@@ -30,13 +30,12 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.point85.uom.Conversion;
+import org.point85.uom.MeasurementService;
 import org.point85.uom.MeasurementSystem;
-import org.point85.uom.ProductUOM;
 import org.point85.uom.Quantity;
 import org.point85.uom.ScalarUOM;
 import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
-import org.point85.uom.MeasurementService;
 import org.point85.uom.UnitType;
 
 import com.github.kevinsawicki.http.HttpRequest;
@@ -276,7 +275,7 @@ public class TestUnifiedCode extends BaseTest {
 		to = from.convert(sys.getUOM(Unit.BTU));
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA3));
 	}
 
 	private BigDecimal wsConvert(String amount, UnitOfMeasure from, UnitOfMeasure to)

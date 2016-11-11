@@ -46,10 +46,10 @@ import java.util.ResourceBundle;
  */
 public class MeasurementService {
 	// name of resource bundle with translatable strings for measurement system
-	static final String MEASUREMENT_SYSTEM_BUNDLE_NAME = "MeasurementSystem";
+	static final String MEASUREMENT_SYSTEM_BUNDLE_NAME = "System";
 
 	// name of resource bundle with translatable strings for exception messages
-	static final String MESSAGES_BUNDLE_NAME = "Messages";
+	static final String MESSAGES_BUNDLE_NAME = "Message";
 
 	// resource bundle for exception messages
 	private static ResourceBundle messages;

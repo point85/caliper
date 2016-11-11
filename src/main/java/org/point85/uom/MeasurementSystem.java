@@ -70,7 +70,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 	private static final long serialVersionUID = 2414813534548133467L;
 
 	// name of resource bundle with translatable strings for UOMs (e.g. time)
-	static final String BUNDLE_NAME = "Symbols";
+	static final String BUNDLE_NAME = "UNit";
 
 	// unit resource bundle (e.g. time units)
 	private transient ResourceBundle symbols;

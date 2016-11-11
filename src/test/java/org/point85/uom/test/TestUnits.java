@@ -266,10 +266,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure u = uom3.multiply(uom2);
 		assertTrue(u.equals(sys.getOne()));
 
-		sys.unregisterUnit(a);
-		sys.unregisterUnit(b);
-		sys.unregisterUnit(aOverb);
-		sys.unregisterUnit(bOvera);
+		sys.clearCache();
 
 		// product
 		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
@@ -303,9 +300,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(uom6.getDivisor().equals(ab));
 		assertThat(uom6.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
-		sys.unregisterUnit(a);
-		sys.unregisterUnit(b);
-		sys.unregisterUnit(ab);
+		sys.clearCache();
 
 		// power
 		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
@@ -333,17 +328,16 @@ public class TestUnits extends BaseTest {
 		uom = sys.getUOM(a.getSymbol());
 		assertTrue(uom == null);
 
-		sys.unregisterUnit(b);
-		sys.unregisterUnit(a2);
+		sys.clearCache();
 
-		// now in SI System
+		// again
 		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
 		b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		ScalarUOM c = sys.createScalarUOM(UnitType.CUSTOM, "c", "c", "C");
 		ScalarUOM x = sys.createScalarUOM(UnitType.CUSTOM, "x", "x", "X");
 		ScalarUOM e = sys.createScalarUOM(UnitType.CUSTOM, "e", "e", "E");
 
-		uom = sys.createProductUOM(UnitType.CUSTOM, "", "a2", "", a, a);
+		uom = sys.createProductUOM(UnitType.CUSTOM, "", "a*2", "", a, a);
 		assertTrue(uom.divide(a).equals(a));
 		String symbol = uom.getSymbol();
 		uom2 = sys.getUOM(symbol);
@@ -366,18 +360,18 @@ public class TestUnits extends BaseTest {
 		uom = axbsq.divide(axb);
 		assertTrue(uom.getBaseSymbol().equals(axb.getBaseSymbol()));
 
-		PowerUOM b2 = sys.createPowerUOM(UnitType.CUSTOM, "b2", "b^2", "", b, 2);
+		PowerUOM b2 = sys.createPowerUOM(UnitType.CUSTOM, "b2", "b*2", "", b, 2);
 
 		symbol = axb.getBaseSymbol();
 		uom = sys.getUOM(symbol);
 		assertTrue(uom != null);
 
-		PowerUOM axb2 = sys.createPowerUOM(UnitType.CUSTOM, "axb2", "axb^2", "", axb, 2);
+		PowerUOM axb2 = sys.createPowerUOM(UnitType.CUSTOM, "axb2", "(a.b)*2", "", axb, 2);
 		uom = axb2.divide(axb);
 		assertTrue(uom.getBaseSymbol().equals(axb.getBaseSymbol()));
 		assertTrue(uom.equals(axb));
 
-		PowerUOM aOverb2 = sys.createPowerUOM(UnitType.CUSTOM, "aOverb2", "(a/b)^2", "", aOverb, 2);
+		PowerUOM aOverb2 = sys.createPowerUOM(UnitType.CUSTOM, "aOverb2", "(a/b)*2", "", aOverb, 2);
 		uom = aOverb2.multiply(b2);
 		assertTrue(uom.getBaseSymbol().equals(a2.getBaseSymbol()));
 

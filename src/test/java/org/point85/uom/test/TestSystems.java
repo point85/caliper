@@ -100,6 +100,8 @@ public class TestSystems extends BaseTest {
 	public void testCache() throws Exception {
 		MeasurementSystem sys = uomService.getUnifiedSystem();
 		
+		sys.getOne();
+		
 		int before = sys.getRegisteredUnits().size();
 		
 		for (int i = 0; i < 10; i++) {
@@ -108,7 +110,7 @@ public class TestSystems extends BaseTest {
 
 		int after = sys.getRegisteredUnits().size();
 		
-		assertTrue(after == (before + 11));
+		assertTrue(after == (before + 10));
 		sys.clearCache();
 		assertTrue(sys.getRegisteredUnits().size() == 0);
 
