@@ -1,3 +1,26 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package org.point85.uom.test;
 
 import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
@@ -62,11 +85,7 @@ public class TestUnifiedCode extends BaseTest {
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// kilowatt-hours to Joules
-		ProductUOM kwh = sys.createProductUOM(UnitType.ENERGY, "kilowatt-hour", "kWh", "kilowatt-hour",
-				sys.getUOM(Unit.KILOWATT), sys.getHour());
-		kwh.setUnifiedSymbol("kW.h");
-
-		from = new Quantity(amount, kwh);
+		from = new Quantity(amount, sys.getUOM(Unit.KILOWATT_HOUR));
 		to = from.convert(sys.getUOM(Unit.KILOJOULE));
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
@@ -251,6 +270,13 @@ public class TestUnifiedCode extends BaseTest {
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		
+		// kWh to BTU
+		from = new Quantity(amount, sys.getUOM(Unit.KILOWATT_HOUR));
+		to = from.convert(sys.getUOM(Unit.BTU));
+
+		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
 	}
 
 	private BigDecimal wsConvert(String amount, UnitOfMeasure from, UnitOfMeasure to)

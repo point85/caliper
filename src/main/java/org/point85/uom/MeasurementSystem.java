@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
 package org.point85.uom;
 
 import java.io.Serializable;
@@ -483,6 +507,12 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createScalarUOM(UnitType.ENERGY, Unit.KILOJOULE, symbols.getString("kj.name"),
 					symbols.getString("kj.symbol"), symbols.getString("kj.desc"), symbols.getString("kj.unified"));
 			uom.setConversion(conversion);
+			break;
+			
+		case KILOWATT_HOUR:
+			uom = createProductUOM(UnitType.ENERGY, Unit.KILOWATT_HOUR, symbols.getString("kwh.name"),
+					symbols.getString("kwh.symbol"), symbols.getString("kwh.desc"),
+					symbols.getString("kwh.unified"), getUOM(Unit.KILOWATT), getHour());
 			break;
 
 		case WATT:
@@ -1224,8 +1254,8 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 		UnitOfMeasure current = symbolRegistry.get(key);
 
 		if (current != null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("already.registered"), uom.toString(),
-					key, current.toString());
+			String msg = MessageFormat.format(MeasurementService.getMessage("already.registered"), uom.toString(), key,
+					current.toString());
 			throw new Exception(msg);
 		}
 		symbolRegistry.put(key, uom);

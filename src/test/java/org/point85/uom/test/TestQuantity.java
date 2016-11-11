@@ -1,3 +1,26 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package org.point85.uom.test;
 
 import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
@@ -452,22 +475,24 @@ public class TestQuantity extends BaseTest {
 	}
 
 	@Test
-	public void testCans() throws Exception {
-		MeasurementSystem custom = uomService.createSystem("custom1", "cs1", "custom system #1");
+	public void testPackaging() throws Exception {
+		// MeasurementSystem custom = uomService.createSystem("custom1", "cs1",
+		// "custom system #1");
+		MeasurementSystem sys = uomService.getUnifiedSystem();
 		BigDecimal one = Quantity.createAmount("1");
 		BigDecimal four = Quantity.createAmount("4");
 		BigDecimal six = Quantity.createAmount("6");
 		BigDecimal ten = Quantity.createAmount("10");
 		BigDecimal forty = Quantity.createAmount("40");
 
-		ScalarUOM one12ozCan = custom.createScalarUOM(UnitType.CUSTOM, "12 oz can", "12ozCan", "12 oz can");
+		ScalarUOM one12ozCan = sys.createScalarUOM(UnitType.CUSTOM, "12 oz can", "12ozCan", "12 oz can");
 
 		Conversion conversion = new Conversion(six, one12ozCan);
-		ScalarUOM sixPackCan = custom.createScalarUOM(UnitType.CUSTOM, "6-pack", "6PCan", "6-pack of 12 oz cans");
+		ScalarUOM sixPackCan = sys.createScalarUOM(UnitType.CUSTOM, "6-pack", "6PCan", "6-pack of 12 oz cans");
 		sixPackCan.setConversion(conversion);
 
 		conversion = new Conversion(four, sixPackCan);
-		ScalarUOM fourPackCase = custom.createScalarUOM(UnitType.CUSTOM, "4 pack case", "4PCase", "case of 4 6-packs");
+		ScalarUOM fourPackCase = sys.createScalarUOM(UnitType.CUSTOM, "4 pack case", "4PCase", "case of 4 6-packs");
 		fourPackCase.setConversion(conversion);
 
 		BigDecimal bd = fourPackCase.getConversionFactor(one12ozCan);
@@ -500,16 +525,12 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testGenericQuantity() throws Exception {
-		MeasurementSystem cs1 = uomService.getSystem("cs1");
+		MeasurementSystem sys = uomService.getUnifiedSystem();
 
-		if (cs1 == null) {
-			cs1 = uomService.createSystem("custom1", "cs1", "description");
-		}
-
-		ScalarUOM a = cs1.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
+		ScalarUOM a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
 
 		Conversion conversion = new Conversion(BigDecimal.TEN, a);
-		ScalarUOM b = cs1.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
+		ScalarUOM b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		b.setConversion(conversion);
 
 		BigDecimal two = Quantity.createAmount("2");

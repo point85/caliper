@@ -1,3 +1,26 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package org.point85.uom.test;
 
 import static org.junit.Assert.assertFalse;
@@ -18,46 +41,6 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestSystems extends BaseTest {
-
-	@Test
-	public void testCustom() throws Exception {
-
-		MeasurementSystem cs1 = null;
-
-		try {
-			cs1 = uomService.createSystem("custom1", null, "description");
-			fail("no symbol");
-		} catch (Exception e) {
-		}
-
-		try {
-			uomService.createSystem("custom1", "", "description");
-			fail("no symbol");
-		} catch (Exception e) {
-		}
-
-		String symbol = "cs1";
-		cs1 = uomService.getSystem(symbol);
-
-		if (cs1 == null) {
-			cs1 = uomService.createSystem("custom1", symbol, "description");
-		}
-		assertNotNull(cs1.getName());
-		assertNotNull(cs1.getSymbol());
-		assertNotNull(cs1.getDescription());
-		assertNotNull(cs1.toString());
-
-		MeasurementSystem cs2 = uomService.getSystem(symbol);
-		assertTrue(cs1.equals(cs2));
-
-		try {
-			cs1 = uomService.createSystem("custom1", symbol, "description");
-			fail("already created");
-		} catch (Exception e) {
-		}
-
-		cs2 = uomService.createSystem("custom2", "cs2", "description");
-	}
 
 	@Test
 	public void testUnifiedSystem() throws Exception {
@@ -115,29 +98,27 @@ public class TestSystems extends BaseTest {
 
 	@Test
 	public void testCache() throws Exception {
-		MeasurementSystem customSys = uomService.createSystem("Cans", UUID.randomUUID().toString(), "Cache test");
-
+		MeasurementSystem sys = uomService.getUnifiedSystem();
+		
+		int before = sys.getRegisteredUnits().size();
+		
 		for (int i = 0; i < 10; i++) {
-			customSys.createScalarUOM(UnitType.CUSTOM, null, UUID.randomUUID().toString(), null);
+			sys.createScalarUOM(UnitType.CUSTOM, null, UUID.randomUUID().toString(), null);
 		}
 
-		assertTrue(customSys.getRegisteredUnits().size() == 11);
-		customSys.clearCache();
-		assertTrue(customSys.getRegisteredUnits().size() == 0);
+		int after = sys.getRegisteredUnits().size();
+		
+		assertTrue(after == (before + 11));
+		sys.clearCache();
+		assertTrue(sys.getRegisteredUnits().size() == 0);
 
-		UnitOfMeasure uom = customSys.createScalarUOM(UnitType.CUSTOM, CustomUnit.CAN, "Can",
+		UnitOfMeasure uom = sys.createScalarUOM(UnitType.CUSTOM, CustomUnit.CAN, "Can",
 				UUID.randomUUID().toString(), "a can", null);
-		uom.setEnumeration(CustomUnit.CAN);
 
-		assertTrue(customSys.getUOM(CustomUnit.CAN).equals(uom));
+		assertTrue(sys.getUOM(CustomUnit.CAN).equals(uom));
 
-		customSys.unregisterUnit(uom);
-		assertNull(customSys.getUOM(CustomUnit.CAN));
+		sys.unregisterUnit(uom);
+		assertNull(sys.getUOM(CustomUnit.CAN));
 
-		uomService.unregisterSystem(customSys);
-		assertNull(uomService.getSystem(customSys.getSymbol()));
-
-		uomService.unregisterSystem(customSys);
-		assertNull(uomService.getSystem(customSys.getSymbol()));
 	}
 }

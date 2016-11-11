@@ -1,8 +1,28 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package org.point85.uom;
 
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -39,9 +59,6 @@ public class MeasurementService {
 
 	// standard unified system
 	private MeasurementSystem unifiedSystem;
-
-	// custom systems, e.g. packaging, key = system name are registered by name
-	private List<MeasurementSystem> systemRegistry = new ArrayList<>();
 
 	// singleton
 	private static MeasurementService serviceInstance;
@@ -97,73 +114,5 @@ public class MeasurementService {
 		unifiedSystem = new MeasurementSystem(symbols.getString("unified.name"), symbols.getString("unified.symbol"),
 				symbols.getString("unified.desc"));
 		unifiedSystem.initialize();
-	}
-
-	/**
-	 * Get the measurement system by its unique symbol
-	 * 
-	 * @param symbol
-	 *            The measurement system symbol
-	 * @return {@link MeasurementSystem}
-	 * @throws Exception
-	 *             Exception
-	 */
-	public MeasurementSystem getSystem(String symbol) throws Exception {
-		MeasurementSystem system = null;
-		for (MeasurementSystem registeredSystem : systemRegistry) {
-			if (registeredSystem.getSymbol().equals(symbol)) {
-				system = registeredSystem;
-				break;
-			}
-		}
-		return system;
-	}
-
-	/**
-	 * Create a custom unit of measure system
-	 * 
-	 * @param name
-	 *            Name of system
-	 * @param symbol
-	 *            Unique symbol of system
-	 * @param description
-	 *            Description of system
-	 * @return {@link MeasurementSystem}
-	 * @throws Exception
-	 *             Exception
-	 */
-	public MeasurementSystem createSystem(String name, String symbol, String description) throws Exception {
-
-		if (symbol == null || symbol.trim().length() == 0) {
-			throw new Exception(MeasurementService.getMessage("symbol.cannot.be.null"));
-		}
-
-		if (getSystem(symbol) != null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("system.already.created"), symbol);
-			throw new Exception(msg);
-		}
-
-		MeasurementSystem custom = new MeasurementSystem(name, symbol, description);
-		systemRegistry.add(custom);
-		custom.initialize();
-		return custom;
-	}
-
-	/**
-	 * Remove this measurement system from the cache
-	 * 
-	 * @param system
-	 *            {@link MeasurementSystem}
-	 * @throws Exception
-	 *             Exception
-	 */
-	public void unregisterSystem(MeasurementSystem system) throws Exception {
-		if (system != null) {
-			MeasurementSystem registeredSystem = getSystem(system.getSymbol());
-
-			if (registeredSystem != null) {
-				systemRegistry.remove(system);
-			}
-		}
 	}
 }

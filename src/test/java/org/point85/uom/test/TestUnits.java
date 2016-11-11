@@ -1,3 +1,26 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package org.point85.uom.test;
 
 import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
@@ -181,44 +204,40 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testGeneric() throws Exception {
-		MeasurementSystem cs1 = uomService.getSystem("cs1");
+		MeasurementSystem sys = uomService.getUnifiedSystem();
 
-		if (cs1 == null) {
-			cs1 = uomService.createSystem("custom1", "cs1", "description");
-		}
-
-		UnitOfMeasure b = cs1.getUOM("b");
+		UnitOfMeasure b = sys.getUOM("b");
 
 		if (b != null) {
-			cs1.unregisterUnit(b);
+			sys.unregisterUnit(b);
 		}
-		b = cs1.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
+		b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 
 		assertFalse(b.equals(null));
 
 		// scalar
 		BigDecimal two = Quantity.createAmount("2");
 		Conversion conversion = new Conversion(two, b, BigDecimal.ONE);
-		ScalarUOM ab1 = cs1.createScalarUOM(UnitType.CUSTOM, "a=2b+1", "a=2b+1", "custom");
+		ScalarUOM ab1 = sys.createScalarUOM(UnitType.CUSTOM, "a=2b+1", "a=2b+1", "custom");
 		ab1.setConversion(conversion);
 
 		assertThat(ab1.getScalingFactor(), closeTo(two, DELTA6));
 		assertTrue(ab1.getAbscissaUnit().equals(b));
 		assertThat(ab1.getOffset(), closeTo(BigDecimal.ONE, DELTA6));
 
-		cs1.unregisterUnit(ab1);
-		assertNull(cs1.getUOM(ab1.getSymbol()));
+		sys.unregisterUnit(ab1);
+		assertNull(sys.getUOM(ab1.getSymbol()));
 
 		// quotient
-		UnitOfMeasure a = cs1.getUOM("a");
+		UnitOfMeasure a = sys.getUOM("a");
 
 		if (a != null) {
-			cs1.unregisterUnit(a);
+			sys.unregisterUnit(a);
 		}
-		a = cs1.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
+		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
 		assertTrue(a.getAbscissaUnit().equals(a));
 
-		QuotientUOM aOverb = cs1.createQuotientUOM(UnitType.CUSTOM, "a/b", "a/b", "", a, b);
+		QuotientUOM aOverb = sys.createQuotientUOM(UnitType.CUSTOM, "a/b", "a/b", "", a, b);
 		aOverb.setScalingFactor(two);
 
 		assertThat(aOverb.getScalingFactor(), closeTo(two, DELTA6));
@@ -227,7 +246,7 @@ public class TestUnits extends BaseTest {
 		assertThat(aOverb.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 		assertTrue(aOverb.getAbscissaUnit().equals(aOverb));
 
-		QuotientUOM bOvera = cs1.createQuotientUOM(UnitType.CUSTOM, "b/a", "b/a", "", b, a);
+		QuotientUOM bOvera = sys.createQuotientUOM(UnitType.CUSTOM, "b/a", "b/a", "", b, a);
 
 		// multiply2
 		UnitOfMeasure uom = aOverb.multiply(b);
@@ -245,19 +264,19 @@ public class TestUnits extends BaseTest {
 		// invert
 		UnitOfMeasure uom3 = uom2.invert();
 		UnitOfMeasure u = uom3.multiply(uom2);
-		assertTrue(u.equals(cs1.getOne()));
+		assertTrue(u.equals(sys.getOne()));
 
-		cs1.unregisterUnit(a);
-		cs1.unregisterUnit(b);
-		cs1.unregisterUnit(aOverb);
-		cs1.unregisterUnit(bOvera);
+		sys.unregisterUnit(a);
+		sys.unregisterUnit(b);
+		sys.unregisterUnit(aOverb);
+		sys.unregisterUnit(bOvera);
 
 		// product
-		a = cs1.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
-		b = cs1.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
+		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
+		b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		a.setScalingFactor(two);
 
-		ProductUOM ab = cs1.createProductUOM(UnitType.CUSTOM, "name", "symbol", "custom", a, b);
+		ProductUOM ab = sys.createProductUOM(UnitType.CUSTOM, "name", "symbol", "custom", a, b);
 		ab.setOffset(BigDecimal.ONE);
 
 		assertThat(ab.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
@@ -280,17 +299,17 @@ public class TestUnits extends BaseTest {
 		// invert
 		QuotientUOM uom6 = (QuotientUOM) ab.invert();
 		assertThat(uom6.getScalingFactor(), closeTo(Quantity.createAmount("0.5"), DELTA6));
-		assertTrue(uom6.getDividend().equals(cs1.getOne()));
+		assertTrue(uom6.getDividend().equals(sys.getOne()));
 		assertTrue(uom6.getDivisor().equals(ab));
 		assertThat(uom6.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
-		cs1.unregisterUnit(a);
-		cs1.unregisterUnit(b);
-		cs1.unregisterUnit(ab);
+		sys.unregisterUnit(a);
+		sys.unregisterUnit(b);
+		sys.unregisterUnit(ab);
 
 		// power
-		a = cs1.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
-		PowerUOM a2 = cs1.createPowerUOM(UnitType.CUSTOM, "name", "symbol", "custom", a, 2);
+		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
+		PowerUOM a2 = sys.createPowerUOM(UnitType.CUSTOM, "name", "symbol", "custom", a, 2);
 		a2.setScalingFactor(two);
 
 		assertThat(a2.getScalingFactor(), closeTo(two, DELTA6));
@@ -310,15 +329,14 @@ public class TestUnits extends BaseTest {
 		u = uom9.getAbscissaUnit();
 		assertTrue(u.getBaseSymbol().equals(a2.getBaseSymbol()));
 
-		cs1.unregisterUnit(a);
-		uom = cs1.getUOM(a.getSymbol());
+		sys.unregisterUnit(a);
+		uom = sys.getUOM(a.getSymbol());
 		assertTrue(uom == null);
 
-		cs1.unregisterUnit(b);
-		cs1.unregisterUnit(a2);
+		sys.unregisterUnit(b);
+		sys.unregisterUnit(a2);
 
 		// now in SI System
-		MeasurementSystem sys = uomService.getUnifiedSystem();
 		a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
 		b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		ScalarUOM c = sys.createScalarUOM(UnitType.CUSTOM, "c", "c", "C");

@@ -1,3 +1,26 @@
+/*
+MIT License
+
+Copyright (c) 2016 Kent Randall
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 package org.point85.uom;
 
 import java.io.Serializable;
@@ -45,6 +68,13 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 		implements Serializable, UnitOfMeasure, Comparable<UnitOfMeasure> {
 
 	private static final long serialVersionUID = 2555302674617525240L;
+	
+	// multiply, divide and power symbols
+	protected static final char MULT = 0xB7;
+	protected static final char DIV = '/';
+	protected static final char POW = '^';
+	protected static final char SQ = 0xB2;
+	protected static final char CUBED = 0xB3;
 
 	// conversion to another Unit of Measure in the same recognized measurement
 	// system (y = ax + b)
@@ -645,7 +675,7 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 		// scaling factor
 		BigDecimal factor = getScalingFactor();
 		if (factor != null && (factor.compareTo(BigDecimal.ONE) != 0)) {
-			sb.append(factor.toString()).append(Reducer.MULT);
+			sb.append(factor.toString()).append(MULT);
 		}
 
 		// abscissa unit
@@ -707,14 +737,9 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 	// reduce a unit of measure to its most basic units
 	class Reducer {
-		private static final char MULT = 0xB7;
-		private static final char DIV = '/';
-		private static final char POW = '^';
 		private static final char LP = '(';
 		private static final char RP = ')';
 		private static final char ONE = '1';
-		private static final char SQ = 0xB2;
-		private static final char CUBED = 0xB3;
 
 		private static final int MAX_RECURSIONS = 10;
 
