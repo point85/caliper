@@ -35,7 +35,7 @@ public enum Unit implements UnitEnumeration {
 	// dimension-less "1" or unity
 	ONE,
 	// time
-	MILLISECOND, SECOND, MINUTE, HOUR, DAY, WEEK, SQUARE_SECOND,
+	MILLISECOND, SECOND, MINUTE, HOUR, DAY, WEEK, JULIAN_YEAR, SQUARE_SECOND,
 	// angle
 	RADIAN, STERADIAN,
 	// degree of arc
@@ -45,7 +45,7 @@ public enum Unit implements UnitEnumeration {
 
 	// SI units follow
 	// length
-	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE, ANGSTROM,
+	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE, ANGSTROM, LIGHT_YEAR,
 	// area
 	SQUARE_METRE,
 	// temperature
@@ -65,7 +65,7 @@ public enum Unit implements UnitEnumeration {
 	// acceleration
 	METRE_PER_SECOND_SQUARED,
 	// energy
-	JOULE, KILOJOULE, CALORIE, KILOWATT_HOUR,
+	JOULE, KILOJOULE, ELECTRON_VOLT, CALORIE, KILOWATT_HOUR,
 	// force
 	NEWTON,
 	// power
@@ -75,7 +75,7 @@ public enum Unit implements UnitEnumeration {
 	// pressure
 	PASCAL, KILOPASCAL, BAR,
 	// electrical
-	AMPERE, COULOMB, VOLT, OHM, FARAD, WEBER, TESLA, HENRY, SIEMENS,
+	AMPERE, COULOMB, ELEMENTARY_CHARGE, VOLT, OHM, FARAD, WEBER, TESLA, HENRY, SIEMENS,
 	// substance
 	MOLE,
 	// luminosity
@@ -93,7 +93,7 @@ public enum Unit implements UnitEnumeration {
 
 	// Customary Units follow
 	// length
-	INCH, FOOT, YARD, MILE, NAUTICAL_MILE,
+	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL,
 	// temperature
 	FAHRENHEIT, RANKINE,
 	// mass
@@ -103,9 +103,9 @@ public enum Unit implements UnitEnumeration {
 	// torque (moment of force)
 	FOOT_POUND_FORCE,
 	// area
-	SQUARE_INCH, SQUARE_FOOT, ACRE,
+	SQUARE_INCH, SQUARE_FOOT, SQUARE_YARD, ACRE,
 	// volume
-	CUBIC_INCH, CUBIC_FOOT,
+	CUBIC_INCH, CUBIC_FOOT, CUBIC_YARD, CORD,
 	// velocity
 	FEET_PER_SECOND, KNOT, MILES_PER_HOUR,
 	// acceleration
@@ -119,7 +119,7 @@ public enum Unit implements UnitEnumeration {
 
 	// US Units follow
 	// volume
-	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON,
+	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, 
 
 	// British units follow
 	// volume

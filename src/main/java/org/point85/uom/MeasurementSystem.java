@@ -226,6 +226,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("week.symbol"), symbols.getString("week.desc"), symbols.getString("week.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case JULIAN_YEAR:
+			// Julian year
+			conversion = new Conversion(Quantity.createAmount("365.25"), getUOM(Unit.DAY));
+			uom = createScalarUOM(UnitType.TIME, Unit.JULIAN_YEAR, symbols.getString("jyear.name"),
+					symbols.getString("jyear.symbol"), symbols.getString("jyear.desc"), symbols.getString("jyear.unified"));
+			uom.setConversion(conversion);
+			
+			break;
 
 		case SQUARE_SECOND:
 			// square second
@@ -307,6 +316,12 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("mole.symbol"), symbols.getString("mole.desc"),
 					symbols.getString("mole.unified"));
 			uom.setConversion(conversion);
+			break;
+			
+		case LIGHT_YEAR:
+			uom = createProductUOM(UnitType.LENGTH, Unit.LIGHT_YEAR, symbols.getString("ly.name"),
+					symbols.getString("ly.symbol"), symbols.getString("ly.desc"),
+					symbols.getString("ly.unified"), getUOM(Unit.LIGHT_VELOCITY), getUOM(Unit.JULIAN_YEAR));
 			break;
 
 		case KILOMETRE:
@@ -517,6 +532,12 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom.setConversion(conversion);
 			break;
 			
+		case ELECTRON_VOLT:
+			uom = createProductUOM(UnitType.ENERGY, Unit.ELECTRON_VOLT, symbols.getString("ev.name"),
+					symbols.getString("ev.symbol"), symbols.getString("ev.desc"), symbols.getString("ev.unified"), 
+					getUOM(Unit.ELEMENTARY_CHARGE), getUOM(Unit.VOLT));
+			break;
+			
 		case KILOWATT_HOUR:
 			uom = createProductUOM(UnitType.ENERGY, Unit.KILOWATT_HOUR, symbols.getString("kwh.name"),
 					symbols.getString("kwh.symbol"), symbols.getString("kwh.desc"),
@@ -572,6 +593,14 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createProductUOM(UnitType.ELECTRIC_CHARGE, Unit.COULOMB, symbols.getString("coulomb.name"),
 					symbols.getString("coulomb.symbol"), symbols.getString("coulomb.desc"),
 					symbols.getString("coulomb.unified"), getUOM(Unit.AMPERE), getSecond());
+			break;
+			
+		case ELEMENTARY_CHARGE:
+			// e
+			conversion = new Conversion(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
+			uom = createScalarUOM(UnitType.ELECTRIC_CHARGE, Unit.ELEMENTARY_CHARGE, symbols.getString("e.name"),
+					symbols.getString("e.symbol"), symbols.getString("e.desc"), symbols.getString("e.unified"));
+			uom.setConversion(conversion);
 			break;
 
 		case VOLT:
@@ -786,6 +815,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("inch.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case MIL:
+			// inch
+			conversion = new Conversion(MILLI, getUOM(Unit.INCH));
+			uom = createScalarUOM(UnitType.LENGTH, Unit.MIL, symbols.getString("mil.name"),
+					symbols.getString("mil.symbol"), symbols.getString("mil.desc"),
+					symbols.getString("mil.unified"));
+			uom.setConversion(conversion);
+			break;
 
 		case YARD:
 			// yard
@@ -812,6 +850,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("NM.symbol"), symbols.getString("NM.desc"), symbols.getString("NM.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case FATHOM:
+			// fathom
+			conversion = new Conversion(Quantity.createAmount("6"), getUOM(Unit.FOOT));
+			uom = createScalarUOM(UnitType.LENGTH, Unit.FATHOM, symbols.getString("fth.name"),
+					symbols.getString("fth.symbol"), symbols.getString("fth.desc"), symbols.getString("fth.unified"));
+			uom.setConversion(conversion);
+			
+			break;
 
 		case PSI:
 			uom = createQuotientUOM(UnitType.PRESSURE, Unit.PSI, symbols.getString("psi.name"),
@@ -834,6 +881,13 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_FOOT, symbols.getString("ft2.name"),
 					symbols.getString("ft2.symbol"), symbols.getString("ft2.desc"), symbols.getString("ft2.unified"),
 					getUOM(Unit.FOOT), 2);
+			break;
+			
+		case SQUARE_YARD:
+			// square yard
+			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_YARD, symbols.getString("yd2.name"),
+					symbols.getString("yd2.symbol"), symbols.getString("yd2.desc"), symbols.getString("yd2.unified"),
+					getUOM(Unit.YARD), 2);
 			break;
 
 		case ACRE:
@@ -860,6 +914,22 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createPowerUOM(UnitType.VOLUME, Unit.CUBIC_FOOT, symbols.getString("ft3.name"),
 					symbols.getString("ft3.symbol"), symbols.getString("ft3.desc"), symbols.getString("ft3.unified"),
 					getUOM(Unit.FOOT), 3);
+			break;
+			
+		case CORD:
+			// cord
+			conversion = new Conversion(Quantity.createAmount("128"), getUOM(Unit.CUBIC_FOOT));
+			uom = createScalarUOM(UnitType.VOLUME, Unit.CORD, symbols.getString("cord.name"),
+					symbols.getString("cord.symbol"), symbols.getString("cord.desc"),
+					symbols.getString("cord.unified"));
+			uom.setConversion(conversion);
+			break;
+			
+		case CUBIC_YARD:
+			// cubic yard
+			uom = createPowerUOM(UnitType.VOLUME, Unit.CUBIC_YARD, symbols.getString("yd3.name"),
+					symbols.getString("yd3.symbol"), symbols.getString("yd3.desc"), symbols.getString("yd3.unified"),
+					getUOM(Unit.YARD), 3);
 			break;
 
 		case FEET_PER_SECOND:
@@ -957,6 +1027,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_GALLON, symbols.getString("us_gallon.name"),
 					symbols.getString("us_gallon.symbol"), symbols.getString("us_gallon.desc"),
 					symbols.getString("us_gallon.unified"));
+			uom.setConversion(conversion);
+			break;
+			
+		case US_BARREL:
+			// barrel
+			conversion = new Conversion(Quantity.createAmount("42"), getUOM(Unit.US_GALLON));
+			uom = createScalarUOM(UnitType.VOLUME, Unit.US_BARREL, symbols.getString("us_bbl.name"),
+					symbols.getString("us_bbl.symbol"), symbols.getString("us_bbl.desc"),
+					symbols.getString("us_bbl.unified"));
 			uom.setConversion(conversion);
 			break;
 
