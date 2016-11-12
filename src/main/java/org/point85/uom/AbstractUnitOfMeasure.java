@@ -113,6 +113,8 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 	private void initialize(MeasurementSystem measurementSystem) {
 		this.ownerSystem = measurementSystem;
+		
+		// a unit can always be converted to itself
 		this.conversion = new Conversion(this);
 	}
 

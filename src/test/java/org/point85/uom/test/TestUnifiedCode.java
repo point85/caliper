@@ -61,7 +61,7 @@ public class TestUnifiedCode extends BaseTest {
 		Quantity from = null;
 		Quantity to = null;
 		BigDecimal convertedAmount = null;
-
+/*
 		// feet to in
 		from = new Quantity(amount, sys.getUOM(Unit.FOOT));
 		to = from.convert(sys.getUOM(Unit.INCH));
@@ -276,6 +276,21 @@ public class TestUnifiedCode extends BaseTest {
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA3));
+		
+		// Angstrom to inch
+		from = new Quantity(amount, sys.getUOM(Unit.ANGSTROM));
+		to = from.convert(sys.getUOM(Unit.INCH));
+
+		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		
+		// days to weeks
+		from = new Quantity(amount, sys.getUOM(Unit.DAY));
+		to = from.convert(sys.getUOM(Unit.WEEK));
+
+		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		*/
 	}
 
 	private BigDecimal wsConvert(String amount, UnitOfMeasure from, UnitOfMeasure to)

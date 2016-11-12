@@ -70,7 +70,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 	private static final long serialVersionUID = 2414813534548133467L;
 
 	// name of resource bundle with translatable strings for UOMs (e.g. time)
-	static final String BUNDLE_NAME = "UNit";
+	static final String BUNDLE_NAME = "Unit";
 
 	// unit resource bundle (e.g. time units)
 	private transient ResourceBundle symbols;
@@ -216,6 +216,14 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			conversion = new Conversion(Quantity.createAmount("24"), getUOM(Unit.HOUR));
 			uom = createScalarUOM(UnitType.TIME, Unit.DAY, symbols.getString("day.name"),
 					symbols.getString("day.symbol"), symbols.getString("day.desc"), symbols.getString("day.unified"));
+			uom.setConversion(conversion);
+			break;
+			
+		case WEEK:
+			// week
+			conversion = new Conversion(Quantity.createAmount("7"), getUOM(Unit.DAY));
+			uom = createScalarUOM(UnitType.TIME, Unit.WEEK, symbols.getString("week.name"),
+					symbols.getString("week.symbol"), symbols.getString("week.desc"), symbols.getString("week.unified"));
 			uom.setConversion(conversion);
 			break;
 
@@ -681,6 +689,14 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.LIGHT_VELOCITY, symbols.getString("light.name"),
 					symbols.getString("light.symbol"), symbols.getString("light.desc"),
 					symbols.getString("light.unified"));
+			uom.setConversion(conversion);
+			break;
+			
+		case ANGSTROM:
+			conversion = new Conversion(Quantity.createAmount("0.1"), getUOM(Unit.NANOMETRE));
+			uom = createScalarUOM(UnitType.LENGTH, Unit.ANGSTROM, symbols.getString("angstrom.name"),
+					symbols.getString("angstrom.symbol"), symbols.getString("angstrom.desc"),
+					symbols.getString("angstrom.unified"));
 			uom.setConversion(conversion);
 			break;
 

@@ -122,9 +122,27 @@ public class TestUnits extends BaseTest {
 		}
 		sys.unregisterUnit(u);
 
+		UnitOfMeasure uno = sys.getOne();
 		u = sys.createPowerUOM(UnitType.CUSTOM, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);
-		bd = u.getConversionFactor(sys.getOne());
+		bd = u.getConversionFactor(uno);
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
+		
+		UnitOfMeasure m1 = sys.getUOM(Unit.METRE);
+		u = sys.createPowerUOM(UnitType.CUSTOM, "m^1", "m^1", "", sys.getUOM(Unit.METRE), 1);
+		assertTrue(u.getBaseSymbol().equals(m1.getBaseSymbol()));		
+		
+		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
+		u = sys.createPowerUOM(UnitType.CUSTOM, "m^2", "m^2", "", sys.getUOM(Unit.METRE), 2);
+		assertTrue(u.getBaseSymbol().equals(m2.getBaseSymbol()));
+		
+		UnitOfMeasure perMetre = m1.invert();
+		u = sys.createPowerUOM(UnitType.CUSTOM, "m*-1", "m*-1", "", sys.getUOM(Unit.METRE), -1);
+		assertTrue(u.getBaseSymbol().equals(perMetre.getBaseSymbol()));
+		
+		UnitOfMeasure perMetre2 = m2.invert();
+		u = sys.createPowerUOM(UnitType.CUSTOM, "m*-2", "m*-2", "", sys.getUOM(Unit.METRE), -2);
+		assertTrue(u.getBaseSymbol().equals(perMetre2.getBaseSymbol()));
 
 		try {
 			sys.createPowerUOM(UnitType.CUSTOM, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);

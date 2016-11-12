@@ -35,7 +35,7 @@ public enum Unit implements UnitEnumeration {
 	// dimension-less "1" or unity
 	ONE,
 	// time
-	MILLISECOND, SECOND, MINUTE, HOUR, DAY, SQUARE_SECOND,
+	MILLISECOND, SECOND, MINUTE, HOUR, DAY, WEEK, SQUARE_SECOND,
 	// angle
 	RADIAN, STERADIAN,
 	// degree of arc
@@ -45,7 +45,7 @@ public enum Unit implements UnitEnumeration {
 
 	// SI units follow
 	// length
-	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE,
+	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE, ANGSTROM,
 	// area
 	SQUARE_METRE,
 	// temperature
