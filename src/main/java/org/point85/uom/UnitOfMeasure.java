@@ -24,6 +24,7 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 /**
  * UnitOfMeasure is the interface for a unit Of measure.
@@ -32,6 +33,11 @@ import java.math.BigDecimal;
  *
  */
 public interface UnitOfMeasure {
+	
+	// BigDecimal math. A MathContext object with a precision setting matching
+	// the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
+	// HALF_EVEN, the IEEE 754R default.
+	static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
 	String getSymbol();
 

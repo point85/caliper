@@ -102,7 +102,7 @@ public class Quantity implements Serializable {
 	public static BigDecimal createAmount(String value) {
 		// use String constructor for exact precision with rounding mode in math
 		// context
-		return new BigDecimal(value, Symbolic.MATH_CONTEXT);
+		return new BigDecimal(value, UnitOfMeasure.MATH_CONTEXT);
 	}
 
 	/**
@@ -117,7 +117,7 @@ public class Quantity implements Serializable {
 	static public BigDecimal divide(String dividendAmount, String divisorAmount) {
 		BigDecimal dividend = Quantity.createAmount(dividendAmount);
 		BigDecimal divisor = Quantity.createAmount(divisorAmount);
-		return dividend.divide(divisor, Symbolic.MATH_CONTEXT);
+		return dividend.divide(divisor, UnitOfMeasure.MATH_CONTEXT);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class Quantity implements Serializable {
 	static public BigDecimal multiply(String multiplierAmount, String multiplicandAmount) {
 		BigDecimal multiplier = Quantity.createAmount(multiplierAmount);
 		BigDecimal multiplicand = Quantity.createAmount(multiplicandAmount);
-		return multiplier.multiply(multiplicand, Symbolic.MATH_CONTEXT);
+		return multiplier.multiply(multiplicand, UnitOfMeasure.MATH_CONTEXT);
 	}
 
 	/**
@@ -164,7 +164,7 @@ public class Quantity implements Serializable {
 	 */
 	public Quantity subtract(Quantity other) throws Exception {
 		Quantity toSubtract = other.convert(getUOM());
-		BigDecimal amount = getAmount().subtract(toSubtract.getAmount(), Symbolic.MATH_CONTEXT);
+		BigDecimal amount = getAmount().subtract(toSubtract.getAmount(), UnitOfMeasure.MATH_CONTEXT);
 		Quantity quantity = new Quantity(amount, this.getUOM());
 		return quantity;
 	}
@@ -180,7 +180,7 @@ public class Quantity implements Serializable {
 	 */
 	public Quantity add(Quantity other) throws Exception {
 		Quantity toAdd = other.convert(getUOM());
-		BigDecimal amount = getAmount().add(toAdd.getAmount(), Symbolic.MATH_CONTEXT);
+		BigDecimal amount = getAmount().add(toAdd.getAmount(), UnitOfMeasure.MATH_CONTEXT);
 		Quantity quantity = new Quantity(amount, this.getUOM());
 		return quantity;
 	}
@@ -197,7 +197,7 @@ public class Quantity implements Serializable {
 	public Quantity divide(Quantity other) throws Exception {
 		Quantity toDivide = other;
 
-		BigDecimal amount = getAmount().divide(toDivide.getAmount(), Symbolic.MATH_CONTEXT);
+		BigDecimal amount = getAmount().divide(toDivide.getAmount(), UnitOfMeasure.MATH_CONTEXT);
 		UnitOfMeasure uom = getUOM().divide(toDivide.getUOM());
 
 		Quantity quantity = new Quantity(amount, uom);
@@ -216,7 +216,7 @@ public class Quantity implements Serializable {
 	public Quantity multiply(Quantity other) throws Exception {
 		Quantity toMultiply = other;
 
-		BigDecimal amount = getAmount().multiply(toMultiply.getAmount(), Symbolic.MATH_CONTEXT);
+		BigDecimal amount = getAmount().multiply(toMultiply.getAmount(), UnitOfMeasure.MATH_CONTEXT);
 		UnitOfMeasure uom = getUOM().multiply(toMultiply.getUOM());
 
 		Quantity quantity = new Quantity(amount, uom);
@@ -231,7 +231,7 @@ public class Quantity implements Serializable {
 	 *             Exception
 	 */
 	public Quantity invert() throws Exception {
-		BigDecimal amount = BigDecimal.ONE.divide(this.getAmount(), Symbolic.MATH_CONTEXT);
+		BigDecimal amount = BigDecimal.ONE.divide(this.getAmount(), UnitOfMeasure.MATH_CONTEXT);
 		UnitOfMeasure uom = getUOM().invert();
 
 		Quantity quantity = new Quantity(amount, uom);
@@ -259,15 +259,15 @@ public class Quantity implements Serializable {
 		// adjust for a non-zero "this" offset
 		BigDecimal offsetAmount = getAmount();
 		if (thisOffset.compareTo(BigDecimal.ZERO) != 0) {
-			offsetAmount = getAmount().add(thisOffset, Symbolic.MATH_CONTEXT);
+			offsetAmount = getAmount().add(thisOffset, UnitOfMeasure.MATH_CONTEXT);
 		}
 
 		// new path amount
-		BigDecimal newAmount = offsetAmount.multiply(multiplier, Symbolic.MATH_CONTEXT);
+		BigDecimal newAmount = offsetAmount.multiply(multiplier, UnitOfMeasure.MATH_CONTEXT);
 
 		// adjust for non-zero target offset
 		if (targetOffset.compareTo(BigDecimal.ZERO) != 0) {
-			newAmount = newAmount.subtract(targetOffset, Symbolic.MATH_CONTEXT);
+			newAmount = newAmount.subtract(targetOffset, UnitOfMeasure.MATH_CONTEXT);
 		}
 
 		// create the quantity now
@@ -287,6 +287,6 @@ public class Quantity implements Serializable {
 	 * @return Math context
 	 */
 	public static MathContext getMathContext() {
-		return Symbolic.MATH_CONTEXT;
+		return UnitOfMeasure.MATH_CONTEXT;
 	}
 }

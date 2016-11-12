@@ -68,7 +68,7 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 		implements Serializable, UnitOfMeasure, Comparable<UnitOfMeasure> {
 
 	private static final long serialVersionUID = 2555302674617525240L;
-	
+
 	// multiply, divide and power symbols
 	protected static final char MULT = 0xB7;
 	protected static final char DIV = '/';
@@ -243,8 +243,7 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 	private void checkOffset(UnitOfMeasure other) throws Exception {
 		if (other.getOffset().compareTo(BigDecimal.ZERO) != 0) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("offset.not.supported"),
-					other.toString());
+			String msg = MessageFormat.format(MeasurementService.getMessage("offset.not.supported"), other.toString());
 			throw new Exception(msg);
 		}
 	}
@@ -274,7 +273,7 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 		BigDecimal multiplierFactor = multiplierPowerMap.getScalingFactor();
 		BigDecimal multiplicandFactor = multiplicandPowerMap.getScalingFactor();
-		BigDecimal productFactor = multiplierFactor.multiply(multiplicandFactor, Symbolic.MATH_CONTEXT);
+		BigDecimal productFactor = multiplierFactor.multiply(multiplicandFactor, UnitOfMeasure.MATH_CONTEXT);
 
 		if (productFactor.compareTo(BigDecimal.ONE) != 0) {
 			product.setScalingFactor(productFactor);
@@ -344,7 +343,7 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 		BigDecimal dividendFactor = dividendPowerMap.getScalingFactor();
 		BigDecimal divisorFactor = divisorPowerMap.getScalingFactor();
-		BigDecimal quotientFactor = dividendFactor.divide(divisorFactor, Symbolic.MATH_CONTEXT);
+		BigDecimal quotientFactor = dividendFactor.divide(divisorFactor, UnitOfMeasure.MATH_CONTEXT);
 
 		if (quotientFactor.compareTo(BigDecimal.ONE) != 0) {
 			quotient.setScalingFactor(quotientFactor);
@@ -473,7 +472,7 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 		if (thisAbscissa.equals(targetUOM)) {
 			scalingFactor = thisFactor;
 		} else if (thisUOM.equals(targetAbscissa)) {
-			scalingFactor = BigDecimal.ONE.divide(targetFactor, Symbolic.MATH_CONTEXT);
+			scalingFactor = BigDecimal.ONE.divide(targetFactor, UnitOfMeasure.MATH_CONTEXT);
 		} else if (thisAbscissa.equals(targetAbscissa)) {
 			return getScalingFactor().divide(targetUOM.getScalingFactor(), MATH_CONTEXT);
 		} else {
@@ -516,11 +515,11 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 						targetUOM.toString());
 				throw new Exception(msg);
 			}
-			thisPathFactor = thisPathFactor.multiply(bridgeFactor, Symbolic.MATH_CONTEXT);
+			thisPathFactor = thisPathFactor.multiply(bridgeFactor, UnitOfMeasure.MATH_CONTEXT);
 		}
 
 		// new path amount
-		BigDecimal scalingFactor = thisPathFactor.divide(targetPathFactor, Symbolic.MATH_CONTEXT);
+		BigDecimal scalingFactor = thisPathFactor.divide(targetPathFactor, UnitOfMeasure.MATH_CONTEXT);
 
 		return scalingFactor;
 	}
@@ -578,8 +577,8 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 					// from and to powers must be equal
 					if (fromPower != toPower) {
-						String msg = MessageFormat.format(MeasurementService.getMessage("powers.not.equal"),
-								fromPower, toPower);
+						String msg = MessageFormat.format(MeasurementService.getMessage("powers.not.equal"), fromPower,
+								toPower);
 						throw new Exception(msg);
 					}
 

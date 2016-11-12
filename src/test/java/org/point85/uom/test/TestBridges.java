@@ -111,7 +111,7 @@ public class TestBridges extends BaseTest {
 
 		q1 = new Quantity(BigDecimal.TEN, psi);
 		q2 = q1.convert(kPa);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(68.94757280343134d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("68.94757280343134"), DELTA6));
 		q2 = q2.convert(psi);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
@@ -124,37 +124,37 @@ public class TestBridges extends BaseTest {
 
 		q1 = new Quantity(BigDecimal.TEN, gal);
 		q2 = q1.convert(litre);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(37.8541178d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("37.8541178"), DELTA6));
 		q2 = q2.convert(gal);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
 		q1 = new Quantity(BigDecimal.TEN, m3);
 		q2 = q1.convert(ft3);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(353.1466672398284d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("353.1466672398284"), DELTA6));
 		q2 = q2.convert(m3);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
 		q1 = new Quantity(BigDecimal.TEN, N);
 		q2 = q1.convert(lbf);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(2.24809d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("2.24809"), DELTA6));
 		q2 = q2.convert(N);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
 		q1 = new Quantity(BigDecimal.TEN, ftlbf);
 		q2 = q1.convert(Nm);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(13.558179483314004d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("13.558179483314004"), DELTA6));
 		q2 = q2.convert(ftlbf);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
 		q1 = new Quantity(BigDecimal.TEN, lbm);
 		q2 = q1.convert(kg);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(4.5359237d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("4.5359237"), DELTA6));
 		q2 = q2.convert(lbm);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
 		q1 = new Quantity(BigDecimal.TEN, km);
 		q2 = q1.convert(mi);
-		assertThat(q2.getAmount(), closeTo(new BigDecimal(6.21371192237d), DELTA6));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("6.21371192237"), DELTA6));
 		q2 = q2.convert(km);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 

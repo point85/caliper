@@ -34,6 +34,7 @@ public class TestSnippet extends BaseTest {
 	public void testCase() throws Exception {
 		MeasurementSystem sys = uomService.getUnifiedSystem();
 		assertNotNull(sys);
+		
 
 	}
 

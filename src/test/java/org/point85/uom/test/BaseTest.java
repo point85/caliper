@@ -27,16 +27,17 @@ import java.math.BigDecimal;
 
 import org.junit.Before;
 import org.point85.uom.MeasurementService;
+import org.point85.uom.Quantity;
 
 public class BaseTest {
 
-	protected static final BigDecimal DELTA6 = new BigDecimal("0.000001");
-	protected static final BigDecimal DELTA5 = new BigDecimal("0.00001");
-	protected static final BigDecimal DELTA4 = new BigDecimal("0.0001");
-	protected static final BigDecimal DELTA3 = new BigDecimal("0.001");
-	protected static final BigDecimal DELTA2 = new BigDecimal("0.01");
-	protected static final BigDecimal DELTA1 = new BigDecimal("0.1");
-	protected static final BigDecimal DELTA0 = new BigDecimal("1");
+	protected static final BigDecimal DELTA6 = Quantity.createAmount("0.000001");
+	protected static final BigDecimal DELTA5 = Quantity.createAmount("0.00001");
+	protected static final BigDecimal DELTA4 = Quantity.createAmount("0.0001");
+	protected static final BigDecimal DELTA3 = Quantity.createAmount("0.001");
+	protected static final BigDecimal DELTA2 = Quantity.createAmount("0.01");
+	protected static final BigDecimal DELTA1 = Quantity.createAmount("0.1");
+	protected static final BigDecimal DELTA0 = Quantity.createAmount("1");
 
 	protected MeasurementService uomService;
 

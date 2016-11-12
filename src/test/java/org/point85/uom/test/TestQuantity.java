@@ -476,8 +476,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testPackaging() throws Exception {
-		// MeasurementSystem custom = uomService.createSystem("custom1", "cs1",
-		// "custom system #1");
 		MeasurementSystem sys = uomService.getUnifiedSystem();
 		BigDecimal one = Quantity.createAmount("1");
 		BigDecimal four = Quantity.createAmount("4");
@@ -485,14 +483,26 @@ public class TestQuantity extends BaseTest {
 		BigDecimal ten = Quantity.createAmount("10");
 		BigDecimal forty = Quantity.createAmount("40");
 
-		ScalarUOM one12ozCan = sys.createScalarUOM(UnitType.CUSTOM, "12 oz can", "12ozCan", "12 oz can");
+		ScalarUOM one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
+		one16ozCan.setConversion(new Conversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE)));
+
+		Quantity q400 = new Quantity("400", one16ozCan);
+		Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
+		assertThat(q50.getAmount(), closeTo(Quantity.createAmount("50"), DELTA6));
+
+		ScalarUOM one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
+		one12ozCan.setConversion(new Conversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE)));
+		
+		Quantity q48 = new Quantity("48", one12ozCan);
+		Quantity q36 = q48.convert(one16ozCan);
+		assertThat(q36.getAmount(), closeTo(Quantity.createAmount("36"), DELTA6));
 
 		Conversion conversion = new Conversion(six, one12ozCan);
-		ScalarUOM sixPackCan = sys.createScalarUOM(UnitType.CUSTOM, "6-pack", "6PCan", "6-pack of 12 oz cans");
+		ScalarUOM sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
 		sixPackCan.setConversion(conversion);
 
 		conversion = new Conversion(four, sixPackCan);
-		ScalarUOM fourPackCase = sys.createScalarUOM(UnitType.CUSTOM, "4 pack case", "4PCase", "case of 4 6-packs");
+		ScalarUOM fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "4 pack case", "4PCase", "case of 4 6-packs");
 		fourPackCase.setConversion(conversion);
 
 		BigDecimal bd = fourPackCase.getConversionFactor(one12ozCan);

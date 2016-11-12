@@ -31,7 +31,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
 
 import org.junit.Test;
 import org.point85.uom.Conversion;
@@ -247,6 +246,8 @@ public class TestUnits extends BaseTest {
 		assertTrue(aOverb.getAbscissaUnit().equals(aOverb));
 
 		QuotientUOM bOvera = sys.createQuotientUOM(UnitType.CUSTOM, "b/a", "b/a", "", b, a);
+		UnitOfMeasure bOveraI = bOvera.invert();
+		assertTrue(bOveraI.getBaseSymbol().equals(aOverb.getBaseSymbol()));
 
 		// multiply2
 		UnitOfMeasure uom = aOverb.multiply(b);
@@ -319,7 +320,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(uom8.getAbscissaUnit().equals(a));
 
 		UnitOfMeasure uom9 = uom8.multiply(a);
-		assertThat(uom9.getScalingFactor(), closeTo(new BigDecimal("2"), DELTA6));
+		assertThat(uom9.getScalingFactor(), closeTo(Quantity.createAmount("2"), DELTA6));
 		assertThat(uom9.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 		u = uom9.getAbscissaUnit();
 		assertTrue(u.getBaseSymbol().equals(a2.getBaseSymbol()));
@@ -496,7 +497,7 @@ public class TestUnits extends BaseTest {
 
 		if (velocity == null) {
 			Conversion conversion = new Conversion(
-					BigDecimal.ONE.divide(Quantity.createAmount("3600"), MathContext.DECIMAL64),
+					BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT),
 					sys.getUOM(Unit.METRE_PER_SECOND));
 			velocity = sys.createScalarUOM(UnitType.VELOCITY, "m/hr", "m/hr", "");
 			velocity.setConversion(conversion);
@@ -806,12 +807,14 @@ public class TestUnits extends BaseTest {
 				-2);
 
 		PowerUOM perMin = sys.createPowerUOM(UnitType.TIME, "per minute", "perMin", null, sys.getMinute(), -1);
-		conversion = new Conversion(BigDecimal.ONE.divide(new BigDecimal("60"), MathContext.DECIMAL64), perSec);
+		conversion = new Conversion(BigDecimal.ONE.divide(Quantity.createAmount("60"), UnitOfMeasure.MATH_CONTEXT),
+				perSec);
 		perMin.setConversion(conversion);
 
 		PowerUOM perMin2 = sys.createPowerUOM(UnitType.TIME, "per minute squared", "perMin^2", null, sys.getMinute(),
 				-2);
-		conversion = new Conversion(BigDecimal.ONE.divide(new BigDecimal("3600"), MathContext.DECIMAL64), perSec2);
+		conversion = new Conversion(BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT),
+				perSec2);
 		perMin2.setConversion(conversion);
 
 		u = perMin2.invert();

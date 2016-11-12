@@ -24,7 +24,6 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.io.Serializable;
-import java.math.MathContext;
 
 /**
  * Symbolic is the base class for named entities
@@ -35,11 +34,6 @@ import java.math.MathContext;
 abstract class Symbolic implements Serializable {
 
 	private static final long serialVersionUID = 549468378059268646L;
-
-	// BigDecimal math. A MathContext object with a precision setting matching
-	// the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
-	// HALF_EVEN, the IEEE 754R default.
-	static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
 	// name, e.g. "kilogram"
 	private String name;
