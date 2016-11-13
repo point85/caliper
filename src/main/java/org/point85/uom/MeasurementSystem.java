@@ -282,6 +282,12 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createScalarUOM(UnitType.LENGTH, Unit.METRE, symbols.getString("m.name"),
 					symbols.getString("m.symbol"), symbols.getString("m.desc"), symbols.getString("m.unified"));
 			break;
+			
+		case DIOPTER:
+			uom = createQuotientUOM(UnitType.LENGTH, Unit.DIOPTER, symbols.getString("diopter.name"),
+					symbols.getString("diopter.symbol"), symbols.getString("diopter.desc"), symbols.getString("diopter.unified"),
+					getOne(), getUOM(Unit.METRE));
+			break;
 
 		case KILOGRAM:
 			// fundamental mass
@@ -728,6 +734,19 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("angstrom.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case BIT:
+			uom = createScalarUOM(UnitType.IT, Unit.BIT, symbols.getString("bit.name"),
+					symbols.getString("bit.symbol"), symbols.getString("bit.desc"),
+					symbols.getString("bit.unified"));
+			break;
+			
+		case BYTE:
+			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BIT));
+			uom = createScalarUOM(UnitType.IT, Unit.BYTE, symbols.getString("byte.name"),
+					symbols.getString("byte.symbol"), symbols.getString("byte.desc"),
+					symbols.getString("byte.unified"));
+			uom.setConversion(conversion);
 
 		default:
 			break;
@@ -824,6 +843,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("mil.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case POINT:
+			// point
+			conversion = new Conversion(Quantity.divide("1", "72"), getUOM(Unit.INCH));
+			uom = createScalarUOM(UnitType.LENGTH, Unit.POINT, symbols.getString("point.name"),
+					symbols.getString("point.symbol"), symbols.getString("point.desc"),
+					symbols.getString("point.unified"));
+			uom.setConversion(conversion);
+			break;
 
 		case YARD:
 			// yard
@@ -861,9 +889,18 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			break;
 
 		case PSI:
+			// psi
 			uom = createQuotientUOM(UnitType.PRESSURE, Unit.PSI, symbols.getString("psi.name"),
 					symbols.getString("psi.symbol"), symbols.getString("psi.desc"), symbols.getString("psi.unified"),
 					getUOM(Unit.POUND_FORCE), getUOM(Unit.SQUARE_INCH));
+			break;
+			
+		case IN_HG:
+			// inches of Mercury
+			conversion = new Conversion(Quantity.createAmount("0.4911531047"), getUOM(Unit.PSI));
+			uom = createScalarUOM(UnitType.PRESSURE, Unit.IN_HG, symbols.getString("inhg.name"),
+					symbols.getString("inhg.symbol"), symbols.getString("inhg.desc"), symbols.getString("inhg.unified"));
+			uom.setConversion(conversion);
 			break;
 
 		case SQUARE_INCH:
@@ -1038,6 +1075,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("us_bbl.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case US_BUSHEL:
+			// bushel
+			conversion = new Conversion(Quantity.createAmount("2150.42058"), getUOM(Unit.CUBIC_INCH));
+			uom = createScalarUOM(UnitType.VOLUME, Unit.US_BUSHEL, symbols.getString("us_bu.name"),
+					symbols.getString("us_bu.symbol"), symbols.getString("us_bu.desc"),
+					symbols.getString("us_bu.unified"));
+			uom.setConversion(conversion);
+			break;
 
 		case US_FLUID_OUNCE:
 			// fluid ounce
@@ -1114,6 +1160,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_GALLON, symbols.getString("br_gallon.name"),
 					symbols.getString("br_gallon.symbol"), symbols.getString("br_gallon.desc"),
 					symbols.getString("br_gallon.unified"));
+			uom.setConversion(conversion);
+			break;
+			
+		case BR_BUSHEL:
+			// bushel
+			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BR_GALLON));
+			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_BUSHEL, symbols.getString("br_bu.name"),
+					symbols.getString("br_bu.symbol"), symbols.getString("br_bu.desc"),
+					symbols.getString("br_bu.unified"));
 			uom.setConversion(conversion);
 			break;
 

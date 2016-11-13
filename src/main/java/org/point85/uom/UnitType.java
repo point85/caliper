@@ -40,6 +40,8 @@ public enum UnitType {
 	PLANE_ANGLE, SOLID_ANGLE,
 	// intensity (power)
 	INTENSITY,
+	// computer information technology
+	IT,
 	// other custom
 	CUSTOM;
 }

@@ -45,7 +45,7 @@ public enum Unit implements UnitEnumeration {
 
 	// SI units follow
 	// length
-	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE, ANGSTROM, LIGHT_YEAR,
+	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE, ANGSTROM, LIGHT_YEAR, DIOPTER,
 	// area
 	SQUARE_METRE,
 	// temperature
@@ -90,10 +90,12 @@ public enum Unit implements UnitEnumeration {
 	NEWTON_METRE,
 	// constants
 	GRAVITY, LIGHT_VELOCITY,
+	// IT
+	BIT, BYTE,
 
 	// Customary Units follow
 	// length
-	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL,
+	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL, POINT,
 	// temperature
 	FAHRENHEIT, RANKINE,
 	// mass
@@ -115,14 +117,14 @@ public enum Unit implements UnitEnumeration {
 	// energy
 	BTU,
 	// pressure
-	PSI,
+	PSI, IN_HG,
 
 	// US Units follow
 	// volume
-	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, 
+	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, US_BUSHEL,
 
 	// British units follow
 	// volume
-	BR_TEASPOON, BR_TABLESPOON, BR_FLUID_OUNCE, BR_CUP, BR_PINT, BR_QUART, BR_GALLON
+	BR_TEASPOON, BR_TABLESPOON, BR_FLUID_OUNCE, BR_CUP, BR_PINT, BR_QUART, BR_GALLON, BR_BUSHEL,
 
 }

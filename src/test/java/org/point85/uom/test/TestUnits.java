@@ -1223,6 +1223,11 @@ public class TestUnits extends BaseTest {
 
 		bd = F.getConversionFactor(K);
 		assertThat(bd, closeTo(fiveNinths, DELTA6));
+		
+		// invert diopters to metre
+		Quantity from = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.DIOPTER));
+		Quantity inverted = from.invert();
+		assertThat(inverted.getAmount(), closeTo(Quantity.createAmount("0.1"), DELTA6));
 
 	}
 
