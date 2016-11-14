@@ -5,10 +5,17 @@
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
+/*
+ *task doJavadocs(type: Javadoc) {
+  * source = sourceSets.main.allJava
+  * destinationDir = reporting.file("caliper-api-docs")
+ *}
+ */
+
 // Repos
 repositories {
     // jcenter
-    jcenter()
+    //jcenter()
     
     // Maven Central
     mavenCentral()
