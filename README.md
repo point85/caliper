@@ -27,8 +27,7 @@ ordered list
 Images 
 
 If you want to embed images, this is how you do it:
-
-![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png)
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/CaliperDiagram.png)
 
 ![GitHub Logo](/images/logo.png)
 Format: ![Alt Text](url)
