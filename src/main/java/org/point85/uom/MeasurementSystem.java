@@ -46,7 +46,7 @@ import java.util.ResourceBundle;
  * 
  * Unified Code for Units of Measure : http://unitsofmeasure.org/unified.html
  * 
- * The SISystem class represents the Internal System of Units. See
+ * The SISystem class represents the International System of Units. See
  * <i><a href="https://en.wikipedia.org/wiki/International_System_of_Units">
  * International System of Units</a></i> and
  * <i><a href="https://en.wikipedia.org/wiki/SI_derived_unit">SI Derived

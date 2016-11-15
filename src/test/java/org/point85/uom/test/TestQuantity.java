@@ -44,6 +44,21 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestQuantity extends BaseTest {
+	
+	@Test
+	public void testAllUnits() throws Exception {
+		MeasurementSystem sys = uomService.getUnifiedSystem();
+		
+		for (Unit u : Unit.values()) {
+			UnitOfMeasure uom1 = sys.getUOM(u);
+			UnitOfMeasure uom2 = sys.getUOM(u);
+			assertTrue(uom1.equals(uom2));
+			
+			Quantity q1 = new Quantity(BigDecimal.TEN, uom1);
+			Quantity q2 = q1.convert(uom2);
+			assertTrue(q1.equals(q2));
+		}
+	}
 
 	@Test
 	public void testTime() throws Exception {
