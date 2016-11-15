@@ -239,10 +239,6 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 		return ownerSystem;
 	}
 
-	public void setMeasurementSystem(MeasurementSystem measurementSystem) {
-		this.ownerSystem = measurementSystem;
-	}
-
 	private void checkOffset(UnitOfMeasure other) throws Exception {
 		if (other.getOffset().compareTo(BigDecimal.ZERO) != 0) {
 			String msg = MessageFormat.format(MeasurementService.getMessage("offset.not.supported"), other.toString());

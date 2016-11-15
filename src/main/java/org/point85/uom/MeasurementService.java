@@ -84,11 +84,6 @@ public class MeasurementService {
 		symbols = ResourceBundle.getBundle(MEASUREMENT_SYSTEM_BUNDLE_NAME, Locale.getDefault());
 	}
 
-	// get the resource bundle for messages
-	static ResourceBundle getMessages() {
-		return messages;
-	}
-
 	// get a particular message by its key
 	static String getMessage(String key) {
 		return messages.getString(key);

@@ -179,6 +179,8 @@ public class TestUnits extends BaseTest {
 		Conversion conversion = new Conversion(BigDecimal.ONE, sys.getOne(), BigDecimal.ONE);
 		ScalarUOM uom = sys.createScalarUOM(UnitType.CUSTOM, "1/1", "1/1", "");
 		uom.setConversion(conversion);
+		Conversion c = uom.getConversion();
+		assertTrue(c.equals(conversion));
 
 		assertThat(uom.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(uom.getAbscissaUnit().equals(sys.getOne()));

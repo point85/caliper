@@ -11,6 +11,12 @@ apply plugin: 'java'
   * destinationDir = reporting.file("caliper-api-docs")
  *}
  */
+ 
+ task javadocZip(type: Zip, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+    //options.encoding = 'UTF-8'
+}
 
 // Repos
 repositories {

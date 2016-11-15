@@ -75,6 +75,8 @@ public class TestQuantity extends BaseTest {
 		q1 = q1.convert(minute);
 		assertTrue(q1.getUOM().equals(minute));
 		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		
+		assertTrue(q1.hashCode() != 0);
 
 	}
 
@@ -247,6 +249,11 @@ public class TestQuantity extends BaseTest {
 		q2 = q1.convert(in);
 
 		q1 = new Quantity(BigDecimal.ONE, mi);
+		
+		// British cup to US gallon
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.BR_CUP));
+		q2 = q1.convert(sys.getUOM(Unit.US_GALLON));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("0.6"), DELTA3));
 	}
 
 	@Test
@@ -543,7 +550,7 @@ public class TestQuantity extends BaseTest {
 		ScalarUOM b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		b.setConversion(conversion);
 
-		BigDecimal two = Quantity.createAmount("2");
+		BigDecimal two = Quantity.multiply("2", "2");
 
 		// add
 		Quantity q1 = new Quantity(two, a);
@@ -556,23 +563,23 @@ public class TestQuantity extends BaseTest {
 		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(q3.getUOM().getAbscissaUnit().equals(a));
 		assertThat(q3.getUOM().getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
-		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("22"), DELTA6));
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("44"), DELTA6));
 
 		// subtract
 		q3 = q1.subtract(q2);
 		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(q3.getUOM().getAbscissaUnit().equals(a));
 		assertThat(q3.getUOM().getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
-		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("-18"), DELTA6));
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("-36"), DELTA6));
 
 		// multiply
 		q3 = q1.multiply(q2);
-		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("4"), DELTA6));
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("16"), DELTA6));
 		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.TEN, DELTA6));
 		assertThat(q3.getUOM().getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
 		Quantity q4 = q3.divide(q2);
-		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("2"), DELTA6));
+		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("4"), DELTA6));
 		q4 = q4.convert(b);
 		assertTrue(q4.equals(q2));
 

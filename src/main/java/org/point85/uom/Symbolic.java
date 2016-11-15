@@ -44,10 +44,6 @@ abstract class Symbolic implements Serializable {
 	// description
 	private String description;
 
-	protected Symbolic() {
-
-	}
-
 	protected Symbolic(String name, String symbol, String description) {
 		this.setName(name);
 		this.setSymbol(symbol);
