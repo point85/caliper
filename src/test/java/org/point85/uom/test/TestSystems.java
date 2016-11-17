@@ -47,10 +47,6 @@ public class TestSystems extends BaseTest {
 
 		MeasurementSystem sys = uomService.getUnifiedSystem();
 		assertFalse(sys.equals(null));
-		assertNotNull(sys.getName());
-		assertNotNull(sys.getSymbol());
-		assertNotNull(sys.getDescription());
-		assertNotNull(sys.toString());
 
 		// check the SI units
 		for (Unit unit : Unit.values()) {

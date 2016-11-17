@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * The UnitOfMeasureService provides access to the four internationally
+ * The MeasurementService provides access to the four internationally
  * recognized unit of measure systems:
  * <ul>
  * <li>International System (SI)</li>
@@ -36,26 +36,21 @@ import java.util.ResourceBundle;
  * <li>British Imperial (BR)</li>
  * </ul>
  * through a unified {@link MeasurementSystem}, and as many custom systems as
- * needed. <br>
- * Once a measurement system is created, units of measure can be created for any
+ * needed.
+ * Once the unified measurement system is created, units of measure can be created for any
  * recognized or custom system. Existing units can be accessed by symbol or by
- * enumerated type if so defined.
+ * enumerated type.
  * 
  * @author Kent Randall
  *
  */
 public class MeasurementService {
-	// name of resource bundle with translatable strings for measurement system
-	static final String MEASUREMENT_SYSTEM_BUNDLE_NAME = "System";
 
 	// name of resource bundle with translatable strings for exception messages
 	static final String MESSAGES_BUNDLE_NAME = "Message";
 
 	// resource bundle for exception messages
 	private static ResourceBundle messages;
-
-	// resource bundle for measurement systems
-	private static ResourceBundle symbols;
 
 	// standard unified system
 	private MeasurementSystem unifiedSystem;
@@ -81,7 +76,6 @@ public class MeasurementService {
 
 	private void initialize() {
 		messages = ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, Locale.getDefault());
-		symbols = ResourceBundle.getBundle(MEASUREMENT_SYSTEM_BUNDLE_NAME, Locale.getDefault());
 	}
 
 	// get a particular message by its key
@@ -106,8 +100,7 @@ public class MeasurementService {
 	}
 
 	private void createUnifiedSystem() throws Exception {
-		unifiedSystem = new MeasurementSystem(symbols.getString("unified.name"), symbols.getString("unified.symbol"),
-				symbols.getString("unified.desc"));
+		unifiedSystem = new MeasurementSystem();
 		unifiedSystem.initialize();
 	}
 }

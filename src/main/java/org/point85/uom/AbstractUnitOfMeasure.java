@@ -36,20 +36,20 @@ import java.util.TreeSet;
 /**
  * AbstractUnitOfMeasure is the base class for the concrete implementations of
  * ScalarUOM, ProductUOM, QuotientUOM and PowerUOM. It can have a linear
- * conversion (y = ax + b) {@link Conversion} to another unit of measure in the
- * same internationally recognized measurement system of International
- * Customary, SI, US or British Imperial. It is owned by a {#link
- * MeasurementSystem) such as the standard unified system defined by this
- * project.
+ * {@link Conversion} (y = ax + b) to another unit of measure in the same
+ * internationally recognized measurement system of International Customary, SI,
+ * US or British Imperial. Or, the unit of measure can have a conversion to
+ * another custom unit of measure. It is owned by the unified {#link
+ * MeasurementSystem) defined by this project.
  * 
- * An abstract unit of measure also has an enumerated type (e.g. LENGTH or MASS)
- * {@link UnitType} and a unique enumerated discriminator (e.g. METRE)
- * {@link UnitEnumeration}.
+ * An abstract unit of measure also has an enumerated {@link UnitType} (e.g.
+ * LENGTH or MASS) and a unique {@link UnitEnumeration} discriminator (e.g.
+ * METRE).
  * 
- * A basic (a.k.a fundamental unit in the SI system) unit can have a bridge
- * conversion {@link Conversion} to another basic unit in another recognized
- * measurement system. This conversion is defined unidirectionally. For example,
- * a International Customary foot is 0.3048 SI metres. The conversion from metre
+ * A basic unit (a.k.a fundamental unit in the SI system) can have a bridge
+ * {@link Conversion} to another basic unit in another recognized measurement
+ * system. This conversion is defined unidirectionally. For example, an
+ * International Customary foot is 0.3048 SI metres. The conversion from metre
  * to foot is just the inverse of this relationship.
  * 
  * A unit of measure has a unique base symbol, e.g. 'm' for metre. In the SI
@@ -64,8 +64,7 @@ import java.util.TreeSet;
  * @author Kent Randall
  *
  */
-abstract class AbstractUnitOfMeasure extends Symbolic
-		implements Serializable, UnitOfMeasure, Comparable<UnitOfMeasure> {
+abstract class AbstractUnitOfMeasure implements Serializable, UnitOfMeasure, Comparable<UnitOfMeasure> {
 
 	private static final long serialVersionUID = 2555302674617525240L;
 
@@ -75,6 +74,15 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 	protected static final char POW = '^';
 	protected static final char SQ = 0xB2;
 	protected static final char CUBED = 0xB3;
+
+	// name, e.g. "kilogram"
+	private String name;
+
+	// symbol or abbreviation, e.g. "kg"
+	private String symbol;
+
+	// description
+	private String description;
 
 	// conversion to another Unit of Measure in the same recognized measurement
 	// system (y = ax + b)
@@ -106,16 +114,57 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 
 	protected AbstractUnitOfMeasure(UnitType type, String name, String symbol, String description,
 			MeasurementSystem measurementSystem) {
-		super(name, symbol, description);
+		this.name = name;
+		this.symbol = symbol;
+		this.description = description;
 		this.setUnitType(type);
 		this.initialize(measurementSystem);
 	}
 
 	private void initialize(MeasurementSystem measurementSystem) {
 		this.ownerSystem = measurementSystem;
-		
+
 		// a unit can always be converted to itself
 		this.conversion = new Conversion(this);
+	}
+
+	/**
+	 * Get the symbol
+	 * 
+	 * @return Symbol
+	 */
+	public String getSymbol() {
+		return symbol;
+	}
+
+	protected void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
+
+	/**
+	 * Get the name
+	 * 
+	 * @return Name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	protected void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Get the description
+	 * 
+	 * @return Description
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	protected void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override
@@ -329,10 +378,12 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 		checkOffset(this);
 		checkOffset(divisor);
 
+		// create a quotient UOM
 		QuotientUOM quotient = new QuotientUOM(null, null, null, null, getMeasurementSystem());
 		quotient.setUnits(this, divisor);
 		quotient.setSymbol(quotient.generateSymbol());
 
+		// get the base symbol maps
 		Reducer dividendPowerMap = getBaseMap();
 		Reducer divisorPowerMap = ((AbstractUnitOfMeasure) divisor).getBaseMap();
 
@@ -866,7 +917,6 @@ abstract class AbstractUnitOfMeasure extends Symbolic
 				if (uom.equals(abscissaUnit)) {
 					addTerm(abscissaUnit, invert);
 				} else {
-					// explodeRecursively(uom, invert, counter);
 					explodeRecursively(abscissaUnit, invert, counter);
 				}
 			} // end Scalar UOM

@@ -24,7 +24,6 @@ SOFTWARE.
 
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -38,36 +37,31 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * A measurement system is a collection of units of measure that can have a
+ * A MeasurementSystem is a collection of units of measure that can have a
  * linear relationship, i.e. y = ax + b where x is the unit to be converted, y
  * is the converted unit, a is the factor and b is the offset.
  * 
- * Table of Conversions: https://en.wikipedia.org/wiki/Conversion_of_units
- * 
- * Unified Code for Units of Measure : http://unitsofmeasure.org/unified.html
- * 
- * The SISystem class represents the International System of Units. See
- * <i><a href="https://en.wikipedia.org/wiki/International_System_of_Units">
- * International System of Units</a></i> and
- * <i><a href="https://en.wikipedia.org/wiki/SI_derived_unit">SI Derived
- * Units</a></i>. This class:
+ * See
  * <ul>
- * <li>Provides a definition of standard prefixes</li>
- * <li>Creates the 7 fundamental units of measure</li>
- * <li>Creates 20 units derived from these fundamental units</li>
- * <li>Creates other units commonly used in science and engineering</li>
+ * <li>Wikipedia: <i><a href="https://en.wikipedia.org/wiki/International_System_of_Units">International System of Units</a></i> </li>
+ * <li>Table of conversions: <i><a href="https://en.wikipedia.org/wiki/Conversion_of_units">Conversion of Units</a></i> </li>
+ * <li>Unified Code for Units of Measure : <i><a href="http://unitsofmeasure.org/unified.html">UCUM</a></i> </li>
+ * <li>SI derived units: <i><a href="https://en.wikipedia.org/wiki/SI_derived_unit">SI Derived Units</a></i> </li>
+ * <li>US system: <i><a href="https://en.wikipedia.org/wiki/United_States_customary_units">US Units</a></i> </li>
+ * <li>British Imperial system: <i><a href="https://en.wikipedia.org/wiki/Imperial_units">British Imperial Units</a></i> </li>
  * </ul>
- *
- * For US System, see:
- * https://en.wikipedia.org/wiki/United_States_customary_units
- *
- * For British Imperial system, see https://en.wikipedia.org/wiki/Imperial_units
+ * 
+ * The MeasurementSystem class:
+ * <ul>
+ * <li>Provides a definition of standard SI prefixes</li>
+ * <li>Creates the 7 SI fundamental units of measure</li>
+ * <li>Creates 20 SI units derived from these fundamental units</li>
+ * <li>Creates other units in the International Customary, US and British Imperial systems</li>
+ * </ul>
  *
  */
 
-public class MeasurementSystem extends Symbolic implements Serializable {
-
-	private static final long serialVersionUID = 2414813534548133467L;
+public class MeasurementSystem {
 
 	// name of resource bundle with translatable strings for UOMs (e.g. time)
 	static final String BUNDLE_NAME = "Unit";
@@ -103,28 +97,13 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 	// registry for units by enumeration
 	protected transient Map<UnitEnumeration, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<>());
 
-	MeasurementSystem(String name, String abbreviation, String description) {
-		super(name, abbreviation, description);
+	MeasurementSystem() {
+
 	}
 
 	void initialize() throws Exception {
 		// common unit strings
 		symbols = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault());
-	}
-
-	@Override
-	public int hashCode() {
-		return this.getSymbol().hashCode();
-	}
-
-	@Override
-	public boolean equals(Object other) {
-		boolean answer = false;
-
-		if (other != null && other instanceof MeasurementSystem) {
-			answer = getSymbol().equals(((MeasurementSystem) other).getSymbol());
-		}
-		return answer;
 	}
 
 	private UnitOfMeasure createUOM(UnitEnumeration enumeration) throws Exception {
@@ -218,22 +197,24 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("day.symbol"), symbols.getString("day.desc"), symbols.getString("day.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case WEEK:
 			// week
 			conversion = new Conversion(Quantity.createAmount("7"), getUOM(Unit.DAY));
 			uom = createScalarUOM(UnitType.TIME, Unit.WEEK, symbols.getString("week.name"),
-					symbols.getString("week.symbol"), symbols.getString("week.desc"), symbols.getString("week.unified"));
+					symbols.getString("week.symbol"), symbols.getString("week.desc"),
+					symbols.getString("week.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case JULIAN_YEAR:
 			// Julian year
 			conversion = new Conversion(Quantity.createAmount("365.25"), getUOM(Unit.DAY));
 			uom = createScalarUOM(UnitType.TIME, Unit.JULIAN_YEAR, symbols.getString("jyear.name"),
-					symbols.getString("jyear.symbol"), symbols.getString("jyear.desc"), symbols.getString("jyear.unified"));
+					symbols.getString("jyear.symbol"), symbols.getString("jyear.desc"),
+					symbols.getString("jyear.unified"));
 			uom.setConversion(conversion);
-			
+
 			break;
 
 		case SQUARE_SECOND:
@@ -282,11 +263,11 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 			uom = createScalarUOM(UnitType.LENGTH, Unit.METRE, symbols.getString("m.name"),
 					symbols.getString("m.symbol"), symbols.getString("m.desc"), symbols.getString("m.unified"));
 			break;
-			
+
 		case DIOPTER:
 			uom = createQuotientUOM(UnitType.LENGTH, Unit.DIOPTER, symbols.getString("diopter.name"),
-					symbols.getString("diopter.symbol"), symbols.getString("diopter.desc"), symbols.getString("diopter.unified"),
-					getOne(), getUOM(Unit.METRE));
+					symbols.getString("diopter.symbol"), symbols.getString("diopter.desc"),
+					symbols.getString("diopter.unified"), getOne(), getUOM(Unit.METRE));
 			break;
 
 		case KILOGRAM:
@@ -323,11 +304,11 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("mole.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case LIGHT_YEAR:
 			uom = createProductUOM(UnitType.LENGTH, Unit.LIGHT_YEAR, symbols.getString("ly.name"),
-					symbols.getString("ly.symbol"), symbols.getString("ly.desc"),
-					symbols.getString("ly.unified"), getUOM(Unit.LIGHT_VELOCITY), getUOM(Unit.JULIAN_YEAR));
+					symbols.getString("ly.symbol"), symbols.getString("ly.desc"), symbols.getString("ly.unified"),
+					getUOM(Unit.LIGHT_VELOCITY), getUOM(Unit.JULIAN_YEAR));
 			break;
 
 		case KILOMETRE:
@@ -537,17 +518,17 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("kj.symbol"), symbols.getString("kj.desc"), symbols.getString("kj.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case ELECTRON_VOLT:
 			uom = createProductUOM(UnitType.ENERGY, Unit.ELECTRON_VOLT, symbols.getString("ev.name"),
-					symbols.getString("ev.symbol"), symbols.getString("ev.desc"), symbols.getString("ev.unified"), 
+					symbols.getString("ev.symbol"), symbols.getString("ev.desc"), symbols.getString("ev.unified"),
 					getUOM(Unit.ELEMENTARY_CHARGE), getUOM(Unit.VOLT));
 			break;
-			
+
 		case KILOWATT_HOUR:
 			uom = createProductUOM(UnitType.ENERGY, Unit.KILOWATT_HOUR, symbols.getString("kwh.name"),
-					symbols.getString("kwh.symbol"), symbols.getString("kwh.desc"),
-					symbols.getString("kwh.unified"), getUOM(Unit.KILOWATT), getHour());
+					symbols.getString("kwh.symbol"), symbols.getString("kwh.desc"), symbols.getString("kwh.unified"),
+					getUOM(Unit.KILOWATT), getHour());
 			break;
 
 		case WATT:
@@ -600,7 +581,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("coulomb.symbol"), symbols.getString("coulomb.desc"),
 					symbols.getString("coulomb.unified"), getUOM(Unit.AMPERE), getSecond());
 			break;
-			
+
 		case ELEMENTARY_CHARGE:
 			// e
 			conversion = new Conversion(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
@@ -726,7 +707,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("light.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case ANGSTROM:
 			conversion = new Conversion(Quantity.createAmount("0.1"), getUOM(Unit.NANOMETRE));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.ANGSTROM, symbols.getString("angstrom.name"),
@@ -734,13 +715,12 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("angstrom.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case BIT:
-			uom = createScalarUOM(UnitType.IT, Unit.BIT, symbols.getString("bit.name"),
-					symbols.getString("bit.symbol"), symbols.getString("bit.desc"),
-					symbols.getString("bit.unified"));
+			uom = createScalarUOM(UnitType.IT, Unit.BIT, symbols.getString("bit.name"), symbols.getString("bit.symbol"),
+					symbols.getString("bit.desc"), symbols.getString("bit.unified"));
 			break;
-			
+
 		case BYTE:
 			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BIT));
 			uom = createScalarUOM(UnitType.IT, Unit.BYTE, symbols.getString("byte.name"),
@@ -834,16 +814,15 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("inch.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case MIL:
 			// inch
 			conversion = new Conversion(MILLI, getUOM(Unit.INCH));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.MIL, symbols.getString("mil.name"),
-					symbols.getString("mil.symbol"), symbols.getString("mil.desc"),
-					symbols.getString("mil.unified"));
+					symbols.getString("mil.symbol"), symbols.getString("mil.desc"), symbols.getString("mil.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case POINT:
 			// point
 			conversion = new Conversion(Quantity.divide("1", "72"), getUOM(Unit.INCH));
@@ -878,14 +857,14 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("NM.symbol"), symbols.getString("NM.desc"), symbols.getString("NM.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case FATHOM:
 			// fathom
 			conversion = new Conversion(Quantity.createAmount("6"), getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.FATHOM, symbols.getString("fth.name"),
 					symbols.getString("fth.symbol"), symbols.getString("fth.desc"), symbols.getString("fth.unified"));
 			uom.setConversion(conversion);
-			
+
 			break;
 
 		case PSI:
@@ -894,12 +873,13 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("psi.symbol"), symbols.getString("psi.desc"), symbols.getString("psi.unified"),
 					getUOM(Unit.POUND_FORCE), getUOM(Unit.SQUARE_INCH));
 			break;
-			
+
 		case IN_HG:
 			// inches of Mercury
 			conversion = new Conversion(Quantity.createAmount("0.4911531047"), getUOM(Unit.PSI));
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.IN_HG, symbols.getString("inhg.name"),
-					symbols.getString("inhg.symbol"), symbols.getString("inhg.desc"), symbols.getString("inhg.unified"));
+					symbols.getString("inhg.symbol"), symbols.getString("inhg.desc"),
+					symbols.getString("inhg.unified"));
 			uom.setConversion(conversion);
 			break;
 
@@ -919,7 +899,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("ft2.symbol"), symbols.getString("ft2.desc"), symbols.getString("ft2.unified"),
 					getUOM(Unit.FOOT), 2);
 			break;
-			
+
 		case SQUARE_YARD:
 			// square yard
 			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_YARD, symbols.getString("yd2.name"),
@@ -952,7 +932,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("ft3.symbol"), symbols.getString("ft3.desc"), symbols.getString("ft3.unified"),
 					getUOM(Unit.FOOT), 3);
 			break;
-			
+
 		case CORD:
 			// cord
 			conversion = new Conversion(Quantity.createAmount("128"), getUOM(Unit.CUBIC_FOOT));
@@ -961,7 +941,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("cord.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case CUBIC_YARD:
 			// cubic yard
 			uom = createPowerUOM(UnitType.VOLUME, Unit.CUBIC_YARD, symbols.getString("yd3.name"),
@@ -1066,7 +1046,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("us_gallon.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case US_BARREL:
 			// barrel
 			conversion = new Conversion(Quantity.createAmount("42"), getUOM(Unit.US_GALLON));
@@ -1075,7 +1055,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("us_bbl.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case US_BUSHEL:
 			// bushel
 			conversion = new Conversion(Quantity.createAmount("2150.42058"), getUOM(Unit.CUBIC_INCH));
@@ -1162,7 +1142,7 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 					symbols.getString("br_gallon.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case BR_BUSHEL:
 			// bushel
 			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BR_GALLON));
@@ -1675,23 +1655,6 @@ public class MeasurementSystem extends Symbolic implements Serializable {
 	public PowerUOM createPowerUOM(UnitType type, String name, String symbol, String description, UnitOfMeasure base,
 			int power) throws Exception {
 		return createPowerUOM(type, null, name, symbol, description, null, base, power);
-	}
-
-	@Override
-	public String toString() {
-		ResourceBundle symbolBundle = getSymbols();
-		StringBuffer sb = new StringBuffer();
-
-		if (getName() != null) {
-			sb.append(symbolBundle.getString("name.text")).append(' ').append(getName()).append(", ");
-		}
-		sb.append(symbolBundle.getString("symbol.text")).append(' ').append(getSymbol());
-
-		if (getDescription() != null) {
-			sb.append(", ").append(symbolBundle.getString("description.text")).append(' ').append(getDescription());
-		}
-
-		return sb.toString();
 	}
 
 }
