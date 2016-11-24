@@ -552,6 +552,16 @@ public class MeasurementSystem {
 					symbols.getString("hertz.symbol"), symbols.getString("hertz.desc"),
 					symbols.getString("hertz.unified"), getOne(), getSecond());
 			break;
+			
+		case RAD_PER_SEC:
+			// angular frequency
+			BigDecimal twoPi = new BigDecimal("2").multiply(new BigDecimal(Math.PI), UnitOfMeasure.MATH_CONTEXT);
+			conversion = new Conversion(BigDecimal.ONE.divide(twoPi, UnitOfMeasure.MATH_CONTEXT), getUOM(Unit.HERTZ));
+			uom = createQuotientUOM(UnitType.FREQUENCY, Unit.RAD_PER_SEC, symbols.getString("radpers.name"),
+					symbols.getString("radpers.symbol"), symbols.getString("radpers.desc"),
+					symbols.getString("radpers.unified"), getUOM(Unit.RADIAN), getSecond());
+			uom.setConversion(conversion);
+			break;
 
 		case PASCAL:
 			// pressure (pascal)
@@ -1021,6 +1031,13 @@ public class MeasurementSystem {
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.MILES_PER_HOUR, symbols.getString("mph.name"),
 					symbols.getString("mph.symbol"), symbols.getString("mph.desc"), symbols.getString("mph.unified"));
 			uom.setConversion(conversion);
+			break;
+			
+		case REV_PER_MIN:
+			// rpm
+			uom = createQuotientUOM(UnitType.FREQUENCY, Unit.REV_PER_MIN, symbols.getString("rpm.name"),
+					symbols.getString("rpm.symbol"), symbols.getString("rpm.desc"),
+					symbols.getString("rpm.unified"), getOne(), getMinute());
 			break;
 
 		default:

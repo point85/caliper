@@ -413,7 +413,7 @@ public class TestQuantity extends BaseTest {
 		assertTrue(cv.getBaseSymbol().equals(joule.getBaseSymbol()));
 		assertTrue(ws.getBaseSymbol().equals(joule.getBaseSymbol()));
 
-		Quantity q1 = new Quantity(BigDecimal.TEN, newton);
+		Quantity q1 = new Quantity(BigDecimal.TEN, newton); 
 		Quantity q2 = new Quantity(BigDecimal.TEN, metre);
 		Quantity q3 = q1.multiply(q2);
 		assertThat(q3.getAmount(), closeTo(oneHundred, DELTA6));
@@ -493,7 +493,23 @@ public class TestQuantity extends BaseTest {
 
 		QuotientUOM uom = sys.createQuotientUOM(UnitType.CUSTOM, "1/F", "1/F", "one over farad", sys.getOne(), farad);
 		assertTrue(uom.getSymbol().equals("1/F"));
+		
+		// hz to radians per sec
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.HERTZ));
+		q2 = q1.convert(sys.getUOM(Unit.RAD_PER_SEC));
+		BigDecimal twentyPi = new BigDecimal("20").multiply(new BigDecimal(Math.PI), UnitOfMeasure.MATH_CONTEXT);
+		assertThat(q2.getAmount(), closeTo(twentyPi, DELTA6));
+		
+		q3 = q2.convert(sys.getUOM(Unit.HERTZ));
+		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		
+		// rpm to radians per second
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.REV_PER_MIN));
+		q2 = q1.convert(sys.getUOM(Unit.RAD_PER_SEC));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("1.04719755119"), DELTA6));
 
+		q3 = q2.convert(sys.getUOM(Unit.REV_PER_MIN));
+		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 	}
 
 	@Test

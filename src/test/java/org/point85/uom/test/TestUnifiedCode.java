@@ -410,6 +410,13 @@ public class TestUnifiedCode extends BaseTest {
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
+		// rpm to Hz
+		from = new Quantity(amount, sys.getUOM(Unit.REV_PER_MIN));
+		to = from.convert(sys.getUOM(Unit.HERTZ));
+
+		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+
 	}
 
 	private BigDecimal wsConvert(String amount, UnitOfMeasure from, UnitOfMeasure to)

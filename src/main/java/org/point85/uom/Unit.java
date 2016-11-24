@@ -71,7 +71,7 @@ public enum Unit implements UnitEnumeration {
 	// power
 	WATT, KILOWATT,
 	// frequency
-	HERTZ,
+	HERTZ, RAD_PER_SEC,
 	// pressure
 	PASCAL, KILOPASCAL, BAR,
 	// electrical
@@ -109,7 +109,9 @@ public enum Unit implements UnitEnumeration {
 	// volume
 	CUBIC_INCH, CUBIC_FOOT, CUBIC_YARD, CORD,
 	// velocity
-	FEET_PER_SECOND, KNOT, MILES_PER_HOUR,
+	FEET_PER_SECOND, KNOT, MILES_PER_HOUR, 
+	// frequency
+	REV_PER_MIN,
 	// acceleration
 	FEET_PER_SECOND_SQUARED,
 	// power
