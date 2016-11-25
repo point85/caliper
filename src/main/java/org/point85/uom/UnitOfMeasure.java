@@ -27,25 +27,32 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 /**
- * UnitOfMeasure is the interface for a unit Of measure.
+ * UnitOfMeasure is the interface for a unit of measure.
  * 
  * @author Kent Randall
  *
  */
 public interface UnitOfMeasure {
-	
+
 	// BigDecimal math. A MathContext object with a precision setting matching
 	// the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
 	// HALF_EVEN, the IEEE 754R default.
 	static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
 
+	/**
+	 * Get the unit of measure's symbol
+	 * 
+	 * @return Symbol
+	 */
 	String getSymbol();
 
 	/**
 	 * Get the unit of measure's symbol in the fundamental units for that
 	 * system. For example a Newton is a kg.m/s2.
+	 * 
 	 * @return Base symbol
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	String getBaseSymbol() throws Exception;
 
@@ -54,18 +61,21 @@ public interface UnitOfMeasure {
 	 * base is metre.
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	UnitOfMeasure getBaseUOM() throws Exception;
 
 	/**
 	 * Get the name of the unit of measure.
+	 * 
 	 * @return Name
 	 */
 	String getName();
 
 	/**
 	 * Get the description of the unit of measure.
+	 * 
 	 * @return Description
 	 */
 	String getDescription();
@@ -78,7 +88,7 @@ public interface UnitOfMeasure {
 	UnitType getUnitType();
 
 	/**
-	 * Get the system that the unit of measure was created in
+	 * Get the system that owns the unit of measure
 	 * 
 	 * @return {@link MeasurementSystem}
 	 */
@@ -90,7 +100,8 @@ public interface UnitOfMeasure {
 	 * @param other
 	 *            {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	UnitOfMeasure multiply(UnitOfMeasure other) throws Exception;
 
@@ -100,7 +111,8 @@ public interface UnitOfMeasure {
 	 * @param other
 	 *            {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	UnitOfMeasure divide(UnitOfMeasure other) throws Exception;
 
@@ -108,21 +120,22 @@ public interface UnitOfMeasure {
 	 * Invert a unit of measure to create a new one
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	UnitOfMeasure invert() throws Exception;
 
 	/**
 	 * Get the conversion between the international customary and corresponding
-	 * SI unit, e.g. feet to metres.
+	 * SI unit. For example feet to metres.
 	 * 
 	 * @return {@link Conversion}
 	 */
 	Conversion getBridge();
 
 	/**
-	 * Specify a conversion to a unit of measure in a different system, e.g.
-	 * International Customary to SI
+	 * Specify a conversion to a unit of measure in a different system, for
+	 * example International Customary to SI
 	 * 
 	 * @param toUOM
 	 *            Target {@link UnitOfMeasure}
@@ -132,7 +145,7 @@ public interface UnitOfMeasure {
 
 	/**
 	 * Set the conversion between the international customary and corresponding
-	 * SI unit, e.g. feet to metres.
+	 * SI unit. For example feet to metres.
 	 * 
 	 * @param conversion
 	 *            {@link Conversion}
@@ -155,42 +168,42 @@ public interface UnitOfMeasure {
 	void setEnumeration(UnitEnumeration unitEnumeration);
 
 	/**
-	 * Get the y-axis unit of measure's x-axis unit of measure for the relation
-	 * y = ax + b.
+	 * Get the unit of measure's x-axis unit of measure for the relation y = ax
+	 * + b.
 	 * 
 	 * @return {@link UnitOfMeasure}
 	 */
 	UnitOfMeasure getAbscissaUnit();
 
 	/**
-	 * Get the y-axis unit of measure's 'a' factor (slope) for the relation y =
-	 * ax + b.
+	 * Get the unit of measure's 'a' factor (slope) for the relation y = ax + b.
 	 * 
 	 * @return Factor
 	 */
 	BigDecimal getScalingFactor();
 
 	/**
-	 * Set the y-axis unit of measure's 'a' factor (slope) for the relation y =
-	 * ax + b.
+	 * Set the unit of measure's 'a' factor (slope) for the relation y = ax + b.
 	 * 
-	 * @param factor Scaling factor
+	 * @param factor
+	 *            Scaling factor
 	 */
 	void setScalingFactor(BigDecimal factor);
 
 	/**
-	 * Get the y-axis unit of measure's 'b' offset (intercept) for the relation
-	 * y = ax + b.
+	 * Get the unit of measure's 'b' offset (intercept) for the relation y = ax
+	 * + b.
 	 * 
 	 * @return Offset
 	 */
 	BigDecimal getOffset();
 
 	/**
-	 * Set the y-axis unit of measure's 'b' offset (intercept) for the relation
-	 * y = ax + b.
+	 * Set the unit of measure's 'b' offset (intercept) for the relation y = ax
+	 * + b.
 	 * 
-	 * @param offset Offset
+	 * @param offset
+	 *            Offset
 	 */
 	void setOffset(BigDecimal offset);
 
@@ -200,12 +213,13 @@ public interface UnitOfMeasure {
 	 * @param toUOM
 	 *            Target {@link UnitOfMeasure}
 	 * @return conversion factor
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	BigDecimal getConversionFactor(UnitOfMeasure toUOM) throws Exception;
 
 	/**
-	 * Set the conversion to another unit of measure and conversion factor
+	 * Set the conversion to another unit of measure
 	 * 
 	 * @param conversion
 	 *            {@link Conversion}
@@ -213,7 +227,7 @@ public interface UnitOfMeasure {
 	void setConversion(Conversion conversion);
 
 	/**
-	 * Get the conversion to another unit of measure and conversion factor
+	 * Get the conversion to another unit of measure
 	 * 
 	 * @return {@link Conversion}
 	 */
@@ -228,7 +242,7 @@ public interface UnitOfMeasure {
 	void setUnifiedSymbol(String unifiedSymbol);
 
 	/**
-	 * Get the Unified Code for Unit of Measure Conversion (UCUM)
+	 * Get the Unified Code for Unit of Measure Conversion's (UCUM) symbol
 	 * 
 	 * @return Symbol
 	 */

@@ -23,19 +23,16 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 
 /**
- * The ProductUOM represents a unit of measure that is the product of two other
+ * ProductUOM represents a unit of measure that is the product of two other
  * units of measure, for example Newton-metres.
  * 
  * @author Kent Randall
  *
  */
-public class ProductUOM extends AbstractUnitOfMeasure implements Serializable {
-
-	private static final long serialVersionUID = -2557375717703721882L;
+public class ProductUOM extends AbstractUnitOfMeasure {
 
 	// left of "times"
 	private UnitOfMeasure multiplier;
@@ -60,8 +57,7 @@ public class ProductUOM extends AbstractUnitOfMeasure implements Serializable {
 
 	void setUnits(UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 		if (multiplier == null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("multiplier.cannot.be.null"),
-					getSymbol());
+			String msg = MessageFormat.format(MeasurementService.getMessage("multiplier.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
 		}
 

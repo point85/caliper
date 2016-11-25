@@ -23,19 +23,16 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 
 /**
- * The QuotientUOM represents a unit of measure that is the ratio of two other
- * units of measure, for example metres per second.
+ * QuotientUOM represents a unit of measure that is the ratio of two other units
+ * of measure, for example metres per second.
  * 
  * @author Kent Randall
  *
  */
-public class QuotientUOM extends AbstractUnitOfMeasure implements Serializable {
-
-	private static final long serialVersionUID = -4338453032032082553L;
+public class QuotientUOM extends AbstractUnitOfMeasure {
 
 	QuotientUOM(UnitType type, String name, String symbol, String description, MeasurementSystem system) {
 		super(type, name, symbol, description, system);

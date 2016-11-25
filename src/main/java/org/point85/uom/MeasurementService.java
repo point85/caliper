@@ -27,13 +27,13 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- * The MeasurementService provides access to the four internationally
+ * MeasurementService provides access to the four internationally
  * recognized unit of measure systems:
  * <ul>
- * <li>International System (SI)</li>
- * <li>International Customary</li>
- * <li>United States (US)</li>
- * <li>British Imperial (BR)</li>
+ * <li>International System (SI),</li>
+ * <li>International Customary,</li>
+ * <li>United States (US),</li>
+ * <li>and British Imperial (BR)</li>
  * </ul>
  * through a unified {@link MeasurementSystem}, and as many custom systems as
  * needed.
@@ -63,7 +63,7 @@ public class MeasurementService {
 	}
 
 	/**
-	 * Get an instance of a UnitOfMeasureService
+	 * Get an instance of a {@link MeasurementService}
 	 * 
 	 * @return {@link MeasurementService}
 	 */
@@ -84,8 +84,8 @@ public class MeasurementService {
 	}
 
 	/**
-	 * Get the standard system of units of measure from International Customary,
-	 * SI, US and British Imperial
+	 * Get the unified system of units of measure from International Customary,
+	 * SI, US and British Imperial systems
 	 * 
 	 * @return {@link MeasurementSystem}
 	 * @throws Exception

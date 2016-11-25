@@ -23,19 +23,16 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.text.MessageFormat;
 
 /**
- * The PowerUOM represents a unit of measure with an exponent, for example
- * square metres.
+ * PowerUOM represents a unit of measure with an exponent, for example square
+ * metres.
  * 
  * @author Kent Randall
  *
  */
-public class PowerUOM extends AbstractUnitOfMeasure implements Serializable {
-
-	private static final long serialVersionUID = 2233946797577576713L;
+public class PowerUOM extends AbstractUnitOfMeasure {
 
 	// exponent, e.g. "2"
 	private int power = 0;

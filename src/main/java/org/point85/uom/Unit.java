@@ -25,7 +25,7 @@ package org.point85.uom;
 
 /**
  * Unit is an enumeration of units of measure types in the International
- * Customary, SI, US and British Imperial systems
+ * Customary, SI, US and British Imperial systems.
  * 
  * @author Kent Randall
  *

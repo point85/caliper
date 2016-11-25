@@ -24,7 +24,9 @@ SOFTWARE.
 package org.point85.uom;
 
 /**
- * Concrete unit enumerations must implement the UnitEnumeration interface
+ * Concrete unit enumerations, for example {@link Unit} must implement the
+ * UnitEnumeration interface.
+ * 
  * @author Kent Randall
  *
  */

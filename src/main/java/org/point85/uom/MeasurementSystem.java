@@ -37,15 +37,15 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * A MeasurementSystem is a collection of units of measure that can have a
- * linear relationship, i.e. y = ax + b where x is the unit to be converted, y
- * is the converted unit, a is the factor and b is the offset.
+ * A MeasurementSystem is a collection of units of measure that have a
+ * linear relationship to each other, i.e. y = ax + b where x is the unit to be converted, y
+ * is the converted unit, a is the scaling factor and b is the offset.
  * 
  * See
  * <ul>
  * <li>Wikipedia: <i><a href="https://en.wikipedia.org/wiki/International_System_of_Units">International System of Units</a></i> </li>
  * <li>Table of conversions: <i><a href="https://en.wikipedia.org/wiki/Conversion_of_units">Conversion of Units</a></i> </li>
- * <li>Unified Code for Units of Measure : <i><a href="http://unitsofmeasure.org/unified.html">UCUM</a></i> </li>
+ * <li>Unified Code for Units of Measure : <i><a href="http://unitsofmeasure.org/trac">UCUM</a></i> </li>
  * <li>SI derived units: <i><a href="https://en.wikipedia.org/wiki/SI_derived_unit">SI Derived Units</a></i> </li>
  * <li>US system: <i><a href="https://en.wikipedia.org/wiki/United_States_customary_units">US Units</a></i> </li>
  * <li>British Imperial system: <i><a href="https://en.wikipedia.org/wiki/Imperial_units">British Imperial Units</a></i> </li>
@@ -92,10 +92,10 @@ public class MeasurementSystem {
 	public static final BigDecimal YOCTO = Quantity.createAmount("1.0E-24");
 
 	// registry by unit symbol
-	protected transient Map<String, UnitOfMeasure> symbolRegistry = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, UnitOfMeasure> symbolRegistry = Collections.synchronizedMap(new HashMap<>());
 
 	// registry for units by enumeration
-	protected transient Map<UnitEnumeration, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<>());
+	private Map<UnitEnumeration, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<>());
 
 	MeasurementSystem() {
 
@@ -1502,7 +1502,7 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * 
+	 * Create a unit of measure that is a unit divided by another unit
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
@@ -1559,7 +1559,8 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * 
+	 * Create a unit of measure that is the product of two other units of
+	 * measure
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id

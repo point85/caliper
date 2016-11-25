@@ -23,21 +23,18 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.MathContext;
 
 /**
- * Quantity represents an amount and a unit of measure {@link UnitOfMeasure}.
+ * Quantity represents an amount and {@link UnitOfMeasure}.
  * The amount is expressed as a BigDecimal to control the precision of floating
  * point arithmetic.
  * 
  * @author Kent Randall
  *
  */
-public class Quantity implements Serializable {
-
-	private static final long serialVersionUID = -4653588613380904185L;
+public class Quantity {
 
 	// the amount
 	private BigDecimal amount;
@@ -186,7 +183,7 @@ public class Quantity implements Serializable {
 	}
 
 	/**
-	 * Divide two quantities
+	 * Divide two quantities to create a third quantity
 	 * 
 	 * @param other
 	 *            {@link Quantity}
@@ -205,7 +202,7 @@ public class Quantity implements Serializable {
 	}
 
 	/**
-	 * Multiply this quantity by another quantity
+	 * Multiply this quantity by another quantity to create a third quantity
 	 * 
 	 * @param other
 	 *            Quantity
@@ -224,7 +221,7 @@ public class Quantity implements Serializable {
 	}
 
 	/**
-	 * Invert this quantity, i.e. 1/quantity
+	 * Invert this quantity, i.e. 1/quantity to create another quantity
 	 * 
 	 * @return {@link Quantity}
 	 * @throws Exception

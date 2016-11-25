@@ -23,7 +23,6 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -36,9 +35,7 @@ import java.math.BigDecimal;
  * @author Kent Randall
  *
  */
-public class Conversion implements Serializable {
-
-	private static final long serialVersionUID = 592322625370978694L;
+public class Conversion {
 
 	// scaling factor (a)
 	private BigDecimal scalingFactor = BigDecimal.ONE;

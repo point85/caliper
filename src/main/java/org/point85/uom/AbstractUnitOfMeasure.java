@@ -23,7 +23,6 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -42,9 +41,9 @@ import java.util.TreeSet;
  * another custom unit of measure. It is owned by the unified {#link
  * MeasurementSystem) defined by this project.
  * 
- * An abstract unit of measure also has an enumerated {@link UnitType} (e.g.
- * LENGTH or MASS) and a unique {@link UnitEnumeration} discriminator (e.g.
- * METRE).
+ * An abstract unit of measure also has an enumerated {@link UnitType} (for
+ * example LENGTH or MASS) and a unique {@link UnitEnumeration} discriminator
+ * (for example METRE).
  * 
  * A basic unit (a.k.a fundamental unit in the SI system) can have a bridge
  * {@link Conversion} to another basic unit in another recognized measurement
@@ -52,9 +51,9 @@ import java.util.TreeSet;
  * International Customary foot is 0.3048 SI metres. The conversion from metre
  * to foot is just the inverse of this relationship.
  * 
- * A unit of measure has a unique base symbol, e.g. 'm' for metre. In the SI
- * system, the derived units such as Newton all have base symbols expressed in
- * the fundamental units of length (metre), mass (kilogram), time (second),
+ * A unit of measure has a unique base symbol, for example 'm' for metre. In the
+ * SI system, the derived units such as Newton all have base symbols expressed
+ * in the fundamental units of length (metre), mass (kilogram), time (second),
  * temperature (Kelvin), plane angle (radian), electric charge (Coulomb) and
  * luminous intensity (candela). This base symbol is used in unit of measure
  * conversions to uniquely identify the target unit. A unit of measure can also
@@ -64,9 +63,7 @@ import java.util.TreeSet;
  * @author Kent Randall
  *
  */
-abstract class AbstractUnitOfMeasure implements Serializable, UnitOfMeasure, Comparable<UnitOfMeasure> {
-
-	private static final long serialVersionUID = 2555302674617525240L;
+abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOfMeasure> {
 
 	// multiply, divide and power symbols
 	protected static final char MULT = 0xB7;
@@ -75,7 +72,7 @@ abstract class AbstractUnitOfMeasure implements Serializable, UnitOfMeasure, Com
 	protected static final char SQ = 0xB2;
 	protected static final char CUBED = 0xB3;
 
-	// name, e.g. "kilogram"
+	// name, for example "kilogram"
 	private String name;
 
 	// symbol or abbreviation, e.g. "kg"

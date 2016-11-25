@@ -24,7 +24,8 @@ SOFTWARE.
 package org.point85.uom;
 
 /**
- * UnitType is an enumeration of unit of measure types.
+ * UnitType is an enumeration of unit of measure types. Only units of measure
+ * with the same type can be converted.
  * 
  * @author Kent Randall
  *
