@@ -38,7 +38,7 @@ import java.util.ResourceBundle;
 
 /**
  * A MeasurementSystem is a collection of units of measure that have a
- * linear relationship to each other, i.e. y = ax + b where x is the unit to be converted, y
+ * linear relationship to each other: y = ax + b where x is the unit to be converted, y
  * is the converted unit, a is the scaling factor and b is the offset.
  * 
  * See
@@ -62,9 +62,17 @@ import java.util.ResourceBundle;
  */
 
 public class MeasurementSystem {
+	// name of resource bundle with translatable strings for exception messages
+	static final String MESSAGES_BUNDLE_NAME = "Message";
+
+	// resource bundle for exception messages
+	private static ResourceBundle messages;
+
+	// standard unified system
+	private static MeasurementSystem unifiedSystem;
 
 	// name of resource bundle with translatable strings for UOMs (e.g. time)
-	static final String BUNDLE_NAME = "Unit";
+	static final String UNIT_BUNDLE_NAME = "Unit";
 
 	// unit resource bundle (e.g. time units)
 	private transient ResourceBundle symbols;
@@ -95,18 +103,44 @@ public class MeasurementSystem {
 	private Map<String, UnitOfMeasure> symbolRegistry = Collections.synchronizedMap(new HashMap<>());
 
 	// registry for units by enumeration
-	private Map<UnitEnumeration, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<>());
+	private Map<Unit, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<>());
 
-	MeasurementSystem() {
-
+	private MeasurementSystem() throws Exception {
+		initialize();
 	}
 
 	void initialize() throws Exception {
 		// common unit strings
-		symbols = ResourceBundle.getBundle(BUNDLE_NAME, Locale.getDefault());
+		symbols = ResourceBundle.getBundle(UNIT_BUNDLE_NAME, Locale.getDefault());
+		messages = ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, Locale.getDefault());
+	}
+	
+	// get a particular message by its key
+	static String getMessage(String key) {
+		return messages.getString(key);
+	}
+	
+	/**
+	 * Get the unified system of units of measure from International Customary,
+	 * SI, US and British Imperial systems
+	 * 
+	 * @return {@link MeasurementSystem}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public static MeasurementSystem getUnifiedSystem() throws Exception {
+		if (unifiedSystem == null) {
+			createUnifiedSystem();
+		}
+
+		return unifiedSystem;
 	}
 
-	private UnitOfMeasure createUOM(UnitEnumeration enumeration) throws Exception {
+	private static void createUnifiedSystem() throws Exception {
+		unifiedSystem = new MeasurementSystem();
+	}
+
+	private UnitOfMeasure createUOM(Unit enumeration) throws Exception {
 		UnitOfMeasure uom = null;
 
 		if (!(enumeration instanceof Unit)) {
@@ -1235,12 +1269,12 @@ public class MeasurementSystem {
 	 * Get the unit of measure with this unique enumerated type
 	 * 
 	 * @param enumeration
-	 *            {@link UnitEnumeration}
+	 *            {@link Unit}
 	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception Exception
 	 */
-	public UnitOfMeasure getUOM(UnitEnumeration enumeration) throws Exception {
+	public UnitOfMeasure getUOM(Unit enumeration) throws Exception {
 		UnitOfMeasure uom = unitRegistry.get(enumeration);
 
 		if (uom == null && enumeration instanceof Unit) {
@@ -1315,19 +1349,19 @@ public class MeasurementSystem {
 		return symbolRegistry.get(symbol);
 	}
 
-	private void checkExistance(String symbol, UnitEnumeration id) throws Exception {
+	private void checkExistance(String symbol, Unit id) throws Exception {
 		if (symbol == null || symbol.length() == 0) {
-			throw new Exception(MeasurementService.getMessage("symbol.cannot.be.null"));
+			throw new Exception(MeasurementSystem.getMessage("symbol.cannot.be.null"));
 		}
 
 		if (symbolRegistry.containsKey(symbol)) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("already.created"), symbol,
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("already.created"), symbol,
 					symbolRegistry.get(symbol).toString());
 			throw new Exception(msg);
 		}
 
 		if (unitRegistry.containsKey(id)) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("already.created"), symbol,
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("already.created"), symbol,
 					unitRegistry.get(id).toString());
 			throw new Exception(msg);
 		}
@@ -1378,13 +1412,13 @@ public class MeasurementSystem {
 	}
 
 	private void registerUnit(UnitOfMeasure uom) throws Exception {
-		UnitEnumeration id = uom.getEnumeration();
+		Unit id = uom.getEnumeration();
 
 		if (id != null) {
 			UnitOfMeasure current = unitRegistry.get(id);
 
 			if (current != null) {
-				String msg = MessageFormat.format(MeasurementService.getMessage("already.registered"), uom.toString(),
+				String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(),
 						id.toString(), current.toString());
 				throw new Exception(msg);
 			}
@@ -1401,7 +1435,7 @@ public class MeasurementSystem {
 		UnitOfMeasure current = symbolRegistry.get(key);
 
 		if (current != null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("already.registered"), uom.toString(), key,
+			String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(), key,
 					current.toString());
 			throw new Exception(msg);
 		}
@@ -1420,11 +1454,11 @@ public class MeasurementSystem {
 
 	private void checkType(UnitType type) throws Exception {
 		if (type == null) {
-			throw new Exception(MeasurementService.getMessage("unit.type.cannot.be.null"));
+			throw new Exception(getMessage("unit.type.cannot.be.null"));
 		}
 	}
 
-	private UnitOfMeasure createUOM(Class<?> clazz, UnitType type, UnitEnumeration id, String name, String symbol,
+	private UnitOfMeasure createUOM(Class<?> clazz, UnitType type, Unit id, String name, String symbol,
 			String description) throws Exception {
 
 		checkType(type);
@@ -1445,7 +1479,7 @@ public class MeasurementSystem {
 			uom = new PowerUOM(type, name, symbol, description, this);
 
 		} else {
-			String msg = MessageFormat.format(MeasurementService.getMessage("unsupported.class"), clazz.toString());
+			String msg = MessageFormat.format(getMessage("unsupported.class"), clazz.toString());
 			throw new Exception(msg);
 		}
 
@@ -1458,7 +1492,7 @@ public class MeasurementSystem {
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
-	 *            {@link UnitEnumeration}
+	 *            {@link Unit}
 	 * @param name
 	 *            Name of unit of measure
 	 * @param symbol
@@ -1471,7 +1505,7 @@ public class MeasurementSystem {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ScalarUOM createScalarUOM(UnitType type, UnitEnumeration id, String name, String symbol, String description,
+	public ScalarUOM createScalarUOM(UnitType type, Unit id, String name, String symbol, String description,
 			String unified) throws Exception {
 
 		ScalarUOM uom = (ScalarUOM) createUOM(ScalarUOM.class, type, id, name, symbol, description);
@@ -1506,7 +1540,7 @@ public class MeasurementSystem {
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
-	 *            {@link UnitEnumeration}
+	 *            {@link Unit}
 	 * @param name
 	 *            Name of unit of measure
 	 * @param symbol
@@ -1523,7 +1557,7 @@ public class MeasurementSystem {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public QuotientUOM createQuotientUOM(UnitType type, UnitEnumeration id, String name, String symbol,
+	public QuotientUOM createQuotientUOM(UnitType type, Unit id, String name, String symbol,
 			String description, String unified, UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 
 		QuotientUOM uom = (QuotientUOM) createUOM(QuotientUOM.class, type, id, name, symbol, description);
@@ -1564,7 +1598,7 @@ public class MeasurementSystem {
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
-	 *            {@link UnitEnumeration}
+	 *            {@link Unit}
 	 * @param name
 	 *            Name of unit of measure
 	 * @param symbol
@@ -1581,7 +1615,7 @@ public class MeasurementSystem {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ProductUOM createProductUOM(UnitType type, UnitEnumeration id, String name, String symbol,
+	public ProductUOM createProductUOM(UnitType type, Unit id, String name, String symbol,
 			String description, String unified, UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 
 		ProductUOM uom = (ProductUOM) createUOM(ProductUOM.class, type, id, name, symbol, description);
@@ -1623,7 +1657,7 @@ public class MeasurementSystem {
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
-	 *            {@link UnitEnumeration}
+	 *            {@link Unit}
 	 * @param name
 	 *            Name of unit of measure
 	 * @param symbol
@@ -1640,7 +1674,7 @@ public class MeasurementSystem {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public PowerUOM createPowerUOM(UnitType type, UnitEnumeration id, String name, String symbol, String description,
+	public PowerUOM createPowerUOM(UnitType type, Unit id, String name, String symbol, String description,
 			String unified, UnitOfMeasure base, int power) throws Exception {
 
 		PowerUOM uom = (PowerUOM) createUOM(PowerUOM.class, type, id, name, symbol, description);

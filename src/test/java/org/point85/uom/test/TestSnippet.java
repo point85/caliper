@@ -32,9 +32,8 @@ public class TestSnippet extends BaseTest {
 
 	@Test
 	public void testCase() throws Exception {
-		MeasurementSystem sys = uomService.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 		assertNotNull(sys);
-		
 
 	}
 

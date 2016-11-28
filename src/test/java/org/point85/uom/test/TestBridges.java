@@ -46,7 +46,7 @@ public class TestBridges extends BaseTest {
 	@Test
 	public void testBridges() throws Exception {
 
-		MeasurementSystem sys = uomService.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 
 		// SI
 		UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);

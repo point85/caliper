@@ -30,7 +30,7 @@ package org.point85.uom;
  * @author Kent Randall
  *
  */
-public enum Unit implements UnitEnumeration {
+public enum Unit {
 	// common units
 	// dimension-less "1" or unity
 	ONE,

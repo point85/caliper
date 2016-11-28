@@ -155,17 +155,17 @@ public interface UnitOfMeasure {
 	/**
 	 * Get the unit's enumerated type
 	 * 
-	 * @return {@link UnitEnumeration}
+	 * @return {@link Unit}
 	 */
-	UnitEnumeration getEnumeration();
+	Unit getEnumeration();
 
 	/**
 	 * Set the unit's enumerated type
 	 * 
 	 * @param unitEnumeration
-	 *            {@link UnitEnumeration}
+	 *            {@link Unit}
 	 */
-	void setEnumeration(UnitEnumeration unitEnumeration);
+	void setEnumeration(Unit unitEnumeration);
 
 	/**
 	 * Get the unit of measure's x-axis unit of measure for the relation y = ax

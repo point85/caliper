@@ -5,24 +5,19 @@
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 
-/*
- *task doJavadocs(type: Javadoc) {
-  * source = sourceSets.main.allJava
-  * destinationDir = reporting.file("caliper-api-docs")
- *}
- */
+// only include public members in javadoc
+javadoc {
+  options.memberLevel = JavadocMemberLevel.PUBLIC
+}
  
+ // zip up javadocs
  task javadocZip(type: Zip, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
-    //options.encoding = 'UTF-8'
 }
 
 // Repos
-repositories {
-    // jcenter
-    //jcenter()
-    
+repositories {    
     // Maven Central
     mavenCentral()
 }

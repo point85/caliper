@@ -25,8 +25,6 @@ package org.point85.uom.test;
 
 import java.math.BigDecimal;
 
-import org.junit.Before;
-import org.point85.uom.MeasurementService;
 import org.point85.uom.Quantity;
 
 public class BaseTest {
@@ -39,12 +37,4 @@ public class BaseTest {
 	protected static final BigDecimal DELTA1 = Quantity.createAmount("0.1");
 	protected static final BigDecimal DELTA0 = Quantity.createAmount("1");
 
-	protected MeasurementService uomService;
-
-	@Before
-	public void createService() throws Exception {
-		if (uomService == null) {
-			uomService = MeasurementService.getInstance();
-		}
-	}
 }

@@ -57,12 +57,12 @@ public class ProductUOM extends AbstractUnitOfMeasure {
 
 	void setUnits(UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 		if (multiplier == null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("multiplier.cannot.be.null"), getSymbol());
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("multiplier.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
 		}
 
 		if (multiplicand == null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("multiplicand.cannot.be.null"),
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("multiplicand.cannot.be.null"),
 					getSymbol());
 			throw new Exception(msg);
 		}

@@ -46,12 +46,12 @@ public class QuotientUOM extends AbstractUnitOfMeasure {
 
 	void setUnits(UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 		if (dividend == null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("dividend.cannot.be.null"), getSymbol());
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("dividend.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
 		}
 
 		if (divisor == null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("divisor.cannot.be.null"), getSymbol());
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("divisor.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
 		}
 

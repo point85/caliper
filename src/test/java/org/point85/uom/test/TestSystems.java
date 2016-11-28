@@ -25,7 +25,6 @@ package org.point85.uom.test;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -36,7 +35,6 @@ import java.util.UUID;
 import org.junit.Test;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Unit;
-import org.point85.uom.UnitEnumeration;
 import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
@@ -45,7 +43,7 @@ public class TestSystems extends BaseTest {
 	@Test
 	public void testUnifiedSystem() throws Exception {
 
-		MeasurementSystem sys = uomService.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 		assertFalse(sys.equals(null));
 
 		// check the SI units
@@ -64,9 +62,9 @@ public class TestSystems extends BaseTest {
 			assertNotNull(uom.getUnifiedSymbol());
 		}
 
-		List<UnitEnumeration> allUnits = new ArrayList<>();
+		List<Unit> allUnits = new ArrayList<>();
 
-		for (UnitEnumeration u : Unit.values()) {
+		for (Unit u : Unit.values()) {
 			allUnits.add(u);
 		}
 
@@ -94,29 +92,21 @@ public class TestSystems extends BaseTest {
 
 	@Test
 	public void testCache() throws Exception {
-		MeasurementSystem sys = uomService.getUnifiedSystem();
-		
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+
 		sys.getOne();
-		
+
 		int before = sys.getRegisteredUnits().size();
-		
+
 		for (int i = 0; i < 10; i++) {
 			sys.createScalarUOM(UnitType.CUSTOM, null, UUID.randomUUID().toString(), null);
 		}
 
 		int after = sys.getRegisteredUnits().size();
-		
+
 		assertTrue(after == (before + 10));
 		sys.clearCache();
 		assertTrue(sys.getRegisteredUnits().size() == 0);
-
-		UnitOfMeasure uom = sys.createScalarUOM(UnitType.CUSTOM, CustomUnit.CAN, "Can",
-				UUID.randomUUID().toString(), "a can", null);
-
-		assertTrue(sys.getUOM(CustomUnit.CAN).equals(uom));
-
-		sys.unregisterUnit(uom);
-		assertNull(sys.getUOM(CustomUnit.CAN));
 
 	}
 }

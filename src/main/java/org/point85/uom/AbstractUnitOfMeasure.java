@@ -42,7 +42,7 @@ import java.util.TreeSet;
  * MeasurementSystem) defined by this project.
  * 
  * An abstract unit of measure also has an enumerated {@link UnitType} (for
- * example LENGTH or MASS) and a unique {@link UnitEnumeration} discriminator
+ * example LENGTH or MASS) and a unique {@link Unit} discriminator
  * (for example METRE).
  * 
  * A basic unit (a.k.a fundamental unit in the SI system) can have a bridge
@@ -86,7 +86,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	private Conversion conversion;
 
 	// unit enumerations for the various systems of measurement, e.g. KILOGRAM
-	private UnitEnumeration unitEnumeration;
+	private Unit unitEnumeration;
 
 	// unit type, e.g. MASS
 	private UnitType unitType;
@@ -196,11 +196,11 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	}
 
 	@Override
-	public UnitEnumeration getEnumeration() {
+	public Unit getEnumeration() {
 		return unitEnumeration;
 	}
 
-	public void setEnumeration(UnitEnumeration unitEnumeration) {
+	public void setEnumeration(Unit unitEnumeration) {
 		this.unitEnumeration = unitEnumeration;
 	}
 
@@ -253,8 +253,8 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 		UnitOfMeasure otherUnit = (UnitOfMeasure) other;
 
 		// same enumerations
-		UnitEnumeration thisEnumeration = getEnumeration();
-		UnitEnumeration otherEnumeration = otherUnit.getEnumeration();
+		Unit thisEnumeration = getEnumeration();
+		Unit otherEnumeration = otherUnit.getEnumeration();
 
 		if (thisEnumeration != null && otherEnumeration != null && !thisEnumeration.equals(otherEnumeration)) {
 			return false;
@@ -287,7 +287,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 	private void checkOffset(UnitOfMeasure other) throws Exception {
 		if (other.getOffset().compareTo(BigDecimal.ZERO) != 0) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("offset.not.supported"), other.toString());
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("offset.not.supported"), other.toString());
 			throw new Exception(msg);
 		}
 	}
@@ -295,7 +295,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	@Override
 	public UnitOfMeasure multiply(UnitOfMeasure multiplicand) throws Exception {
 		if (multiplicand == null) {
-			throw new Exception(MeasurementService.getMessage("unit.cannot.be.null"));
+			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
 		}
 
 		if (multiplicand.equals(getMeasurementSystem().getOne())) {
@@ -365,7 +365,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	@Override
 	public UnitOfMeasure divide(UnitOfMeasure divisor) throws Exception {
 		if (divisor == null) {
-			throw new Exception(MeasurementService.getMessage("unit.cannot.be.null"));
+			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
 		}
 
 		if (divisor.equals(getMeasurementSystem().getOne())) {
@@ -557,7 +557,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 			BigDecimal bridgeFactor = thisBase.getBridgeFactor(targetBase);
 
 			if (bridgeFactor == null) {
-				String msg = MessageFormat.format(MeasurementService.getMessage("no.factor"), this.toString(),
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("no.factor"), this.toString(),
 						targetUOM.toString());
 				throw new Exception(msg);
 			}
@@ -576,7 +576,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		if (thisType != null && targetType != null && !thisType.equals(UnitType.UNITY)
 				&& !targetType.equals(UnitType.UNITY) && !thisType.equals(targetType)) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("must.be.same.as"), uom1,
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.same.as"), uom1,
 					uom1.getUnitType(), uom2, uom2.getUnitType());
 			throw new Exception(msg);
 		}
@@ -585,7 +585,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	@Override
 	public BigDecimal getConversionFactor(UnitOfMeasure targetUOM) throws Exception {
 		if (targetUOM == null) {
-			throw new Exception(MeasurementService.getMessage("unit.cannot.be.null"));
+			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
 		}
 
 		checkTypes(this, targetUOM);
@@ -598,7 +598,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		// both maps must be same size
 		if (fromMap.size() != toMap.size()) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("maps.not.equal"), fromMap.size(),
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("maps.not.equal"), fromMap.size(),
 					toMap.size());
 			throw new Exception(msg);
 		}
@@ -623,19 +623,19 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 					// from and to powers must be equal
 					if (fromPower != toPower) {
-						String msg = MessageFormat.format(MeasurementService.getMessage("powers.not.equal"), fromPower,
+						String msg = MessageFormat.format(MeasurementSystem.getMessage("powers.not.equal"), fromPower,
 								toPower);
 						throw new Exception(msg);
 					}
 
 					// both from and to are scalars at this point
 					if (!(fromUOM instanceof ScalarUOM)) {
-						String msg = MessageFormat.format(MeasurementService.getMessage("must.be.scalar"), fromUOM);
+						String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), fromUOM);
 						throw new Exception(msg);
 					}
 
 					if (!(toUOM instanceof ScalarUOM)) {
-						String msg = MessageFormat.format(MeasurementService.getMessage("must.be.scalar"), toUOM);
+						String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), toUOM);
 						throw new Exception(msg);
 					}
 
@@ -669,7 +669,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 		while (true) {
 			count++;
 			if (count > 10) {
-				String msg = MessageFormat.format(MeasurementService.getMessage("conversion.depth.exceeded"),
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("conversion.depth.exceeded"),
 						pathUOM.toString());
 				throw new Exception(msg);
 			}
@@ -691,7 +691,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 			// must be a scalar at this point
 			if (!(pathUOM instanceof ScalarUOM)) {
-				String msg = MessageFormat.format(MeasurementService.getMessage("must.be.scalar"), pathUOM);
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), pathUOM);
 				throw new Exception(msg);
 			}
 		}
@@ -705,7 +705,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 		ResourceBundle symbolBundle = this.getMeasurementSystem().getSymbols();
 
 		// unit enumeration
-		UnitEnumeration enumeration = getEnumeration();
+		Unit enumeration = getEnumeration();
 		if (enumeration != null) {
 			sb.append(symbolBundle.getString("enum.text")).append(' ').append(enumeration.toString()).append(", ");
 		}
@@ -925,7 +925,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 			UnitOfMeasure uom = unit;
 
 			if (!(uom instanceof ScalarUOM)) {
-				String msg = MessageFormat.format(MeasurementService.getMessage("must.be.scalar"), uom.getSymbol());
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), uom.getSymbol());
 				throw new Exception(msg);
 			}
 

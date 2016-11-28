@@ -43,7 +43,7 @@ public class PowerUOM extends AbstractUnitOfMeasure {
 
 	void setUnits(UnitOfMeasure base, int power) throws Exception {
 		if (base == null) {
-			String msg = MessageFormat.format(MeasurementService.getMessage("base.cannot.be.null"), getSymbol());
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("base.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
 		}
 

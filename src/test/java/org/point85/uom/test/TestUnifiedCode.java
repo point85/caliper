@@ -30,7 +30,6 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.point85.uom.Conversion;
-import org.point85.uom.MeasurementService;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Quantity;
 import org.point85.uom.ScalarUOM;
@@ -54,9 +53,7 @@ public class TestUnifiedCode extends BaseTest {
 	public void runTest() throws Exception {
 		String amount = "10";
 
-		MeasurementService uomService = MeasurementService.getInstance();
-
-		MeasurementSystem sys = uomService.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 
 		Quantity from = null;
 		Quantity to = null;
