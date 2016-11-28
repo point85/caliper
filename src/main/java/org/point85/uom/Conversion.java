@@ -26,11 +26,11 @@ package org.point85.uom;
 import java.math.BigDecimal;
 
 /**
- * An ordinate unit (y) is linearly related to an abscissa unit (x) by the
- * equation y = ax + b. Here 'a' is the slope or scaling factor (a.k.a. constant
- * of proportionality) and 'b' is the y-intercept (offset). For example, 1 km =
- * 1000m, factor (a) = 1000 and offset (b) = 0; 1 C = 1K - 273.15, 'a' = 1 and
- * offset (b) = -273.15.
+ * A Conversion linearly relates an ordinate unit (y) to an abscissa unit (x) by
+ * the equation y = ax + b. Here 'a' is the slope or scaling factor (a.k.a.
+ * constant of proportionality) and 'b' is the y-intercept (offset). For
+ * example, 1 km = 1000m, factor (a) = 1000 and offset (b) = 0; 1 C = 1K -
+ * 273.15, 'a' = 1 and offset (b) = -273.15.
  * 
  * @author Kent Randall
  *
