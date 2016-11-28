@@ -8,8 +8,7 @@ A Caliper measurement system is a collection of units of measure where each pair
 The diagram below illustrates these concepts.
 ![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/CaliperDiagram.png)
  
-All units are owned by the unified measurement system. Units x and y belong to a relational system (such as SI or International Customary).  So too do units w and z.  Unit y has a linear conversion to unit x; therefore x must be defined before y can be defined.  Unit x is also related to y by x = (y - b)/a.  Unit w has a converison to
-unit z.  Unit x has a bridge conversion defined to unit z (for example a foot to a metre).  A bridge conversion from z to x is not necessary since it is the inverse of the conversion from x to z.
+All units are owned by the unified measurement system. Units x and y belong to a relational system (such as SI or International Customary).  So too do units w and z.  Unit y has a linear conversion to unit x; therefore x must be defined before y can be defined.  Unit x is also related to y by x = (y - b)/a.  Unit w has a conversion to unit z.  Unit x has a bridge conversion defined to unit z (for example a foot to a metre).  A bridge conversion from z to x is not necessary since it is the inverse of the conversion from x to z.
  
 *Scalar Unit* 
 
@@ -27,9 +26,15 @@ A unit of measure that is the quotient of two other units is defined as a Quotie
 
 A unit of measure that has an exponent on a base unit is defined as a PowerUOM. An example is area in metre^2. Note that an exponent of 0 is unity, and an exponent of 1 is the base unit itself. An exponent of 2 is a product unit where the multiplier and multiplicand are the base unit.  A power of -1 is a quotient unit of measure where the dividend is 1 and the divisor is the base unit.  
 
+*Type*
+
 Units are classfied by type, e.g. length, mass, time and temperature.  They are also enumerated, e.g. kilogram, Newton, metre, etc.  Custom units (e.g. a 1 litre bottle) do not have a pre-defined type or enumeration.
+
+*Base Symbol*
  
 All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogram·metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantitites.  For example, dividing a quantity of Newton-metres by a quantity of metres results in a quantity of Newtons. 
+
+*Quantity*
 
 A quantity is an amount (implemented as a BigDecimal for precision and scaling) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units are transformed.  For example, multiplying a length in metres by a force in Newtons results in a quantity of energy in Joules.
  
@@ -55,7 +60,8 @@ UnitOfMeasure uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.get
 The metre per second QuotientUOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, 
-					symbols.getString("mps.name"), symbols.getString("mps.symbol"), symbols.getString("mps.desc"), symbols.getString("mps.unified"), getUOM(Unit.METRE), getSecond());
+					symbols.getString("mps.name"), symbols.getString("mps.symbol"), symbols.getString("mps.desc"), symbols.getString("mps.unified"), 
+					getUOM(Unit.METRE), getSecond());
 ```
 
 The Newton ProductUOM is created by the MeasurementSystem as follows: 
@@ -65,13 +71,14 @@ UnitOfMeasure uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getStr
 					symbols.getString("newton.unified"), getUOM(Unit.KILOGRAM), getUOM(Unit.METRE_PER_SECOND_SQUARED));
 ```
 
-A millisecond is 1/1000th of a second.  In this case, the millisecond is defined as:
+A millisecond is 1/1000th of a second defined as:
 
 ```java
 public static final BigDecimal MILLI = Quantity.createAmount("0.001");
 Conversion conversion = new Conversion(MILLI, getUOM(Unit.SECOND));
-UnitOfMeasure uom = createScalarUOM(UnitType.TIME, Unit.MILLISECOND, symbols.getString("ms.name"),
-					symbols.getString("ms.symbol"), symbols.getString("ms.desc"), symbols.getString("ms.unified"));
+UnitOfMeasure uom = createScalarUOM(UnitType.TIME, Unit.MILLISECOND,
+ 				    symbols.getString("ms.name"),symbols.getString("ms.symbol"), 
+				    symbols.getString("ms.desc"), symbols.getString("ms.unified"));
 uom.setConversion(conversion);
 ```
 
@@ -97,8 +104,6 @@ uom.setBridge(conversion);
 
 Custom units and conversions can also be created:
 ```java
-MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
-
 // gallons per hour
 QuotientUOM gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", sys.getUOM(Unit.US_GALLON), sys.getHour());
 
