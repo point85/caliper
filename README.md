@@ -99,6 +99,9 @@ Custom units and conversions can also be created:
 ```java
 MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 
+// gallons per hour
+QuotientUOM gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", sys.getUOM(Unit.US_GALLON), sys.getHour());
+
 // 1 16 oz can = 16 fl. oz.
 ScalarUOM one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
 one16ozCan.setConversion(new Conversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE)));

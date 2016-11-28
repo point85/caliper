@@ -971,14 +971,8 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure pascal = sys.getUOM(Unit.PASCAL);
 		UnitOfMeasure s2 = sys.getUOM(Unit.SQUARE_SECOND);
 		UnitOfMeasure joule = sys.getUOM(Unit.JOULE);
-
-		QuotientUOM rpm = sys.createQuotientUOM(UnitType.CUSTOM, "rpm", "rpm", "revolutions per minute", degree,
-				sys.getMinute());
-		rpm.setScalingFactor(Quantity.createAmount("360"));
-
-		QuotientUOM rps = sys.createQuotientUOM(UnitType.CUSTOM, "rps", "rad/s", "radians per second", radian,
-				sys.getSecond());
-
+		UnitOfMeasure rpm = sys.getUOM(Unit.REV_PER_MIN);
+		UnitOfMeasure rps = sys.getUOM(Unit.RAD_PER_SEC);
 		UnitOfMeasure m3s = sys.getUOM(Unit.CUBIC_METRE_PER_SECOND);
 		UnitOfMeasure ms2 = sys.getUOM(Unit.METRE_PER_SECOND_SQUARED);
 
