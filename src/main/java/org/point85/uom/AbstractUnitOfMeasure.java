@@ -86,7 +86,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	private Conversion conversion;
 
 	// unit enumerations for the various systems of measurement, e.g. KILOGRAM
-	private Unit unitEnumeration;
+	private Unit unit;
 
 	// unit type, e.g. MASS
 	private UnitType unitType;
@@ -197,11 +197,11 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 	@Override
 	public Unit getEnumeration() {
-		return unitEnumeration;
+		return unit;
 	}
 
-	public void setEnumeration(Unit unitEnumeration) {
-		this.unitEnumeration = unitEnumeration;
+	public void setEnumeration(Unit unit) {
+		this.unit = unit;
 	}
 
 	@Override

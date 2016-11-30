@@ -1,14 +1,14 @@
 # Caliper
-The Caliper project manages units of measure and conversions between them.  Caliper is designed to be simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  
+The Caliper project manages units of measure and conversions between them.  Caliper is designed to be simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
 
-A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where x is the abscissa unit to be converted, y (the ordinate) is the converted unit, a is the scaling factor and b is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A special bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  A custom unit can define any bridge conversion such as a bottle to US fluid ounces.
+A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A special bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
  
 ## Concepts
 
 The diagram below illustrates these concepts.
 ![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/CaliperDiagram.png)
  
-All units are owned by the unified measurement system. Units x and y belong to a relational system (such as SI or International Customary).  So too do units w and z.  Unit y has a linear conversion to unit x; therefore x must be defined before y can be defined.  Unit x is also related to y by x = (y - b)/a.  Unit w has a conversion to unit z.  Unit x has a bridge conversion defined to unit z (for example a foot to a metre).  A bridge conversion from z to x is not necessary since it is the inverse of the conversion from x to z.
+All units are owned by the unified measurement system. Units 'x' and 'y' belong to a relational system (such as SI or International Customary).  Units 'w' and 'z' belong to a second relational system.  Unit 'y' has a linear conversion to unit 'x'; therefore 'x' must be defined before 'y' can be defined.  Unit 'x' is also related to 'y' by x = (y - b)/a.  Unit 'w' has a conversion to unit 'z'.  Unit 'x' has a bridge conversion defined to unit 'z' (for example a foot to a metre).  Note that a bridge conversion from 'z' to 'x' is not necessary since it is the inverse of the conversion from 'x' to 'z'.
  
 *Scalar Unit* 
 
@@ -16,9 +16,9 @@ A simple unit, for example a metre, is defined as a ScalarUOM.  A special scalar
 
 *Product Unit*
 
-A unit of measure that is the product of two other units is defined as a ProductUOM.  An example is a Joule which is a NewtonÂ·metre.  
+A unit of measure that is the product of two other units is defined as a ProductUOM.  An example is a Joule which is a Newton·metre.  
 
-*Quotient Unit*
+*Quotient Unit*  
 
 A unit of measure that is the quotient of two other units is defined as a QuotientUOM. An example is a velocity, e.g. metre/second.  
 
@@ -28,15 +28,15 @@ A unit of measure that has an exponent on a base unit is defined as a PowerUOM. 
 
 *Type*
 
-Units are classfied by type, e.g. length, mass, time and temperature.  They are also enumerated, e.g. kilogram, Newton, metre, etc.  Custom units (e.g. a 1 litre bottle) do not have a pre-defined type or enumeration.
+Units are classified by type, e.g. length, mass, time and temperature.  Only units of the same type can be converted to one another. Units are also enumerated, e.g. kilogram, Newton, metre, etc.  Custom units (e.g. a 1 litre bottle) do not have a pre-defined type or enumeration.
 
 *Base Symbol*
  
-All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogramÂ·metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantitites.  For example, dividing a quantity of Newton-metres by a quantity of metres results in a quantity of Newtons. 
+All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogram·metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantities.  For example, dividing a quantity of Newton·metres by a quantity of metres results in a quantity of Newtons. 
 
 *Quantity*
 
-A quantity is an amount (implemented as a BigDecimal for precision and scaling) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units are transformed.  For example, multiplying a length in metres by a force in Newtons results in a quantity of energy in Joules.
+A quantity is an amount (implemented as a BigDecimal for control of precision and scaling) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units can be transformed.  For example, multiplying a length quantity in metres by a force quantity in Newtons results in a quantity of energy in Joules.
  
 ## Code Examples
 The unified MeasurementSystem is obtained by calling:
@@ -60,7 +60,8 @@ UnitOfMeasure uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.get
 The metre per second QuotientUOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, 
-					symbols.getString("mps.name"), symbols.getString("mps.symbol"), symbols.getString("mps.desc"), symbols.getString("mps.unified"), 
+					symbols.getString("mps.name"), symbols.getString("mps.symbol"), 
+					symbols.getString("mps.desc"), symbols.getString("mps.unified"), 
 					getUOM(Unit.METRE), getSecond());
 ```
 
@@ -68,7 +69,8 @@ The Newton ProductUOM is created by the MeasurementSystem as follows:
 ```java
 UnitOfMeasure uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getString("newton.name"),
 					symbols.getString("newton.symbol"), symbols.getString("newton.desc"),
-					symbols.getString("newton.unified"), getUOM(Unit.KILOGRAM), getUOM(Unit.METRE_PER_SECOND_SQUARED));
+					symbols.getString("newton.unified"), getUOM(Unit.KILOGRAM), 
+					getUOM(Unit.METRE_PER_SECOND_SQUARED));
 ```
 
 A millisecond is 1/1000th of a second defined as:
@@ -172,10 +174,10 @@ Quantity q2 = q1.invert();
 ```
 
 ## Project Structure
-Caliper is a Gradle project.  It has the following structure:
- * `/build/docs/javadoc` â€“ javadoc files
- * `/build/libs` â€“ caliper.jar 
- * `/doc` â€“ documentation
+Caliper is a Gradle project with the following structure:
+ * `/build/docs/javadoc` javadoc files
+ * `/build/libs` compiled caliper.jar 
+ * `/doc` documentation
  * `/src/main/java` - java source files
- * `/src/main/resources` - .properties files 
+ * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol, description and UCUM symbol.
  * `/src/test/java` - JUnit test java source files  

@@ -162,10 +162,10 @@ public interface UnitOfMeasure {
 	/**
 	 * Set the unit's enumerated type
 	 * 
-	 * @param unitEnumeration
+	 * @param unit
 	 *            {@link Unit}
 	 */
-	void setEnumeration(Unit unitEnumeration);
+	void setEnumeration(Unit unit);
 
 	/**
 	 * Get the unit of measure's x-axis unit of measure for the relation y = ax
