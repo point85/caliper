@@ -8,7 +8,7 @@ A Caliper measurement system is a collection of units of measure where each pair
 The diagram below illustrates these concepts.
 ![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/CaliperDiagram.png)
  
-All units are owned by the unified measurement system. Units 'x' and 'y' belong to a relational system (such as SI or International Customary).  Units 'w' and 'z' belong to a second relational system.  Unit 'y' has a linear conversion to unit 'x'; therefore 'x' must be defined before 'y' can be defined.  Unit 'x' is also related to 'y' by x = (y - b)/a.  Unit 'w' has a conversion to unit 'z'.  Unit 'x' has a bridge conversion defined to unit 'z' (for example a foot to a metre).  Note that a bridge conversion from 'z' to 'x' is not necessary since it is the inverse of the conversion from 'x' to 'z'.
+All units are owned by the unified measurement system. Units 'x' and 'y' belong to a relational system (such as SI or International Customary).  Units 'w' and 'z' belong to a second relational system.  Unit 'y' has a linear conversion to unit 'x'; therefore 'x' must be defined before 'y' can be defined.  Unit 'x' is also related to 'y' by x = (y - b)/a.  Unit 'w' has a conversion to unit 'z'.  Unit 'z' is related to itself by z = z + 0. Unit 'x' has a bridge conversion defined to unit 'z' (for example a foot to a metre).  Note that a bridge conversion from 'z' to 'x' is not necessary since it is the inverse of the conversion from 'x' to 'z'.
  
 *Scalar Unit* 
 
@@ -43,6 +43,7 @@ The unified MeasurementSystem is obtained by calling:
 ```java
 MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 ```
+The Unit.properties file defines the name, symbol, description and UCUM symbol for each of the predefined units in the following code examples.  The Unit.properties file is localizable.  For example, 'metres' can be changed to use the US spelling 'meters' or descriptions can be translated to another language.
 
 The metre ScalarUOM is created by the MeasurementSystem as follows:
 ```java
@@ -107,7 +108,8 @@ uom.setBridge(conversion);
 Custom units and conversions can also be created:
 ```java
 // gallons per hour
-QuotientUOM gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", sys.getUOM(Unit.US_GALLON), sys.getHour());
+QuotientUOM gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", 
+	sys.getUOM(Unit.US_GALLON), sys.getHour());
 
 // 1 16 oz can = 16 fl. oz.
 ScalarUOM one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
@@ -131,10 +133,8 @@ ScalarUOM sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "
 sixPackCan.setConversion(conversion);	
 ```
 
-Quantities can be added and subtracted:
+Quantities can be added, subtracted and converted:
 ```java
-MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
-
 UnitOfMeasure m = sys.getUOM(Unit.METRE);
 UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
 		
