@@ -37,18 +37,29 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * A MeasurementSystem is a collection of units of measure that have a
- * linear relationship to each other: y = ax + b where x is the unit to be converted, y
+ * A MeasurementSystem is a collection of units of measure that have a linear
+ * relationship to each other: y = ax + b where x is the unit to be converted, y
  * is the converted unit, a is the scaling factor and b is the offset.
  * 
  * See
  * <ul>
- * <li>Wikipedia: <i><a href="https://en.wikipedia.org/wiki/International_System_of_Units">International System of Units</a></i> </li>
- * <li>Table of conversions: <i><a href="https://en.wikipedia.org/wiki/Conversion_of_units">Conversion of Units</a></i> </li>
- * <li>Unified Code for Units of Measure : <i><a href="http://unitsofmeasure.org/trac">UCUM</a></i> </li>
- * <li>SI derived units: <i><a href="https://en.wikipedia.org/wiki/SI_derived_unit">SI Derived Units</a></i> </li>
- * <li>US system: <i><a href="https://en.wikipedia.org/wiki/United_States_customary_units">US Units</a></i> </li>
- * <li>British Imperial system: <i><a href="https://en.wikipedia.org/wiki/Imperial_units">British Imperial Units</a></i> </li>
+ * <li>Wikipedia: <i><a href=
+ * "https://en.wikipedia.org/wiki/International_System_of_Units">International
+ * System of Units</a></i></li>
+ * <li>Table of conversions:
+ * <i><a href="https://en.wikipedia.org/wiki/Conversion_of_units">Conversion of
+ * Units</a></i></li>
+ * <li>Unified Code for Units of Measure :
+ * <i><a href="http://unitsofmeasure.org/trac">UCUM</a></i></li>
+ * <li>SI derived units:
+ * <i><a href="https://en.wikipedia.org/wiki/SI_derived_unit">SI Derived
+ * Units</a></i></li>
+ * <li>US system:
+ * <i><a href="https://en.wikipedia.org/wiki/United_States_customary_units">US
+ * Units</a></i></li>
+ * <li>British Imperial system:
+ * <i><a href="https://en.wikipedia.org/wiki/Imperial_units">British Imperial
+ * Units</a></i></li>
  * </ul>
  * 
  * The MeasurementSystem class:
@@ -56,7 +67,8 @@ import java.util.ResourceBundle;
  * <li>Provides a definition of standard SI prefixes</li>
  * <li>Creates the 7 SI fundamental units of measure</li>
  * <li>Creates 20 SI units derived from these fundamental units</li>
- * <li>Creates other units in the International Customary, US and British Imperial systems</li>
+ * <li>Creates other units in the International Customary, US and British
+ * Imperial systems</li>
  * </ul>
  *
  */
@@ -114,12 +126,12 @@ public class MeasurementSystem {
 		symbols = ResourceBundle.getBundle(UNIT_BUNDLE_NAME, Locale.getDefault());
 		messages = ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, Locale.getDefault());
 	}
-	
+
 	// get a particular message by its key
 	static String getMessage(String key) {
 		return messages.getString(key);
 	}
-	
+
 	/**
 	 * Get the unified system of units of measure from International Customary,
 	 * SI, US and British Imperial systems
@@ -190,6 +202,7 @@ public class MeasurementSystem {
 
 		switch (unit) {
 		case ONE:
+			// unity
 			uom = createScalarUOM(UnitType.UNITY, Unit.ONE, symbols.getString("one.name"),
 					symbols.getString("one.symbol"), symbols.getString("one.desc"), symbols.getString("one.unified"));
 			break;
@@ -299,6 +312,7 @@ public class MeasurementSystem {
 			break;
 
 		case DIOPTER:
+			// per metre
 			uom = createQuotientUOM(UnitType.LENGTH, Unit.DIOPTER, symbols.getString("diopter.name"),
 					symbols.getString("diopter.symbol"), symbols.getString("diopter.desc"),
 					symbols.getString("diopter.unified"), getOne(), getUOM(Unit.METRE));
@@ -308,7 +322,15 @@ public class MeasurementSystem {
 			// fundamental mass
 			uom = createScalarUOM(UnitType.MASS, Unit.KILOGRAM, symbols.getString("kg.name"),
 					symbols.getString("kg.symbol"), symbols.getString("kg.desc"), symbols.getString("kg.unified"));
-			// uom.setConversion(conversion);
+			break;
+
+		case TONNE:
+			// mass
+			conversion = new Conversion(KILO, getUOM(Unit.KILOGRAM));
+			uom = createScalarUOM(UnitType.MASS, Unit.TONNE, symbols.getString("tonne.name"),
+					symbols.getString("tonne.symbol"), symbols.getString("tonne.desc"),
+					symbols.getString("tonne.unified"));
+			uom.setConversion(conversion);
 			break;
 
 		case KELVIN:
@@ -429,12 +451,14 @@ public class MeasurementSystem {
 			break;
 
 		case METRE_PER_SECOND:
+			// velocity
 			uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, symbols.getString("mps.name"),
 					symbols.getString("mps.symbol"), symbols.getString("mps.desc"), symbols.getString("mps.unified"),
 					getUOM(Unit.METRE), getSecond());
 			break;
 
 		case METRE_PER_SECOND_SQUARED:
+			// acceleration
 			uom = createQuotientUOM(UnitType.ACCELERATION, Unit.METRE_PER_SECOND_SQUARED,
 					symbols.getString("mps2.name"), symbols.getString("mps2.symbol"), symbols.getString("mps2.desc"),
 					symbols.getString("mps2.unified"), getUOM(Unit.METRE), getUOM(Unit.SQUARE_SECOND));
@@ -547,6 +571,7 @@ public class MeasurementSystem {
 			break;
 
 		case KILOJOULE:
+			// 1000 J
 			conversion = new Conversion(KILO, getUOM(Unit.JOULE));
 			uom = createScalarUOM(UnitType.ENERGY, Unit.KILOJOULE, symbols.getString("kj.name"),
 					symbols.getString("kj.symbol"), symbols.getString("kj.desc"), symbols.getString("kj.unified"));
@@ -554,12 +579,14 @@ public class MeasurementSystem {
 			break;
 
 		case ELECTRON_VOLT:
+			// ev
 			uom = createProductUOM(UnitType.ENERGY, Unit.ELECTRON_VOLT, symbols.getString("ev.name"),
 					symbols.getString("ev.symbol"), symbols.getString("ev.desc"), symbols.getString("ev.unified"),
 					getUOM(Unit.ELEMENTARY_CHARGE), getUOM(Unit.VOLT));
 			break;
 
 		case KILOWATT_HOUR:
+			// kw-hour
 			uom = createProductUOM(UnitType.ENERGY, Unit.KILOWATT_HOUR, symbols.getString("kwh.name"),
 					symbols.getString("kwh.symbol"), symbols.getString("kwh.desc"), symbols.getString("kwh.unified"),
 					getUOM(Unit.KILOWATT), getHour());
@@ -586,7 +613,7 @@ public class MeasurementSystem {
 					symbols.getString("hertz.symbol"), symbols.getString("hertz.desc"),
 					symbols.getString("hertz.unified"), getOne(), getSecond());
 			break;
-			
+
 		case RAD_PER_SEC:
 			// angular frequency
 			BigDecimal twoPi = new BigDecimal("2").multiply(new BigDecimal(Math.PI), UnitOfMeasure.MATH_CONTEXT);
@@ -605,6 +632,7 @@ public class MeasurementSystem {
 			break;
 
 		case KILOPASCAL:
+			// 1000 pascal
 			conversion = new Conversion(KILO, getUOM(Unit.PASCAL));
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.KILOPASCAL, symbols.getString("kpa.name"),
 					symbols.getString("kpa.symbol"), symbols.getString("kpa.desc"), symbols.getString("kpa.unified"));
@@ -745,6 +773,7 @@ public class MeasurementSystem {
 			break;
 
 		case LIGHT_VELOCITY:
+			// speed of light
 			conversion = new Conversion(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.LIGHT_VELOCITY, symbols.getString("light.name"),
 					symbols.getString("light.symbol"), symbols.getString("light.desc"),
@@ -753,6 +782,7 @@ public class MeasurementSystem {
 			break;
 
 		case ANGSTROM:
+			// length
 			conversion = new Conversion(Quantity.createAmount("0.1"), getUOM(Unit.NANOMETRE));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.ANGSTROM, symbols.getString("angstrom.name"),
 					symbols.getString("angstrom.symbol"), symbols.getString("angstrom.desc"),
@@ -761,11 +791,13 @@ public class MeasurementSystem {
 			break;
 
 		case BIT:
+			// computer bit
 			uom = createScalarUOM(UnitType.IT, Unit.BIT, symbols.getString("bit.name"), symbols.getString("bit.symbol"),
 					symbols.getString("bit.desc"), symbols.getString("bit.unified"));
 			break;
 
 		case BYTE:
+			// computer byte
 			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BIT));
 			uom = createScalarUOM(UnitType.IT, Unit.BYTE, symbols.getString("byte.name"),
 					symbols.getString("byte.symbol"), symbols.getString("byte.desc"),
@@ -1011,6 +1043,7 @@ public class MeasurementSystem {
 			break;
 
 		case FEET_PER_SECOND_SQUARED:
+			// acceleration
 			uom = createQuotientUOM(UnitType.ACCELERATION, Unit.FEET_PER_SECOND_SQUARED,
 					symbols.getString("ftps2.name"), symbols.getString("ftps2.symbol"), symbols.getString("ftps2.desc"),
 					symbols.getString("ftps2.unified"), getUOM(Unit.FOOT), getUOM(Unit.SQUARE_SECOND));
@@ -1051,6 +1084,7 @@ public class MeasurementSystem {
 			break;
 
 		case GRAIN:
+			// mass
 			amount = Quantity.divide("1", "7000");
 			conversion = new Conversion(amount, getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.GRAIN, symbols.getString("grain.name"),
@@ -1060,18 +1094,19 @@ public class MeasurementSystem {
 			break;
 
 		case MILES_PER_HOUR:
+			// velocity
 			amount = Quantity.divide("5280", "3600");
 			conversion = new Conversion(amount, getUOM(Unit.FEET_PER_SECOND));
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.MILES_PER_HOUR, symbols.getString("mph.name"),
 					symbols.getString("mph.symbol"), symbols.getString("mph.desc"), symbols.getString("mph.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case REV_PER_MIN:
 			// rpm
 			uom = createQuotientUOM(UnitType.FREQUENCY, Unit.REV_PER_MIN, symbols.getString("rpm.name"),
-					symbols.getString("rpm.symbol"), symbols.getString("rpm.desc"),
-					symbols.getString("rpm.unified"), getOne(), getMinute());
+					symbols.getString("rpm.symbol"), symbols.getString("rpm.desc"), symbols.getString("rpm.unified"),
+					getOne(), getMinute());
 			break;
 
 		default:
@@ -1170,6 +1205,15 @@ public class MeasurementSystem {
 					symbols.getString("us_tsp.unified"));
 			uom.setConversion(conversion);
 			break;
+			
+		case US_TON:
+			// ton
+			conversion = new Conversion(Quantity.createAmount("2000"), getUOM(Unit.POUND_MASS));
+			uom = createScalarUOM(UnitType.MASS, Unit.US_TON, symbols.getString("us_ton.name"),
+					symbols.getString("us_ton.symbol"), symbols.getString("us_ton.desc"),
+					symbols.getString("us_ton.unified"));
+			uom.setConversion(conversion);
+			break;
 
 		default:
 			break;
@@ -1255,6 +1299,15 @@ public class MeasurementSystem {
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_TEASPOON, symbols.getString("br_tsp.name"),
 					symbols.getString("br_tsp.symbol"), symbols.getString("br_tsp.desc"),
 					symbols.getString("br_tsp.unified"));
+			uom.setConversion(conversion);
+			break;
+			
+		case BR_TON:
+			// ton
+			conversion = new Conversion(Quantity.createAmount("2240"), getUOM(Unit.POUND_MASS));
+			uom = createScalarUOM(UnitType.MASS, Unit.BR_TON, symbols.getString("br_ton.name"),
+					symbols.getString("br_ton.symbol"), symbols.getString("br_ton.desc"),
+					symbols.getString("br_ton.unified"));
 			uom.setConversion(conversion);
 			break;
 
@@ -1418,8 +1471,8 @@ public class MeasurementSystem {
 			UnitOfMeasure current = unitRegistry.get(id);
 
 			if (current != null) {
-				String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(),
-						id.toString(), current.toString());
+				String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(), id.toString(),
+						current.toString());
 				throw new Exception(msg);
 			}
 
@@ -1537,6 +1590,7 @@ public class MeasurementSystem {
 
 	/**
 	 * Create a unit of measure that is a unit divided by another unit
+	 * 
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
@@ -1557,8 +1611,8 @@ public class MeasurementSystem {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public QuotientUOM createQuotientUOM(UnitType type, Unit id, String name, String symbol,
-			String description, String unified, UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
+	public QuotientUOM createQuotientUOM(UnitType type, Unit id, String name, String symbol, String description,
+			String unified, UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 
 		QuotientUOM uom = (QuotientUOM) createUOM(QuotientUOM.class, type, id, name, symbol, description);
 		uom.setUnits(dividend, divisor);
@@ -1595,6 +1649,7 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure that is the product of two other units of
 	 * measure
+	 * 
 	 * @param type
 	 *            {@link UnitType}
 	 * @param id
@@ -1615,8 +1670,8 @@ public class MeasurementSystem {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ProductUOM createProductUOM(UnitType type, Unit id, String name, String symbol,
-			String description, String unified, UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
+	public ProductUOM createProductUOM(UnitType type, Unit id, String name, String symbol, String description,
+			String unified, UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 
 		ProductUOM uom = (ProductUOM) createUOM(ProductUOM.class, type, id, name, symbol, description);
 		uom.setUnits(multiplier, multiplicand);

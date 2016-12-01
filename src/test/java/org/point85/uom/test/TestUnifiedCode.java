@@ -414,6 +414,13 @@ public class TestUnifiedCode extends BaseTest {
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
+		// tonne to lbm
+		from = new Quantity(amount, sys.getUOM(Unit.TONNE));
+		to = from.convert(sys.getUOM(Unit.POUND_MASS));
+
+		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA3));
+
 	}
 
 	private BigDecimal wsConvert(String amount, UnitOfMeasure from, UnitOfMeasure to)

@@ -273,6 +273,11 @@ public class TestQuantity extends BaseTest {
 		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.BR_CUP));
 		q2 = q1.convert(sys.getUOM(Unit.US_GALLON));
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("0.6"), DELTA3));
+		
+		// US ton to British ton
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.US_TON));
+		q2 = q1.convert(sys.getUOM(Unit.BR_TON));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("8.928571428"), DELTA6));
 	}
 
 	@Test
