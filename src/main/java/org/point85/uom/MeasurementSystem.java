@@ -266,7 +266,7 @@ public class MeasurementSystem {
 
 		case SQUARE_SECOND:
 			// square second
-			uom = createPowerUOM(UnitType.TIME, Unit.SQUARE_SECOND, symbols.getString("s2.name"),
+			uom = createPowerUOM(UnitType.TIME_SQUARED, Unit.SQUARE_SECOND, symbols.getString("s2.name"),
 					symbols.getString("s2.symbol"), symbols.getString("s2.desc"), symbols.getString("s2.unified"),
 					getUOM(Unit.SECOND), 2);
 			break;
@@ -313,7 +313,7 @@ public class MeasurementSystem {
 
 		case DIOPTER:
 			// per metre
-			uom = createQuotientUOM(UnitType.LENGTH, Unit.DIOPTER, symbols.getString("diopter.name"),
+			uom = createQuotientUOM(UnitType.RECIPROCAL_LENGTH, Unit.DIOPTER, symbols.getString("diopter.name"),
 					symbols.getString("diopter.symbol"), symbols.getString("diopter.desc"),
 					symbols.getString("diopter.unified"), getOne(), getUOM(Unit.METRE));
 			break;

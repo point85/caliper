@@ -559,7 +559,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure min = sys.getMinute();
 		UnitOfMeasure hour = sys.getHour();
 		UnitOfMeasure msec = sys.getUOM(Unit.MILLISECOND);
-		PowerUOM min2 = sys.createPowerUOM(UnitType.TIME, "sqMin", "min^2", null, min, 2);
+		PowerUOM min2 = sys.createPowerUOM(UnitType.TIME_SQUARED, "sqMin", "min^2", null, min, 2);
 
 		assertThat(second.getConversionFactor(msec), closeTo(Quantity.createAmount("1000"), DELTA6));
 
@@ -812,13 +812,13 @@ public class TestUnits extends BaseTest {
 		assertTrue(inverted.equals(sys.getSecond()));
 
 		Conversion conversion = new Conversion(Quantity.createAmount("60"), sys.getUOM(Unit.SQUARE_SECOND));
-		ProductUOM minTimesSec = sys.createProductUOM(UnitType.TIME, "minsec", "minxsec", "minute times a second",
+		ProductUOM minTimesSec = sys.createProductUOM(UnitType.TIME_SQUARED, "minsec", "minxsec", "minute times a second",
 				sys.getMinute(), sys.getSecond());
 		minTimesSec.setConversion(conversion);
 
 		UnitOfMeasure sqMin = sys.getUOM("min^2");
 		if (sqMin == null) {
-			sqMin = sys.createPowerUOM(UnitType.TIME, "square minute", "min^2", null, sys.getUOM(Unit.MINUTE), 2);
+			sqMin = sys.createPowerUOM(UnitType.TIME_SQUARED, "square minute", "min^2", null, sys.getUOM(Unit.MINUTE), 2);
 			conversion = new Conversion(Quantity.createAmount("3600"), sys.getUOM(Unit.SQUARE_SECOND));
 			sqMin.setConversion(conversion);
 		}
@@ -991,7 +991,7 @@ public class TestUnits extends BaseTest {
 		QuotientUOM gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", usGal,
 				sys.getHour());
 		UnitOfMeasure mi = sys.getUOM(Unit.MILE);
-		ProductUOM hrsec = sys.createProductUOM(UnitType.TIME, "", "hr.sec", "", sys.getHour(), sys.getSecond());
+		ProductUOM hrsec = sys.createProductUOM(UnitType.TIME_SQUARED, "", "hr.sec", "", sys.getHour(), sys.getSecond());
 		QuotientUOM mphs = sys.createQuotientUOM(UnitType.ACCELERATION, "mph/sec", "mi/hr-sec",
 				"mile per hour per second", mi, hrsec);
 
