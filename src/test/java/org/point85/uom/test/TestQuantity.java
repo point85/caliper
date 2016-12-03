@@ -389,7 +389,23 @@ public class TestQuantity extends BaseTest {
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 		assertTrue(q2.getUOM().equals(oneOverM));
 
-		assertNotNull(q2.toString());
+		assertNotNull(q2.toString()); 
+		
+		// Newton-metres divided by metres
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.NEWTON_METRE));
+		q2 = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.METRE));
+		q3 = q1.divide(q2);
+		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.NEWTON)));
+		
+		// length multiplied by force
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.NEWTON));
+		q2 = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.METRE));
+		q3 = q1.multiply(q2);
+		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.NEWTON_METRE)));
+		q4 = q3.convert(sys.getUOM(Unit.JOULE));
+		assertTrue(q4.getUOM().equals(sys.getUOM(Unit.JOULE)));
 	}
 
 	@Test
