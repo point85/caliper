@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.junit.Test;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -26,6 +27,7 @@ public class StressTest {
 		unitList.add(uom);
 	}
 	
+	@Test
 	public void runTest() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 		
