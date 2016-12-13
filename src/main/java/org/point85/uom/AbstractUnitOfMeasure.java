@@ -42,8 +42,8 @@ import java.util.TreeSet;
  * MeasurementSystem) defined by this project.
  * 
  * An abstract unit of measure also has an enumerated {@link UnitType} (for
- * example LENGTH or MASS) and a unique {@link Unit} discriminator
- * (for example METRE).
+ * example LENGTH or MASS) and a unique {@link Unit} discriminator (for example
+ * METRE).
  * 
  * A basic unit (a.k.a fundamental unit in the SI system) can have a bridge
  * {@link Conversion} to another basic unit in another recognized measurement
@@ -307,7 +307,6 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		ProductUOM product = new ProductUOM(null, null, null, null, getMeasurementSystem());
 		product.setUnits(this, multiplicand);
-		product.setSymbol(product.generateSymbol());
 
 		Reducer multiplierPowerMap = getBaseMap();
 		Reducer multiplicandPowerMap = ((AbstractUnitOfMeasure) multiplicand).getBaseMap();
@@ -357,6 +356,9 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		if (uom != null) {
 			product.setAbscissaUnit(uom);
+			product.setSymbol(uom.getSymbol());
+		} else {
+			product.setSymbol(product.generateSymbol());
 		}
 
 		return product;
@@ -378,7 +380,6 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 		// create a quotient UOM
 		QuotientUOM quotient = new QuotientUOM(null, null, null, null, getMeasurementSystem());
 		quotient.setUnits(this, divisor);
-		quotient.setSymbol(quotient.generateSymbol());
 
 		// get the base symbol maps
 		Reducer dividendPowerMap = getBaseMap();
@@ -433,6 +434,9 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		if (uom != null) {
 			quotient.setAbscissaUnit(uom);
+			quotient.setSymbol(uom.getSymbol());
+		} else {
+			quotient.setSymbol(quotient.generateSymbol());
 		}
 
 		return quotient;
@@ -576,8 +580,8 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		if (thisType != null && targetType != null && !thisType.equals(UnitType.UNITY)
 				&& !targetType.equals(UnitType.UNITY) && !thisType.equals(targetType)) {
-			String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.same.as"), uom1,
-					uom1.getUnitType(), uom2, uom2.getUnitType());
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.same.as"), uom1, uom1.getUnitType(),
+					uom2, uom2.getUnitType());
 			throw new Exception(msg);
 		}
 	}

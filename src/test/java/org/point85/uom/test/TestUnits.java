@@ -399,7 +399,7 @@ public class TestUnits extends BaseTest {
 		symbol = axb.getSymbol() + "^-2";
 		PowerUOM axbm2 = sys.createPowerUOM(UnitType.CUSTOM, "", symbol, "", axb, -2);
 		uom = axbm2.multiply(axb2);
-		assertTrue(uom.getSymbol().indexOf(axb.getSymbol()) != -1);
+		assertTrue(uom.getSymbol().equals(sys.getOne().getSymbol()));
 
 		ProductUOM cxd = sys.createProductUOM(UnitType.CUSTOM, "", "c.D", "", c, x);
 		final char MULT = 0xB7;
