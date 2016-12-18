@@ -322,7 +322,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 			product.setScalingFactor(productFactor);
 		}
 
-		Map<UnitOfMeasure, Integer> productMap = new HashMap<>();
+		Map<UnitOfMeasure, Integer> productMap = new HashMap<UnitOfMeasure, Integer>();
 
 		// iterate over the multiplier's unit map
 		for (Entry<UnitOfMeasure, Integer> multiplierEntry : multiplierMap.entrySet()) {
@@ -396,7 +396,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 			quotient.setScalingFactor(quotientFactor);
 		}
 
-		Map<UnitOfMeasure, Integer> quotientMap = new HashMap<>();
+		Map<UnitOfMeasure, Integer> quotientMap = new HashMap<UnitOfMeasure, Integer>();
 
 		// iterate over the multiplier's unit map
 		for (Entry<UnitOfMeasure, Integer> dividendEntry : dividendMap.entrySet()) {
@@ -792,7 +792,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 
 		private static final int MAX_RECURSIONS = 10;
 
-		private Map<UnitOfMeasure, Integer> terms = new HashMap<>();
+		private Map<UnitOfMeasure, Integer> terms = new HashMap<UnitOfMeasure, Integer>();
 
 		private BigDecimal mapScalingFactor = BigDecimal.ONE;
 
@@ -975,7 +975,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 			int denominatorCount = 0;
 
 			// sort units by symbol (ascending)
-			SortedSet<UnitOfMeasure> keys = new TreeSet<>(terms.keySet());
+			SortedSet<UnitOfMeasure> keys = new TreeSet<UnitOfMeasure>(terms.keySet());
 
 			for (UnitOfMeasure unit : keys) {
 				int power = terms.get(unit);

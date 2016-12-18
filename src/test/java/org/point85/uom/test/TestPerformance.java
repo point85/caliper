@@ -17,13 +17,13 @@ import org.point85.uom.UnitType;
 public class TestPerformance {
 
 	// unit map
-	private Map<UnitType, List<UnitOfMeasure>> unitListMap = new HashMap<>();
+	private Map<UnitType, List<UnitOfMeasure>> unitListMap = new HashMap<UnitType, List<UnitOfMeasure>>();
 
 	private void addUnit(UnitOfMeasure uom) {
 		List<UnitOfMeasure> unitList = unitListMap.get(uom.getUnitType());
 
 		if (unitList == null) {
-			unitList = new ArrayList<>();
+			unitList = new ArrayList<UnitOfMeasure>();
 			unitListMap.put(uom.getUnitType(), unitList);
 		}
 		unitList.add(uom);

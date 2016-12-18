@@ -174,7 +174,7 @@ Quantity q2 = q1.invert();
 ```
 
 ## Project Structure
-Caliper itself depends only upon Java 8.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  Caliper is a Gradle project with the following structure:
+Caliper itself depends only upon Java 6+.  The unit tests depend on Java 8, JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  Caliper is a Gradle project with the following structure:
  * `/build/docs/javadoc` javadoc files
  * `/build/libs` compiled caliper.jar 
  * `/doc` documentation

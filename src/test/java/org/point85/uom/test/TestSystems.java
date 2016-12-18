@@ -62,7 +62,7 @@ public class TestSystems extends BaseTest {
 			assertNotNull(uom.getUnifiedSymbol());
 		}
 
-		List<Unit> allUnits = new ArrayList<>();
+		List<Unit> allUnits = new ArrayList<Unit>();
 
 		for (Unit u : Unit.values()) {
 			allUnits.add(u);

@@ -112,10 +112,10 @@ public class MeasurementSystem {
 	public static final BigDecimal YOCTO = Quantity.createAmount("1.0E-24");
 
 	// registry by unit symbol
-	private Map<String, UnitOfMeasure> symbolRegistry = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, UnitOfMeasure> symbolRegistry = Collections.synchronizedMap(new HashMap<String, UnitOfMeasure>());
 
 	// registry for units by enumeration
-	private Map<Unit, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<>());
+	private Map<Unit, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<Unit, UnitOfMeasure>());
 
 	private MeasurementSystem() throws Exception {
 		initialize();
@@ -1435,7 +1435,7 @@ public class MeasurementSystem {
 	 */
 	public List<UnitOfMeasure> getRegisteredUnits() {
 		Collection<UnitOfMeasure> units = symbolRegistry.values();
-		List<UnitOfMeasure> list = new ArrayList<>(units);
+		List<UnitOfMeasure> list = new ArrayList<UnitOfMeasure>(units);
 
 		Collections.sort(list, new Comparator<UnitOfMeasure>() {
 			public int compare(UnitOfMeasure unit1, UnitOfMeasure unit2) {
