@@ -27,9 +27,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 /**
- * Quantity represents an amount and {@link UnitOfMeasure}.
- * The amount is expressed as a BigDecimal to control the precision of floating
- * point arithmetic.
+ * Quantity represents an amount and {@link UnitOfMeasure}. The amount is
+ * expressed as a BigDecimal to control the precision of floating point
+ * arithmetic.
  * 
  * @author Kent Randall
  *
@@ -285,5 +285,24 @@ public class Quantity {
 	 */
 	public static MathContext getMathContext() {
 		return UnitOfMeasure.MATH_CONTEXT;
+	}
+
+	/**
+	 * Compare this quantity to the other quantity
+	 * 
+	 * @param other
+	 *            Quantity
+	 * @return -1 if less than, 0 if equal and 1 if greater than
+	 * @throws Exception
+	 */
+	public int compare(Quantity other) throws Exception {
+		Quantity toCompare = other;
+
+		if (!getUOM().equals(other.getUOM())) {
+			// first try converting the units
+			toCompare = other.convert(this.getUOM());
+		}
+
+		return getAmount().compareTo(toCompare.getAmount());
 	}
 }

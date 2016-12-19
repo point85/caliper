@@ -699,17 +699,17 @@ public class TestQuantity extends BaseTest {
 		final Quantity q2 = new Quantity(amount, metre);
 		final Quantity q3 = new Quantity(amount, nm);
 		Quantity q5 = new Quantity(Quantity.createAmount("100"), nm);
-		
+
 		// unity
 		Quantity q4 = q5.divide(q3);
 		assertTrue(q4.getUOM().getSymbol().equals(sys.getOne().getSymbol()));
 		assertTrue(q4.getAmount().equals(amount));
-		
+
 		// Newton-metre
 		q4 = q1.multiply(q2);
 		assertTrue(q5.getUOM().getSymbol().equals(q4.getUOM().getSymbol()));
-		assertTrue(q5.equals(q4));		
-		
+		assertTrue(q5.equals(q4));
+
 		// Newton
 		q5 = q4.divide(q2);
 		assertTrue(q5.getUOM().getSymbol().equals(q1.getUOM().getSymbol()));
@@ -730,6 +730,35 @@ public class TestQuantity extends BaseTest {
 		q4 = q5.divide(q2);
 		assertTrue(q4.getUOM().getSymbol().equals(q2.getUOM().getSymbol()));
 		assertTrue(q4.equals(q2));
+
+	}
+
+	@Test
+	public void testComparison() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+
+		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
+		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
+		UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
+
+		BigDecimal amount = Quantity.createAmount("10");
+
+		final Quantity qN = new Quantity(amount, newton);
+		final Quantity qm10 = new Quantity(amount, metre);
+		final Quantity qm1 = new Quantity(BigDecimal.ONE, metre);
+		final Quantity qcm = new Quantity(amount, cm);
+
+		assertTrue(qN.compare(qN) == 0);
+		assertTrue(qm10.compare(qm1) == 1);
+		assertTrue(qm1.compare(qm10) == -1);
+		assertTrue(qcm.compare(qm1) == -1);
+		assertTrue(qm1.compare(qcm) == 1);
+
+		try {
+			qN.compare(qm10);
+			fail("not comparable)");
+		} catch (Exception e) {
+		}
 
 	}
 }
