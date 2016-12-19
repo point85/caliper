@@ -666,7 +666,6 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	final PathParameters traversePath() throws Exception {
 		UnitOfMeasure pathUOM = this;
 		BigDecimal pathFactor = BigDecimal.ONE;
-		int pathPower = 1;
 
 		int count = 0;
 
@@ -700,7 +699,7 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 			}
 		}
 
-		return new PathParameters(pathUOM, pathFactor, pathPower);
+		return new PathParameters(pathUOM, pathFactor);
 	}
 
 	@Override
@@ -760,15 +759,13 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 	}
 
 	// UOM, scaling factor and power cumulative along a conversion path
-	class PathParameters {
+	private class PathParameters {
 		private UnitOfMeasure pathUOM;
 		private BigDecimal pathFactor;
-		private int pathPower;
 
-		PathParameters(UnitOfMeasure pathUOM, BigDecimal pathFactor, int pathPower) {
+		PathParameters(UnitOfMeasure pathUOM, BigDecimal pathFactor) {
 			this.pathUOM = pathUOM;
 			this.pathFactor = pathFactor;
-			this.pathPower = pathPower;
 		}
 
 		UnitOfMeasure getPathUOM() {
@@ -778,14 +775,10 @@ abstract class AbstractUnitOfMeasure implements UnitOfMeasure, Comparable<UnitOf
 		BigDecimal getPathFactor() {
 			return pathFactor;
 		}
-
-		int getPathPower() {
-			return pathPower;
-		}
 	}
 
 	// reduce a unit of measure to its most basic units
-	class Reducer {
+	private class Reducer {
 		private static final char LP = '(';
 		private static final char RP = ')';
 		private static final char ONE = '1';
