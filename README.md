@@ -77,7 +77,6 @@ UnitOfMeasure uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getStr
 A millisecond is 1/1000th of a second with a defined prefix and created as:
 
 ```java
-MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 UnitOfMeasure second = sys.getSecond();
 UnitOfMeasure msec = sys.getUOM(Prefix.MILLI, second);
 ```
@@ -170,10 +169,10 @@ Quantity q1 = new Quantity(BigDecimal.TEN, mps);
 Quantity q2 = q1.invert();
 ```
 
-To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getScaledUOM() can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
+To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getUOM() using a Prefix can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
 ```java
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
-		UnitOfMeasure cL = sys.getScaledUOM(Prefix.CENTI, litre);
+		UnitOfMeasure cL = sys.getUOM(Prefix.CENTI, litre);
 ```
 and, a megabyte (MB = 2^20 bytes) is created by:
 ```java
@@ -199,7 +198,9 @@ already.created = The unit of measure with symbol {0} has already been created b
 ```
 
 ## Project Structure
-Caliper itself depends only upon Java 6+.  The unit tests depend on Java 8, JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  Caliper is a Gradle project with the following structure:
+Caliper itself depends only upon Java 6+.  The unit tests depend on Java 8, JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request). 
+
+Caliper is a Gradle project with the following structure:
  * `/build/docs/javadoc` javadoc files
  * `/build/libs` compiled caliper.jar 
  * `/doc` documentation
