@@ -27,9 +27,13 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 /**
- * The Quantity class represents an amount and {@link UnitOfMeasure}. The amount
- * is expressed as a BigDecimal in order to control the precision of floating
- * point arithmetic.
+ * The Quantity class represents an amount and {@link UnitOfMeasure}.
+ * <p>
+ * The amount is expressed as a BigDecimal in order to control the precision of
+ * floating point arithmetic. A MathContext is used with a precision setting
+ * matching the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
+ * HALF_EVEN, the IEEE 754R default.
+ * </p>
  * 
  * @author Kent Randall
  *
@@ -296,7 +300,8 @@ public class Quantity {
 	 * @param other
 	 *            Quantity
 	 * @return -1 if less than, 0 if equal and 1 if greater than
-	 * @throws Exception If the quantities cannot be compared.
+	 * @throws Exception
+	 *             If the quantities cannot be compared.
 	 */
 	public int compare(Quantity other) throws Exception {
 		Quantity toCompare = other;

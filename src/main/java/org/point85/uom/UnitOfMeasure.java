@@ -76,7 +76,6 @@ import java.util.TreeSet;
  * combinations, the {@link MeasurementSystem} is able to create units by
  * specifying the {@link Prefix} and target unit of measure. Similarly, computer
  * science has defined prefixes for bytes (e.g. "mega").
- * 
  * @author Kent Randall
  *
  */
@@ -1077,7 +1076,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		}
 	}
 
-	// reduce a unit of measure to its most basic units
+	// reduce a unit of measure to its most basic scalar units of measure.
 	private class Reducer {
 		private static final char LP = '(';
 		private static final char RP = ')';

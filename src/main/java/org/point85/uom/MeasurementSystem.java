@@ -475,7 +475,7 @@ public class MeasurementSystem {
 			break;
 
 		case WATT_HOUR:
-			// kw-hour
+			// watt-hour
 			uom = createProductUOM(UnitType.ENERGY, Unit.WATT_HOUR, symbols.getString("wh.name"),
 					symbols.getString("wh.symbol"), symbols.getString("wh.desc"), symbols.getString("wh.unified"),
 					getUOM(Unit.WATT), getHour());
