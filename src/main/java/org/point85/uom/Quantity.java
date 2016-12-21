@@ -27,9 +27,9 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 /**
- * Quantity represents an amount and {@link UnitOfMeasure}. The amount is
- * expressed as a BigDecimal to control the precision of floating point
- * arithmetic.
+ * The Quantity class represents an amount and {@link UnitOfMeasure}. The amount
+ * is expressed as a BigDecimal in order to control the precision of floating
+ * point arithmetic.
  * 
  * @author Kent Randall
  *
@@ -111,7 +111,7 @@ public class Quantity {
 	 *            Divisor
 	 * @return Ratio of two amounts
 	 */
-	static public BigDecimal divide(String dividendAmount, String divisorAmount) {
+	static public BigDecimal divideAmounts(String dividendAmount, String divisorAmount) {
 		BigDecimal dividend = Quantity.createAmount(dividendAmount);
 		BigDecimal divisor = Quantity.createAmount(divisorAmount);
 		return dividend.divide(divisor, UnitOfMeasure.MATH_CONTEXT);
@@ -126,7 +126,7 @@ public class Quantity {
 	 *            Multiplicand
 	 * @return Product of two amounts
 	 */
-	static public BigDecimal multiply(String multiplierAmount, String multiplicandAmount) {
+	static public BigDecimal multiplyAmounts(String multiplierAmount, String multiplicandAmount) {
 		BigDecimal multiplier = Quantity.createAmount(multiplierAmount);
 		BigDecimal multiplicand = Quantity.createAmount(multiplicandAmount);
 		return multiplier.multiply(multiplicand, UnitOfMeasure.MATH_CONTEXT);
@@ -271,6 +271,9 @@ public class Quantity {
 		return new Quantity(newAmount, toUOM);
 	}
 
+	/**
+	 * Create a String representation of this Quantity
+	 */
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
@@ -293,7 +296,7 @@ public class Quantity {
 	 * @param other
 	 *            Quantity
 	 * @return -1 if less than, 0 if equal and 1 if greater than
-	 * @throws Exception
+	 * @throws Exception If the quantities cannot be compared.
 	 */
 	public int compare(Quantity other) throws Exception {
 		Quantity toCompare = other;

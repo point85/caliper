@@ -35,25 +35,24 @@ public enum Unit {
 	// dimension-less "1" or unity
 	ONE,
 	// time
-	MILLISECOND, SECOND, MINUTE, HOUR, DAY, WEEK, JULIAN_YEAR, SQUARE_SECOND,
+	SECOND, MINUTE, HOUR, DAY, WEEK, JULIAN_YEAR, SQUARE_SECOND,
 	// angle
 	RADIAN, STERADIAN,
 	// degree of arc
 	DEGREE,
 	// ratio
 	DECIBEL,
-
 	// SI units follow
 	// length
-	NANOMETRE, MICROMETRE, MILLIMETRE, CENTIMETRE, METRE, KILOMETRE, ANGSTROM, LIGHT_YEAR, DIOPTER,
+	METRE, ANGSTROM, LIGHT_YEAR, DIOPTER,
 	// area
 	SQUARE_METRE,
 	// temperature
 	KELVIN, CELSIUS,
 	// mass
-	MICROGRAM, MILLIGRAM, GRAM, KILOGRAM, CARAT, TONNE,
+	GRAM, KILOGRAM, CARAT, TONNE,
 	// volume
-	CUBIC_METRE, MILLILITRE, CENTILITRE, DECILITRE, LITRE,
+	CUBIC_METRE, LITRE,
 	// volumetric flow
 	CUBIC_METRE_PER_SECOND,
 	// mass flow
@@ -65,19 +64,19 @@ public enum Unit {
 	// acceleration
 	METRE_PER_SECOND_SQUARED,
 	// energy
-	JOULE, KILOJOULE, ELECTRON_VOLT, CALORIE, KILOWATT_HOUR,
+	JOULE, ELECTRON_VOLT, CALORIE, WATT_HOUR,
 	// force
 	NEWTON,
 	// power
-	WATT, KILOWATT,
+	WATT,
 	// frequency
 	HERTZ, RAD_PER_SEC,
 	// pressure
-	PASCAL, KILOPASCAL, BAR,
+	PASCAL, BAR, ATMOSPHERE,
 	// electrical
 	AMPERE, COULOMB, ELEMENTARY_CHARGE, VOLT, OHM, FARAD, WEBER, TESLA, HENRY, SIEMENS,
-	// substance
-	MOLE,
+	// substance amount or concentration
+	MOLE, PH,
 	// luminosity
 	CANDELA, LUMEN, LUX,
 	// radioactivity
@@ -92,7 +91,6 @@ public enum Unit {
 	GRAVITY, LIGHT_VELOCITY,
 	// IT
 	BIT, BYTE,
-
 	// Customary Units follow
 	// length
 	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL, POINT,
@@ -109,7 +107,7 @@ public enum Unit {
 	// volume
 	CUBIC_INCH, CUBIC_FOOT, CUBIC_YARD, CORD,
 	// velocity
-	FEET_PER_SECOND, KNOT, MILES_PER_HOUR, 
+	FEET_PER_SECOND, KNOT, MILES_PER_HOUR,
 	// frequency
 	REV_PER_MIN,
 	// acceleration
@@ -120,17 +118,15 @@ public enum Unit {
 	BTU,
 	// pressure
 	PSI, IN_HG,
-
 	// US Units follow
 	// volume
-	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, US_BUSHEL, 
+	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, US_BUSHEL,
 	// mass
 	US_TON,
-
 	// British units follow
 	// volume
-	BR_TEASPOON, BR_TABLESPOON, BR_FLUID_OUNCE, BR_CUP, BR_PINT, BR_QUART, BR_GALLON, BR_BUSHEL, 
+	BR_TEASPOON, BR_TABLESPOON, BR_FLUID_OUNCE, BR_CUP, BR_PINT, BR_QUART, BR_GALLON, BR_BUSHEL,
 	// mass
-	BR_TON
+	BR_TON;
 
 }

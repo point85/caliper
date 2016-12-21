@@ -1,7 +1,7 @@
 # Caliper
 The Caliper project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
 
-A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A special bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
+A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
  
 ## Concepts
 
@@ -12,23 +12,23 @@ All units are owned by the unified measurement system. Units 'x' and 'y' belong 
  
 *Scalar Unit* 
 
-A simple unit, for example a metre, is defined as a ScalarUOM.  A special scalar unit of measure is unity or "1".  
+A simple unit, for example a metre, is defined as a scalar UOM.  A special scalar unit of measure is unity or dimensionless "1".  
 
 *Product Unit*
 
-A unit of measure that is the product of two other units is defined as a ProductUOM.  An example is a Joule which is a Newton·metre.  
+A unit of measure that is the product of two other units is defined as a product UOM.  An example is a Joule which is a Newton·metre.  
 
 *Quotient Unit*  
 
-A unit of measure that is the quotient of two other units is defined as a QuotientUOM. An example is a velocity, e.g. metre/second.  
+A unit of measure that is the quotient of two other units is defined as a quotient UOM. An example is a velocity, e.g. metre/second.  
 
 *Power Unit*
 
-A unit of measure that has an exponent on a base unit is defined as a PowerUOM. An example is area in metre^2. Note that an exponent of 0 is unity, and an exponent of 1 is the base unit itself. An exponent of 2 is a product unit where the multiplier and multiplicand are the base unit.  A power of -1 is a quotient unit of measure where the dividend is 1 and the divisor is the base unit.  
+A unit of measure that has an exponent on a base unit is defined as a power UOM. An example is area in metre^2. Note that an exponent of 0 is unity, and an exponent of 1 is the base unit itself. An exponent of 2 is a product unit where the multiplier and multiplicand are the base unit.  A power of -1 is a quotient unit of measure where the dividend is 1 and the divisor is the base unit.  
 
 *Type*
 
-Units are classified by type, e.g. length, mass, time and temperature.  Only units of the same type can be converted to one another. Units are also enumerated, e.g. kilogram, Newton, metre, etc.  Custom units (e.g. a 1 litre bottle) do not have a pre-defined type or enumeration.
+Units are classified by type, e.g. length, mass, time and temperature.  Only units of the same type can be converted to one another. Pre-defined units of measure are also enumerated, e.g. kilogram, Newton, metre, etc.  Custom units (e.g. a 1 litre bottle) do not have a pre-defined type or enumeration and are referred to by a unique base symbol.
 
 *Base Symbol*
  
@@ -36,29 +36,29 @@ All units have a base symbol that is the most reduced form of the unit.  For exa
 
 *Quantity*
 
-A quantity is an amount (implemented as a BigDecimal for control of precision and scaling) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units can be transformed.  For example, multiplying a length quantity in metres by a force quantity in Newtons results in a quantity of energy in Joules.
+A quantity is an amount (implemented as a BigDecimal for control of precision and scaling) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units can be transformed.  For example, multiplying a length quantity in metres by a force quantity in Newtons results in a quantity of energy in Joules (or Newton-metres).
  
 ## Code Examples
-The unified MeasurementSystem is obtained by calling:
+The singleton unified MeasurementSystem is obtained by calling:
 ```java
 MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 ```
 The Unit.properties file defines the name, symbol, description and UCUM symbol for each of the predefined units in the following code examples.  The Unit.properties file is localizable.  For example, 'metres' can be changed to use the US spelling 'meters' or descriptions can be translated to another language.
 
-The metre ScalarUOM is created by the MeasurementSystem as follows:
+The metre scalar UOM is created by the MeasurementSystem as follows:
 ```java
 UnitOfMeasure uom = createScalarUOM(UnitType.LENGTH, Unit.METRE, symbols.getString("m.name"),
 					symbols.getString("m.symbol"), symbols.getString("m.desc"), symbols.getString("m.unified"));
 ``` 
 
-The square metre PowerUOM is created by the MeasurementSystem as follows: 
+The square metre power UOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.getString("m2.name"),
 					symbols.getString("m2.symbol"), symbols.getString("m2.desc"), symbols.getString("m2.unified"),
 					getUOM(Unit.METRE), 2);
 ```
 
-The metre per second QuotientUOM is created by the MeasurementSystem as follows: 
+The metre per second quotient UOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, 
 					symbols.getString("mps.name"), symbols.getString("mps.symbol"), 
@@ -66,7 +66,7 @@ UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND,
 					getUOM(Unit.METRE), getSecond());
 ```
 
-The Newton ProductUOM is created by the MeasurementSystem as follows: 
+The Newton product UOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getString("newton.name"),
 					symbols.getString("newton.symbol"), symbols.getString("newton.desc"),
@@ -74,15 +74,12 @@ UnitOfMeasure uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getStr
 					getUOM(Unit.METRE_PER_SECOND_SQUARED));
 ```
 
-A millisecond is 1/1000th of a second defined as:
+A millisecond is 1/1000th of a second with a defined prefix and created as:
 
 ```java
-public static final BigDecimal MILLI = Quantity.createAmount("0.001");
-Conversion conversion = new Conversion(MILLI, getUOM(Unit.SECOND));
-UnitOfMeasure uom = createScalarUOM(UnitType.TIME, Unit.MILLISECOND,
- 				    symbols.getString("ms.name"),symbols.getString("ms.symbol"), 
-				    symbols.getString("ms.desc"), symbols.getString("ms.unified"));
-uom.setConversion(conversion);
+MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+UnitOfMeasure second = sys.getSecond();
+UnitOfMeasure msec = sys.getUOM(Prefix.MILLI, second);
 ```
 
 For a second example, a US gallon = 231 cubic inches:
@@ -136,7 +133,7 @@ sixPackCan.setConversion(conversion);
 Quantities can be added, subtracted and converted:
 ```java
 UnitOfMeasure m = sys.getUOM(Unit.METRE);
-UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
+UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		
 Quantity q1 = new Quantity("2", m);
 Quantity q2 = new Quantity("2", cm);
@@ -173,8 +170,20 @@ Quantity q1 = new Quantity(BigDecimal.TEN, mps);
 Quantity q2 = q1.invert();
 ```
 
+To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getScaledUOM() can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
+```java
+		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
+		UnitOfMeasure cL = sys.getScaledUOM(Prefix.CENTI, litre);
+```
+and, a megabyte (MB = 2^20 bytes) is created by:
+```java
+UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, sys.getUOM(Unit.BYTE));
+```
+###Caching
+A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
+
 ## Localization
-All externally visible text is defined in two properties files.  The Unit.properties file has the name (.name), symbol (.symbol), description (.desc) and UCUM symbol (.unified) for a unit of measure as well as toString() method text.  The Message.properties file has the text for an exception.  A default English file for each is included in the project.  The files can be translated to another language by following the Java locale naming conventions for the properties file, or the English version can be edited, e.g. to change "metre" to "meter".  For example, a metre's text is:
+All externally visible text is defined in two resource bundle .properties files.  The Unit.properties file has the name (.name), symbol (.symbol), description (.desc) and UCUM symbol (.unified) for a unit of measure as well as toString() method text.  The Message.properties file has the text for an exception.  A default English file for each is included in the project.  The files can be translated to another language by following the Java locale naming conventions for the properties file, or the English version can be edited, e.g. to change "metre" to "meter".  For example, a metre's text is:
 
 ```java
 # metre

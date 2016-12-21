@@ -35,10 +35,8 @@ import java.math.BigDecimal;
 import org.junit.Test;
 import org.point85.uom.Conversion;
 import org.point85.uom.MeasurementSystem;
-import org.point85.uom.PowerUOM;
+import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
-import org.point85.uom.QuotientUOM;
-import org.point85.uom.ScalarUOM;
 import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
@@ -156,7 +154,7 @@ public class TestQuantity extends BaseTest {
 		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
-		UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
+		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 
 		final char squared = 0x00B2;
@@ -290,7 +288,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
-		UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
+		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
 		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m);
 		UnitOfMeasure oneOverM = sys.getUOM(Unit.DIOPTER);
@@ -354,8 +352,6 @@ public class TestQuantity extends BaseTest {
 		q3 = q3.divide(q2);
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("2.0"), DELTA6));
 		assertTrue(q3.getUOM().equals(m));
-		UnitOfMeasure base = q3.getUOM().getBaseUOM();
-		assertTrue(base.equals(m));
 		assertTrue(q3.equals(q1));
 
 		q3 = q3.convert(m);
@@ -409,6 +405,28 @@ public class TestQuantity extends BaseTest {
 		q4 = q3.convert(sys.getUOM(Unit.JOULE));
 		assertTrue(q4.getUOM().equals(sys.getUOM(Unit.JOULE)));
 	}
+	
+	@Test
+	public void testPowers() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		
+		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
+		UnitOfMeasure p2 = sys.createPowerUOM(UnitType.AREA, "m2^1", "m2^1", "square metres raised to power 1", m2, 1);
+		UnitOfMeasure p4 = sys.createPowerUOM(UnitType.CUSTOM, "m2^2", "m2^2", "square metres raised to power 2", m2, 2);
+		
+		BigDecimal amount = Quantity.createAmount("10");
+		
+		Quantity q1 = new Quantity(amount, m2);
+		Quantity q3 = new Quantity(amount, p4);
+		
+		Quantity q4 = q3.divide(q1);
+		assertThat(q4.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(q4.getUOM().getBaseUOM().equals(m2));
+		
+		Quantity q2 = q1.convert(p2);
+		assertThat(q2.getAmount(), closeTo(amount, DELTA6));
+		assertTrue(q2.getUOM().getBaseUOM().equals(m2));
+	}
 
 	@Test
 	public void testSIUnits() throws Exception {
@@ -418,7 +436,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
-		UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
+		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, metre);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
 		UnitOfMeasure joule = sys.getUOM(Unit.JOULE);
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
@@ -468,7 +486,6 @@ public class TestQuantity extends BaseTest {
 
 		q2 = q2.convert(cm);
 		assertThat(q2.getAmount(), closeTo(oneHundred, DELTA6));
-		assertTrue(q2.getUOM().getEnumeration().equals(Unit.CENTIMETRE));
 		assertThat(q2.getUOM().getScalingFactor(), closeTo(Quantity.createAmount("0.01"), DELTA6));
 
 		q2 = q1;
@@ -494,7 +511,7 @@ public class TestQuantity extends BaseTest {
 		// power
 		Quantity onem3 = new Quantity(BigDecimal.ONE, m3);
 		String cm3sym = "cm" + (char) 0xB3;
-		PowerUOM cm3 = sys.createPowerUOM(UnitType.VOLUME, cm3sym, cm3sym, null, cm, 3);
+		UnitOfMeasure cm3 = sys.createPowerUOM(UnitType.VOLUME, cm3sym, cm3sym, null, cm, 3);
 		Quantity megcm3 = new Quantity("1E+06", cm3);
 
 		Quantity qft3 = onem3.convert(ft3);
@@ -518,7 +535,7 @@ public class TestQuantity extends BaseTest {
 		u = mps.invert();
 		assertTrue(u.getSymbol().equals("s/m"));
 
-		QuotientUOM uom = sys.createQuotientUOM(UnitType.CUSTOM, "1/F", "1/F", "one over farad", sys.getOne(), farad);
+		UnitOfMeasure uom = sys.createQuotientUOM(UnitType.CUSTOM, "1/F", "1/F", "one over farad", sys.getOne(), farad);
 		assertTrue(uom.getSymbol().equals("1/F"));
 
 		// hz to radians per sec
@@ -548,14 +565,14 @@ public class TestQuantity extends BaseTest {
 		BigDecimal ten = Quantity.createAmount("10");
 		BigDecimal forty = Quantity.createAmount("40");
 
-		ScalarUOM one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
+		UnitOfMeasure one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
 		one16ozCan.setConversion(new Conversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE)));
 
 		Quantity q400 = new Quantity("400", one16ozCan);
 		Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
 		assertThat(q50.getAmount(), closeTo(Quantity.createAmount("50"), DELTA6));
 
-		ScalarUOM one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
+		UnitOfMeasure one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
 		one12ozCan.setConversion(new Conversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE)));
 
 		Quantity q48 = new Quantity("48", one12ozCan);
@@ -563,11 +580,11 @@ public class TestQuantity extends BaseTest {
 		assertThat(q36.getAmount(), closeTo(Quantity.createAmount("36"), DELTA6));
 
 		Conversion conversion = new Conversion(six, one12ozCan);
-		ScalarUOM sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
+		UnitOfMeasure sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
 		sixPackCan.setConversion(conversion);
 
 		conversion = new Conversion(four, sixPackCan);
-		ScalarUOM fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "4 pack case", "4PCase", "case of 4 6-packs");
+		UnitOfMeasure fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "4 pack case", "4PCase", "case of 4 6-packs");
 		fourPackCase.setConversion(conversion);
 
 		BigDecimal bd = fourPackCase.getConversionFactor(one12ozCan);
@@ -602,13 +619,13 @@ public class TestQuantity extends BaseTest {
 	public void testGenericQuantity() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 
-		ScalarUOM a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
+		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
 
 		Conversion conversion = new Conversion(BigDecimal.TEN, a);
-		ScalarUOM b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
+		UnitOfMeasure b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		b.setConversion(conversion);
 
-		BigDecimal two = Quantity.multiply("2", "2");
+		BigDecimal two = Quantity.multiplyAmounts("2", "2");
 
 		// add
 		Quantity q1 = new Quantity(two, a);
@@ -687,12 +704,12 @@ public class TestQuantity extends BaseTest {
 	@Test
 	public void testEquality() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
-		sys.clearCache();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure nm = sys.getUOM(Unit.NEWTON_METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
+		UnitOfMeasure J = sys.getUOM(Unit.JOULE);
 		BigDecimal amount = Quantity.createAmount("10");
 
 		final Quantity q1 = new Quantity(amount, newton);
@@ -705,10 +722,11 @@ public class TestQuantity extends BaseTest {
 		assertTrue(q4.getUOM().getSymbol().equals(sys.getOne().getSymbol()));
 		assertTrue(q4.getAmount().equals(amount));
 
-		// Newton-metre
+		// Newton-metre (Joules)
 		q4 = q1.multiply(q2);
-		assertTrue(q5.getUOM().getSymbol().equals(q4.getUOM().getSymbol()));
-		assertTrue(q5.equals(q4));
+		assertTrue(q5.getUOM().getBaseSymbol().equals(q4.getUOM().getBaseSymbol()));
+		Quantity q6 = q5.convert(J);
+		assertTrue(q6.getAmount().equals(q4.getAmount()));
 
 		// Newton
 		q5 = q4.divide(q2);
@@ -739,7 +757,7 @@ public class TestQuantity extends BaseTest {
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
-		UnitOfMeasure cm = sys.getUOM(Unit.CENTIMETRE);
+		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, metre);
 
 		BigDecimal amount = Quantity.createAmount("10");
 
@@ -759,6 +777,10 @@ public class TestQuantity extends BaseTest {
 			fail("not comparable)");
 		} catch (Exception e) {
 		}
+
+		Quantity acidpH = new Quantity("4.5", sys.getUOM(Unit.PH));
+		Quantity neutralpH = new Quantity("7.0", sys.getUOM(Unit.PH));
+		assertTrue(acidpH.compare(neutralpH) == -1);
 
 	}
 }

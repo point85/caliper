@@ -39,8 +39,7 @@ import java.util.ResourceBundle;
 /**
  * A MeasurementSystem is a collection of units of measure that have a linear
  * relationship to each other: y = ax + b where x is the unit to be converted, y
- * is the converted unit, a is the scaling factor and b is the offset.
- * 
+ * is the converted unit, a is the scaling factor and b is the offset. <br>
  * See
  * <ul>
  * <li>Wikipedia: <i><a href=
@@ -60,15 +59,18 @@ import java.util.ResourceBundle;
  * <li>British Imperial system:
  * <i><a href="https://en.wikipedia.org/wiki/Imperial_units">British Imperial
  * Units</a></i></li>
+ * <li>JSR 363: <i><a href=
+ * "https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf">JSR
+ * 363 Specification</a></i></li>
  * </ul>
- * 
- * The MeasurementSystem class:
+ * <br>
+ * The MeasurementSystem class creates:
  * <ul>
- * <li>Provides a definition of standard SI prefixes</li>
- * <li>Creates the 7 SI fundamental units of measure</li>
- * <li>Creates 20 SI units derived from these fundamental units</li>
- * <li>Creates other units in the International Customary, US and British
- * Imperial systems</li>
+ * <li>the 7 SI fundamental units of measure</li>
+ * <li>20 SI units derived from these fundamental units</li>
+ * <li>other units in the International Customary, US and British Imperial
+ * systems</li>
+ * <li>any number of custom units of measure</li>
  * </ul>
  *
  */
@@ -89,30 +91,9 @@ public class MeasurementSystem {
 	// unit resource bundle (e.g. time units)
 	private transient ResourceBundle symbols;
 
-	// SI prefix factors
-	public static final BigDecimal YOTTA = Quantity.createAmount("1.0E+24");
-	public static final BigDecimal ZETTA = Quantity.createAmount("1.0E+21");
-	public static final BigDecimal EXA = Quantity.createAmount("1.0E+18");
-	public static final BigDecimal PETA = Quantity.createAmount("1.0E+15");
-	public static final BigDecimal TERA = Quantity.createAmount("1.0E+12");
-	public static final BigDecimal GIGA = Quantity.createAmount("1.0E+09");
-	public static final BigDecimal MEGA = Quantity.createAmount("1000000");
-	public static final BigDecimal KILO = Quantity.createAmount("1000");
-	public static final BigDecimal HECTO = Quantity.createAmount("100");
-	public static final BigDecimal DECA = Quantity.createAmount("10");
-	public static final BigDecimal DECI = Quantity.createAmount("0.1");
-	public static final BigDecimal CENTI = Quantity.createAmount("0.01");
-	public static final BigDecimal MILLI = Quantity.createAmount("0.001");
-	public static final BigDecimal MICRO = Quantity.createAmount("0.000001");
-	public static final BigDecimal NANO = Quantity.createAmount("1.0E-09");
-	public static final BigDecimal PICO = Quantity.createAmount("1.0E-12");
-	public static final BigDecimal FEMTO = Quantity.createAmount("1.0E-15");
-	public static final BigDecimal ATTO = Quantity.createAmount("1.0E-18");
-	public static final BigDecimal ZEPTO = Quantity.createAmount("1.0E-21");
-	public static final BigDecimal YOCTO = Quantity.createAmount("1.0E-24");
-
 	// registry by unit symbol
-	private Map<String, UnitOfMeasure> symbolRegistry = Collections.synchronizedMap(new HashMap<String, UnitOfMeasure>());
+	private Map<String, UnitOfMeasure> symbolRegistry = Collections
+			.synchronizedMap(new HashMap<String, UnitOfMeasure>());
 
 	// registry for units by enumeration
 	private Map<Unit, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<Unit, UnitOfMeasure>());
@@ -133,8 +114,8 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * Get the unified system of units of measure from International Customary,
-	 * SI, US and British Imperial systems
+	 * Get the unified system of units of measure for International Customary,
+	 * SI, US, British Imperial as well as custom systems
 	 * 
 	 * @return {@link MeasurementSystem}
 	 * @throws Exception
@@ -213,14 +194,6 @@ public class MeasurementSystem {
 					symbols.getString("sec.symbol"), symbols.getString("sec.desc"), symbols.getString("sec.unified"));
 			break;
 
-		case MILLISECOND:
-			// millisecond
-			conversion = new Conversion(MILLI, getUOM(Unit.SECOND));
-			uom = createScalarUOM(UnitType.TIME, Unit.MILLISECOND, symbols.getString("ms.name"),
-					symbols.getString("ms.symbol"), symbols.getString("ms.desc"), symbols.getString("ms.unified"));
-			uom.setConversion(conversion);
-			break;
-
 		case MINUTE:
 			// minute
 			conversion = new Conversion(Quantity.createAmount("60"), getUOM(Unit.SECOND));
@@ -297,7 +270,7 @@ public class MeasurementSystem {
 
 		case DEGREE:
 			// degree of arc
-			factor = Quantity.divide(String.valueOf(Math.PI), "180");
+			factor = Quantity.divideAmounts(String.valueOf(Math.PI), "180");
 			conversion = new Conversion(factor, getUOM(Unit.RADIAN));
 			uom = createScalarUOM(UnitType.PLANE_ANGLE, Unit.DEGREE, symbols.getString("degree.name"),
 					symbols.getString("degree.symbol"), symbols.getString("degree.desc"),
@@ -326,7 +299,7 @@ public class MeasurementSystem {
 
 		case TONNE:
 			// mass
-			conversion = new Conversion(KILO, getUOM(Unit.KILOGRAM));
+			conversion = new Conversion(Prefix.KILO.getScalingFactor(), getUOM(Unit.KILOGRAM));
 			uom = createScalarUOM(UnitType.MASS, Unit.TONNE, symbols.getString("tonne.name"),
 					symbols.getString("tonne.symbol"), symbols.getString("tonne.desc"),
 					symbols.getString("tonne.unified"));
@@ -361,76 +334,24 @@ public class MeasurementSystem {
 			uom.setConversion(conversion);
 			break;
 
+		case PH:
+			// molar concentration
+			uom = createScalarUOM(UnitType.MOLAR_CONCENTRATION, Unit.PH, symbols.getString("ph.name"),
+					symbols.getString("ph.symbol"), symbols.getString("ph.desc"), symbols.getString("ph.unified"));
+			break;
+
 		case LIGHT_YEAR:
 			uom = createProductUOM(UnitType.LENGTH, Unit.LIGHT_YEAR, symbols.getString("ly.name"),
 					symbols.getString("ly.symbol"), symbols.getString("ly.desc"), symbols.getString("ly.unified"),
 					getUOM(Unit.LIGHT_VELOCITY), getUOM(Unit.JULIAN_YEAR));
 			break;
 
-		case KILOMETRE:
-			// kilometre
-			conversion = new Conversion(KILO, getUOM(Unit.METRE));
-			uom = createScalarUOM(UnitType.LENGTH, Unit.KILOMETRE, symbols.getString("km.name"),
-					symbols.getString("km.symbol"), symbols.getString("km.desc"), symbols.getString("km.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case CENTIMETRE:
-			// centimetre
-			conversion = new Conversion(CENTI, getUOM(Unit.METRE));
-			uom = createScalarUOM(UnitType.LENGTH, Unit.CENTIMETRE, symbols.getString("cm.name"),
-					symbols.getString("cm.symbol"), symbols.getString("cm.desc"), symbols.getString("cm.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case MILLIMETRE:
-			// millimetre
-			conversion = new Conversion(MILLI, getUOM(Unit.METRE));
-			uom = createScalarUOM(UnitType.LENGTH, Unit.MILLIMETRE, symbols.getString("mm.name"),
-					symbols.getString("mm.symbol"), symbols.getString("mm.desc"), symbols.getString("mm.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case MICROMETRE:
-			// micrometre (micron = 10-6 metre)
-			conversion = new Conversion(MICRO, getUOM(Unit.METRE));
-			uom = createScalarUOM(UnitType.LENGTH, Unit.MICROMETRE, symbols.getString("mu.name"),
-					symbols.getString("mu.symbol"), symbols.getString("mu.desc"), symbols.getString("mu.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case NANOMETRE:
-			// nanometre (10-9 metre)
-			conversion = new Conversion(NANO, getUOM(Unit.METRE));
-			uom = createScalarUOM(UnitType.LENGTH, Unit.NANOMETRE, symbols.getString("nm.name"),
-					symbols.getString("nm.symbol"), symbols.getString("nm.desc"), symbols.getString("nm.unified"));
-			uom.setConversion(conversion);
-			break;
-
 		case GRAM:
 			// gram
-			conversion = new Conversion(MILLI, getUOM(Unit.KILOGRAM));
+			conversion = new Conversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.KILOGRAM));
 			uom = createScalarUOM(UnitType.MASS, Unit.GRAM, symbols.getString("gram.name"),
 					symbols.getString("gram.symbol"), symbols.getString("gram.desc"),
 					symbols.getString("gram.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case MILLIGRAM:
-			// milligram
-			conversion = new Conversion(MILLI, getUOM(Unit.GRAM));
-			uom = createScalarUOM(UnitType.MASS, Unit.MILLIGRAM, symbols.getString("milligram.name"),
-					symbols.getString("milligram.symbol"), symbols.getString("milligram.desc"),
-					symbols.getString("milligram.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case MICROGRAM:
-			// microgram
-			conversion = new Conversion(MICRO, getUOM(Unit.GRAM));
-			uom = createScalarUOM(UnitType.MASS, Unit.MICROGRAM, symbols.getString("microgram.name"),
-					symbols.getString("microgram.symbol"), symbols.getString("microgram.desc"),
-					symbols.getString("microgram.unified"));
 			uom.setConversion(conversion);
 			break;
 
@@ -473,34 +394,10 @@ public class MeasurementSystem {
 
 		case LITRE:
 			// litre
-			conversion = new Conversion(MILLI, getUOM(Unit.CUBIC_METRE));
+			conversion = new Conversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.CUBIC_METRE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.LITRE, symbols.getString("litre.name"),
 					symbols.getString("litre.symbol"), symbols.getString("litre.desc"),
 					symbols.getString("litre.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case MILLILITRE:
-			// millilitre
-			conversion = new Conversion(MILLI, getUOM(Unit.LITRE));
-			uom = createScalarUOM(UnitType.VOLUME, Unit.MILLILITRE, symbols.getString("ml.name"),
-					symbols.getString("ml.symbol"), symbols.getString("ml.desc"), symbols.getString("ml.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case CENTILITRE:
-			// centilitre
-			conversion = new Conversion(CENTI, getUOM(Unit.LITRE));
-			uom = createScalarUOM(UnitType.VOLUME, Unit.CENTILITRE, symbols.getString("cl.name"),
-					symbols.getString("cl.symbol"), symbols.getString("cl.desc"), symbols.getString("cl.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case DECILITRE:
-			// decilitre
-			conversion = new Conversion(DECI, getUOM(Unit.LITRE));
-			uom = createScalarUOM(UnitType.VOLUME, Unit.DECILITRE, symbols.getString("dl.name"),
-					symbols.getString("dl.symbol"), symbols.getString("dl.desc"), symbols.getString("dl.unified"));
 			uom.setConversion(conversion);
 			break;
 
@@ -570,14 +467,6 @@ public class MeasurementSystem {
 					symbols.getString("joule.unified"), getUOM(Unit.NEWTON), getUOM(Unit.METRE));
 			break;
 
-		case KILOJOULE:
-			// 1000 J
-			conversion = new Conversion(KILO, getUOM(Unit.JOULE));
-			uom = createScalarUOM(UnitType.ENERGY, Unit.KILOJOULE, symbols.getString("kj.name"),
-					symbols.getString("kj.symbol"), symbols.getString("kj.desc"), symbols.getString("kj.unified"));
-			uom.setConversion(conversion);
-			break;
-
 		case ELECTRON_VOLT:
 			// ev
 			uom = createProductUOM(UnitType.ENERGY, Unit.ELECTRON_VOLT, symbols.getString("ev.name"),
@@ -585,11 +474,11 @@ public class MeasurementSystem {
 					getUOM(Unit.ELEMENTARY_CHARGE), getUOM(Unit.VOLT));
 			break;
 
-		case KILOWATT_HOUR:
+		case WATT_HOUR:
 			// kw-hour
-			uom = createProductUOM(UnitType.ENERGY, Unit.KILOWATT_HOUR, symbols.getString("kwh.name"),
-					symbols.getString("kwh.symbol"), symbols.getString("kwh.desc"), symbols.getString("kwh.unified"),
-					getUOM(Unit.KILOWATT), getHour());
+			uom = createProductUOM(UnitType.ENERGY, Unit.WATT_HOUR, symbols.getString("wh.name"),
+					symbols.getString("wh.symbol"), symbols.getString("wh.desc"), symbols.getString("wh.unified"),
+					getUOM(Unit.WATT), getHour());
 			break;
 
 		case WATT:
@@ -597,14 +486,6 @@ public class MeasurementSystem {
 			uom = createQuotientUOM(UnitType.POWER, Unit.WATT, symbols.getString("watt.name"),
 					symbols.getString("watt.symbol"), symbols.getString("watt.desc"), symbols.getString("watt.unified"),
 					getUOM(Unit.JOULE), getSecond());
-			break;
-
-		case KILOWATT:
-			// power
-			conversion = new Conversion(KILO, getUOM(Unit.WATT));
-			uom = createScalarUOM(UnitType.POWER, Unit.KILOWATT, symbols.getString("kw.name"),
-					symbols.getString("kw.symbol"), symbols.getString("kw.desc"), symbols.getString("kw.unified"));
-			uom.setConversion(conversion);
 			break;
 
 		case HERTZ:
@@ -631,11 +512,11 @@ public class MeasurementSystem {
 					symbols.getString("pascal.unified"), getUOM(Unit.NEWTON), getUOM(Unit.SQUARE_METRE));
 			break;
 
-		case KILOPASCAL:
-			// 1000 pascal
-			conversion = new Conversion(KILO, getUOM(Unit.PASCAL));
-			uom = createScalarUOM(UnitType.PRESSURE, Unit.KILOPASCAL, symbols.getString("kpa.name"),
-					symbols.getString("kpa.symbol"), symbols.getString("kpa.desc"), symbols.getString("kpa.unified"));
+		case ATMOSPHERE:
+			// pressure
+			conversion = new Conversion(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
+			uom = createScalarUOM(UnitType.PRESSURE, Unit.ATMOSPHERE, symbols.getString("atm.name"),
+					symbols.getString("atm.symbol"), symbols.getString("atm.desc"), symbols.getString("atm.unified"));
 			uom.setConversion(conversion);
 			break;
 
@@ -749,6 +630,7 @@ public class MeasurementSystem {
 					symbols.getString("gray.symbol"), symbols.getString("gray.desc"), symbols.getString("gray.unified"),
 					getUOM(Unit.JOULE), getUOM(Unit.KILOGRAM));
 			break;
+
 		case SIEVERT:
 			// sievert (Sv)
 			uom = createQuotientUOM(UnitType.RADIATION_DOSE, Unit.SIEVERT, symbols.getString("sievert.name"),
@@ -783,7 +665,8 @@ public class MeasurementSystem {
 
 		case ANGSTROM:
 			// length
-			conversion = new Conversion(Quantity.createAmount("0.1"), getUOM(Unit.NANOMETRE));
+			UnitOfMeasure nm = this.getUOM(Prefix.NANO, getUOM(Unit.METRE));
+			conversion = new Conversion(Quantity.createAmount("0.1"), nm);
 			uom = createScalarUOM(UnitType.LENGTH, Unit.ANGSTROM, symbols.getString("angstrom.name"),
 					symbols.getString("angstrom.symbol"), symbols.getString("angstrom.desc"),
 					symbols.getString("angstrom.unified"));
@@ -792,14 +675,14 @@ public class MeasurementSystem {
 
 		case BIT:
 			// computer bit
-			uom = createScalarUOM(UnitType.IT, Unit.BIT, symbols.getString("bit.name"), symbols.getString("bit.symbol"),
+			uom = createScalarUOM(UnitType.CS, Unit.BIT, symbols.getString("bit.name"), symbols.getString("bit.symbol"),
 					symbols.getString("bit.desc"), symbols.getString("bit.unified"));
 			break;
 
 		case BYTE:
 			// computer byte
 			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BIT));
-			uom = createScalarUOM(UnitType.IT, Unit.BYTE, symbols.getString("byte.name"),
+			uom = createScalarUOM(UnitType.CS, Unit.BYTE, symbols.getString("byte.name"),
 					symbols.getString("byte.symbol"), symbols.getString("byte.desc"),
 					symbols.getString("byte.unified"));
 			uom.setConversion(conversion);
@@ -826,7 +709,7 @@ public class MeasurementSystem {
 					symbols.getString("rankine.unified"));
 
 			// create bridge to SI
-			factor = Quantity.divide("5", "9");
+			factor = Quantity.divideAmounts("5", "9");
 			conversion = new Conversion(factor, getUOM(Unit.KELVIN));
 			uom.setBridge(conversion);
 
@@ -883,7 +766,7 @@ public class MeasurementSystem {
 
 		case INCH:
 			// inch
-			factor = Quantity.divide("1", "12");
+			factor = Quantity.divideAmounts("1", "12");
 			conversion = new Conversion(factor, getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.INCH, symbols.getString("inch.name"),
 					symbols.getString("inch.symbol"), symbols.getString("inch.desc"),
@@ -893,7 +776,7 @@ public class MeasurementSystem {
 
 		case MIL:
 			// inch
-			conversion = new Conversion(MILLI, getUOM(Unit.INCH));
+			conversion = new Conversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.INCH));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.MIL, symbols.getString("mil.name"),
 					symbols.getString("mil.symbol"), symbols.getString("mil.desc"), symbols.getString("mil.unified"));
 			uom.setConversion(conversion);
@@ -901,7 +784,7 @@ public class MeasurementSystem {
 
 		case POINT:
 			// point
-			conversion = new Conversion(Quantity.divide("1", "72"), getUOM(Unit.INCH));
+			conversion = new Conversion(Quantity.divideAmounts("1", "72"), getUOM(Unit.INCH));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.POINT, symbols.getString("point.name"),
 					symbols.getString("point.symbol"), symbols.getString("point.desc"),
 					symbols.getString("point.unified"));
@@ -961,7 +844,7 @@ public class MeasurementSystem {
 
 		case SQUARE_INCH:
 			// square inch
-			factor = Quantity.divide("1", "144");
+			factor = Quantity.divideAmounts("1", "144");
 			conversion = new Conversion(factor, getUOM(Unit.SQUARE_FOOT));
 			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_INCH, symbols.getString("in2.name"),
 					symbols.getString("in2.symbol"), symbols.getString("in2.desc"), symbols.getString("in2.unified"),
@@ -994,7 +877,7 @@ public class MeasurementSystem {
 
 		case CUBIC_INCH:
 			// cubic inch
-			factor = Quantity.divide("1", "1728");
+			factor = Quantity.divideAmounts("1", "1728");
 			conversion = new Conversion(factor, getUOM(Unit.CUBIC_FOOT));
 			uom = createPowerUOM(UnitType.VOLUME, Unit.CUBIC_INCH, symbols.getString("in3.name"),
 					symbols.getString("in3.symbol"), symbols.getString("in3.desc"), symbols.getString("in3.unified"),
@@ -1034,7 +917,7 @@ public class MeasurementSystem {
 
 		case KNOT:
 			// knot
-			factor = Quantity.divide("6080", "3600");
+			factor = Quantity.divideAmounts("6080", "3600");
 			conversion = new Conversion(factor, getUOM(Unit.FEET_PER_SECOND));
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.KNOT, symbols.getString("knot.name"),
 					symbols.getString("knot.symbol"), symbols.getString("knot.desc"),
@@ -1085,7 +968,7 @@ public class MeasurementSystem {
 
 		case GRAIN:
 			// mass
-			amount = Quantity.divide("1", "7000");
+			amount = Quantity.divideAmounts("1", "7000");
 			conversion = new Conversion(amount, getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.GRAIN, symbols.getString("grain.name"),
 					symbols.getString("grain.symbol"), symbols.getString("grain.desc"),
@@ -1095,7 +978,7 @@ public class MeasurementSystem {
 
 		case MILES_PER_HOUR:
 			// velocity
-			amount = Quantity.divide("5280", "3600");
+			amount = Quantity.divideAmounts("5280", "3600");
 			conversion = new Conversion(amount, getUOM(Unit.FEET_PER_SECOND));
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.MILES_PER_HOUR, symbols.getString("mph.name"),
 					symbols.getString("mph.symbol"), symbols.getString("mph.desc"), symbols.getString("mph.unified"));
@@ -1198,14 +1081,14 @@ public class MeasurementSystem {
 
 		case US_TEASPOON:
 			// teaspoon
-			factor = Quantity.divide("1", "6");
+			factor = Quantity.divideAmounts("1", "6");
 			conversion = new Conversion(factor, getUOM(Unit.US_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_TEASPOON, symbols.getString("us_tsp.name"),
 					symbols.getString("us_tsp.symbol"), symbols.getString("us_tsp.desc"),
 					symbols.getString("us_tsp.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case US_TON:
 			// ton
 			conversion = new Conversion(Quantity.createAmount("2000"), getUOM(Unit.POUND_MASS));
@@ -1294,14 +1177,14 @@ public class MeasurementSystem {
 
 		case BR_TEASPOON:
 			// teaspoon
-			factor = Quantity.divide("5", "24");
+			factor = Quantity.divideAmounts("5", "24");
 			conversion = new Conversion(factor, getUOM(Unit.BR_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_TEASPOON, symbols.getString("br_tsp.name"),
 					symbols.getString("br_tsp.symbol"), symbols.getString("br_tsp.desc"),
 					symbols.getString("br_tsp.unified"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case BR_TON:
 			// ton
 			conversion = new Conversion(Quantity.createAmount("2240"), getUOM(Unit.POUND_MASS));
@@ -1511,32 +1394,13 @@ public class MeasurementSystem {
 		}
 	}
 
-	private UnitOfMeasure createUOM(Class<?> clazz, UnitType type, Unit id, String name, String symbol,
-			String description) throws Exception {
+	private UnitOfMeasure createUOM(UnitType type, Unit id, String name, String symbol, String description)
+			throws Exception {
 
 		checkType(type);
 		checkExistance(symbol, id);
 
-		UnitOfMeasure uom = null;
-
-		if (clazz.equals(ScalarUOM.class)) {
-			uom = new ScalarUOM(type, name, symbol, description, this);
-
-		} else if (clazz.equals(QuotientUOM.class)) {
-			uom = new QuotientUOM(type, name, symbol, description, this);
-
-		} else if (clazz.equals(ProductUOM.class)) {
-			uom = new ProductUOM(type, name, symbol, description, this);
-
-		} else if (clazz.equals(PowerUOM.class)) {
-			uom = new PowerUOM(type, name, symbol, description, this);
-
-		} else {
-			String msg = MessageFormat.format(getMessage("unsupported.class"), clazz.toString());
-			throw new Exception(msg);
-		}
-
-		return uom;
+		return new UnitOfMeasure(type, name, symbol, description, this);
 	}
 
 	/**
@@ -1554,14 +1418,15 @@ public class MeasurementSystem {
 	 *            Description of unit of measure
 	 * @param unified
 	 *            UCUM symbol
-	 * @return {@link ScalarUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ScalarUOM createScalarUOM(UnitType type, Unit id, String name, String symbol, String description,
+	public UnitOfMeasure createScalarUOM(UnitType type, Unit id, String name, String symbol, String description,
 			String unified) throws Exception {
 
-		ScalarUOM uom = (ScalarUOM) createUOM(ScalarUOM.class, type, id, name, symbol, description);
+		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		uom.setCategory(UnitOfMeasure.Category.SCALAR);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
 		cacheUnit(uom);
@@ -1580,11 +1445,12 @@ public class MeasurementSystem {
 	 *            Symbol (must be unique)
 	 * @param description
 	 *            Description of unit of measure
-	 * @return {@link ScalarUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ScalarUOM createScalarUOM(UnitType type, String name, String symbol, String description) throws Exception {
+	public UnitOfMeasure createScalarUOM(UnitType type, String name, String symbol, String description)
+			throws Exception {
 		return createScalarUOM(type, null, name, symbol, description, null);
 	}
 
@@ -1607,15 +1473,16 @@ public class MeasurementSystem {
 	 *            {@link UnitOfMeasure}
 	 * @param divisor
 	 *            {@link UnitOfMeasure}
-	 * @return {@link QuotientUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public QuotientUOM createQuotientUOM(UnitType type, Unit id, String name, String symbol, String description,
+	public UnitOfMeasure createQuotientUOM(UnitType type, Unit id, String name, String symbol, String description,
 			String unified, UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 
-		QuotientUOM uom = (QuotientUOM) createUOM(QuotientUOM.class, type, id, name, symbol, description);
-		uom.setUnits(dividend, divisor);
+		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		uom.setCategory(UnitOfMeasure.Category.QUOTIENT);
+		uom.setQuotientUnits(dividend, divisor);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
 		cacheUnit(uom);
@@ -1637,11 +1504,11 @@ public class MeasurementSystem {
 	 *            {@link UnitOfMeasure}
 	 * @param divisor
 	 *            {@link UnitOfMeasure}
-	 * @return {@link QuotientUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public QuotientUOM createQuotientUOM(UnitType type, String name, String symbol, String description,
+	public UnitOfMeasure createQuotientUOM(UnitType type, String name, String symbol, String description,
 			UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 		return this.createQuotientUOM(type, null, name, symbol, description, null, dividend, divisor);
 	}
@@ -1666,15 +1533,16 @@ public class MeasurementSystem {
 	 *            {@link UnitOfMeasure} multiplier
 	 * @param multiplicand
 	 *            {@link UnitOfMeasure} multiplicand
-	 * @return {@link ProductUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ProductUOM createProductUOM(UnitType type, Unit id, String name, String symbol, String description,
+	public UnitOfMeasure createProductUOM(UnitType type, Unit id, String name, String symbol, String description,
 			String unified, UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 
-		ProductUOM uom = (ProductUOM) createUOM(ProductUOM.class, type, id, name, symbol, description);
-		uom.setUnits(multiplier, multiplicand);
+		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		uom.setCategory(UnitOfMeasure.Category.PRODUCT);
+		uom.setProductUnits(multiplier, multiplicand);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
 		cacheUnit(uom);
@@ -1697,11 +1565,11 @@ public class MeasurementSystem {
 	 *            {@link UnitOfMeasure} multiplier
 	 * @param multiplicand
 	 *            {@link UnitOfMeasure} multiplicand
-	 * @return {@link ProductUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public ProductUOM createProductUOM(UnitType type, String name, String symbol, String description,
+	public UnitOfMeasure createProductUOM(UnitType type, String name, String symbol, String description,
 			UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 		return createProductUOM(type, null, name, symbol, description, null, multiplier, multiplicand);
 	}
@@ -1725,15 +1593,16 @@ public class MeasurementSystem {
 	 *            {@link UnitOfMeasure}
 	 * @param power
 	 *            Exponent
-	 * @return {@link PowerUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public PowerUOM createPowerUOM(UnitType type, Unit id, String name, String symbol, String description,
+	public UnitOfMeasure createPowerUOM(UnitType type, Unit id, String name, String symbol, String description,
 			String unified, UnitOfMeasure base, int power) throws Exception {
 
-		PowerUOM uom = (PowerUOM) createUOM(PowerUOM.class, type, id, name, symbol, description);
-		uom.setUnits(base, power);
+		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		uom.setCategory(UnitOfMeasure.Category.POWER);
+		uom.setPowerUnits(base, power);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
 		cacheUnit(uom);
@@ -1755,13 +1624,43 @@ public class MeasurementSystem {
 	 *            {@link UnitOfMeasure}
 	 * @param power
 	 *            Exponent
-	 * @return {@link PowerUOM}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public PowerUOM createPowerUOM(UnitType type, String name, String symbol, String description, UnitOfMeasure base,
-			int power) throws Exception {
+	public UnitOfMeasure createPowerUOM(UnitType type, String name, String symbol, String description,
+			UnitOfMeasure base, int power) throws Exception {
 		return createPowerUOM(type, null, name, symbol, description, null, base, power);
+	}
+
+	/**
+	 * Create or fetch a unit of measure linearly scaled by the {@link Prefix}
+	 * against the target unit of measure.
+	 * 
+	 * @param prefix
+	 *            {@link Prefix} Scaling prefix with the scaling factor, e.g.
+	 *            1000
+	 * @param targetUOM
+	 *            abscissa {@link UnitOfMeasure}
+	 * @return {@link UnitOfMeasure}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public UnitOfMeasure getUOM(Prefix prefix, UnitOfMeasure targetUOM) throws Exception {
+		String symbol = prefix.getSymbol() + targetUOM.getSymbol();
+
+		UnitOfMeasure scaled = getUOM(symbol);
+
+		// if not found, create it
+		if (scaled == null) {
+			String name = prefix.getPrefixName() + targetUOM.getName();
+			String description = prefix.getScalingFactor() + " " + targetUOM.getName();
+			String unified = prefix.getSymbol() + targetUOM.getUnifiedSymbol();
+			Conversion conversion = new Conversion(prefix.getScalingFactor(), targetUOM);
+			scaled = createScalarUOM(targetUOM.getUnitType(), null, name, symbol, description, unified);
+			scaled.setConversion(conversion);
+		}
+		return scaled;
 	}
 
 }

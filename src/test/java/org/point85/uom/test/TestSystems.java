@@ -87,7 +87,6 @@ public class TestSystems extends BaseTest {
 				fail("No unit found for type " + unitType);
 			}
 		}
-		sys.clearCache();
 	}
 
 	@Test
@@ -105,8 +104,6 @@ public class TestSystems extends BaseTest {
 		int after = sys.getRegisteredUnits().size();
 
 		assertTrue(after == (before + 10));
-		sys.clearCache();
-		assertTrue(sys.getRegisteredUnits().size() == 0);
 
 	}
 }

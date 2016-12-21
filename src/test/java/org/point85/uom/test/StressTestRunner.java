@@ -14,7 +14,7 @@ public class StressTestRunner {
 			executorService.execute(() -> {
 				try {
 					test.runSingleTest();
-					System.out.println("Executed test pass");
+					System.out.println("Executed test pass ");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

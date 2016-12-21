@@ -29,12 +29,9 @@ public class TestPerformance {
 		unitList.add(uom);
 	}
 
-	@Test
+	// @Test
 	public void runSingleTest() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
-
-		// load all defined units
-		sys.clearCache();
 
 		for (Unit u : Unit.values()) {
 			UnitOfMeasure uom = sys.getUOM(u);

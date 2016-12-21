@@ -33,10 +33,8 @@ import java.math.MathContext;
 import org.junit.Test;
 import org.point85.uom.Conversion;
 import org.point85.uom.MeasurementSystem;
-import org.point85.uom.PowerUOM;
-import org.point85.uom.ProductUOM;
+import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
-import org.point85.uom.QuotientUOM;
 import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
@@ -51,13 +49,13 @@ public class TestBridges extends BaseTest {
 		// SI
 		UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
-		UnitOfMeasure km = sys.getUOM(Unit.KILOMETRE);
+		UnitOfMeasure km = sys.getUOM(Prefix.KILO, m);
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 		UnitOfMeasure N = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure Nm = sys.getUOM(Unit.NEWTON_METRE);
-		UnitOfMeasure kPa = sys.getUOM(Unit.KILOPASCAL);
+		UnitOfMeasure kPa = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.PASCAL));
 		UnitOfMeasure celsius = sys.getUOM(Unit.CELSIUS);
 
 		// US
@@ -72,26 +70,26 @@ public class TestBridges extends BaseTest {
 		UnitOfMeasure ftlbf = sys.getUOM(Unit.FOOT_POUND_FORCE);
 		UnitOfMeasure psi = sys.getUOM(Unit.PSI);
 		UnitOfMeasure fahrenheit = sys.getUOM(Unit.FAHRENHEIT);
-		
+
 		Quantity q1 = new Quantity(BigDecimal.TEN, ft);
 		Quantity q2 = q1.convert(m);
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("3.048"), DELTA6));	
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("3.048"), DELTA6));
 		Quantity q3 = q2.convert(q1.getUOM());
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
-		
+
 		q1 = new Quantity(BigDecimal.TEN, kg);
 		q2 = q1.convert(lbm);
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("22.0462"), DELTA4));
 		q3 = q2.convert(q1.getUOM());
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
-		
+
 		q1 = new Quantity(Quantity.createAmount("212"), fahrenheit);
 		q2 = q1.convert(celsius);
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("100"), DELTA6));
 		q3 = q2.convert(q1.getUOM());
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("212"), DELTA6));
 
-		ProductUOM mm = sys.createProductUOM(UnitType.AREA, "name", "mxm", "", m, m);
+		UnitOfMeasure mm = sys.createProductUOM(UnitType.AREA, "name", "mxm", "", m, m);
 
 		q1 = new Quantity(BigDecimal.TEN, mm);
 		q2 = q1.convert(ft2);
@@ -120,7 +118,6 @@ public class TestBridges extends BaseTest {
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("0.009113444152814231"), DELTA6));
 		q2 = q2.convert(mhr);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
-		sys.unregisterUnit(mhr);
 
 		q1 = new Quantity(BigDecimal.TEN, gal);
 		q2 = q1.convert(litre);
@@ -194,35 +191,29 @@ public class TestBridges extends BaseTest {
 		q3 = q1.multiply(q2);
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("4046.8564224"), DELTA6));
 
-		if (q3.getUOM() instanceof PowerUOM) {
-			PowerUOM uom = (PowerUOM) q3.getUOM();
-			UnitOfMeasure base = uom.getBase();
-			int power = uom.getPower();
-			BigDecimal sf = uom.getScalingFactor();
+		UnitOfMeasure uom = q3.getUOM();
+		UnitOfMeasure base = uom.getPowerBase();
+		int power = uom.getPower();
+		BigDecimal sf = uom.getScalingFactor();
 
-			assertTrue(uom.getAbscissaUnit().equals(m2));
-			assertTrue(base.equals(m));
-			assertTrue(power == 2);
-			assertThat(sf, closeTo(BigDecimal.ONE, DELTA6));
-		}
+		assertTrue(uom.getAbscissaUnit().equals(m2));
+		assertTrue(base.equals(m));
+		assertTrue(power == 2);
+		assertThat(sf, closeTo(BigDecimal.ONE, DELTA6));
 
 		Quantity q4 = q3.convert(acre);
 		assertThat(q4.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(q4.getUOM().equals(acre));
 
 		UnitOfMeasure usSec = sys.getSecond();
+		
+		UnitOfMeasure v1 = sys.getUOM("m/hr");
 
-		Conversion conversion = new Conversion(
-				BigDecimal.ONE.divide(Quantity.createAmount("3600"), MathContext.DECIMAL64),
-				sys.getUOM(Unit.METRE_PER_SECOND));
-		UnitOfMeasure v1 = sys.createScalarUOM(UnitType.VELOCITY, "m/hr", "m/hr", "");
-		v1.setConversion(conversion);
-
-		QuotientUOM v2 = (QuotientUOM) sys.getUOM(Unit.METRE_PER_SECOND);
-		QuotientUOM v3 = sys.createQuotientUOM(UnitType.VELOCITY, "", "ft/usec", "", ft, usSec);
+		UnitOfMeasure v2 = sys.getUOM(Unit.METRE_PER_SECOND);
+		UnitOfMeasure v3 = sys.createQuotientUOM(UnitType.VELOCITY, "", "ft/usec", "", ft, usSec);
 
 		UnitOfMeasure d1 = sys.getUOM(Unit.KILOGRAM_PER_CUBIC_METRE);
-		QuotientUOM d2 = sys.createQuotientUOM(UnitType.DENSITY, "density", "lbm/gal", "", lbm, gal);
+		UnitOfMeasure d2 = sys.createQuotientUOM(UnitType.DENSITY, "density", "lbm/gal", "", lbm, gal);
 
 		q1 = new Quantity(BigDecimal.TEN, v1);
 		q2 = q1.convert(v3);
