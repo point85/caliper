@@ -169,7 +169,7 @@ Quantity q1 = new Quantity(BigDecimal.TEN, mps);
 Quantity q2 = q1.invert();
 ```
 
-For example, one's Body Mass Index can be calculated as:
+One's Body Mass Index (BMI) can be calculated as:
 ```java
 Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
 Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
@@ -178,8 +178,8 @@ Quantity bmi = mass.divide(height.multiply(height));
 
 To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getUOM() using a Prefix can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
 ```java
-		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
-		UnitOfMeasure cL = sys.getUOM(Prefix.CENTI, litre);
+UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
+UnitOfMeasure cL = sys.getUOM(Prefix.CENTI, litre);
 ```
 and, a megabyte (MB = 2^20 bytes) is created by:
 ```java
@@ -187,6 +187,8 @@ UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, sys.getUOM(Unit.BYTE));
 ```
 ###Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
+
+The BigDecimal value of a unit of measure conversion is also cached.  This performance optimization eliminates the need to calculate the conversion multiple times if many quantities are being converted at once; for example, operations upon a vector or matrix of quantities all with the same unit of measure.
 
 ## Localization
 All externally visible text is defined in two resource bundle .properties files.  The Unit.properties file has the name (.name), symbol (.symbol), description (.desc) and UCUM symbol (.unified) for a unit of measure as well as toString() method text.  The Message.properties file has the text for an exception.  A default English file for each is included in the project.  The files can be translated to another language by following the Java locale naming conventions for the properties file, or the English version can be edited, e.g. to change "metre" to "meter".  For example, a metre's text is:
@@ -216,7 +218,7 @@ Caliper is a Gradle project with the following structure:
  * `/src/test/java` - JUnit test java source files 
 
 ## JSR 363
-JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular,:
+JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular:
 * UnitOfMeasure class is similar to Unit interface
 * Quantity class is similar to Quantity interface
 * UnitType enum is similar to Dimension interface
