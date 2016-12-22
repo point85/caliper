@@ -134,33 +134,29 @@ public class MeasurementSystem {
 	private UnitOfMeasure createUOM(Unit enumeration) throws Exception {
 		UnitOfMeasure uom = null;
 
-		if (!(enumeration instanceof Unit)) {
-			return uom;
-		}
-
 		// SI
-		uom = createSIUnit((Unit) enumeration);
+		uom = createSIUnit(enumeration);
 
 		if (uom != null) {
 			return uom;
 		}
 
 		// Customary
-		uom = createCustomaryUnit((Unit) enumeration);
+		uom = createCustomaryUnit(enumeration);
 
 		if (uom != null) {
 			return uom;
 		}
 
 		// US
-		uom = createUSUnit((Unit) enumeration);
+		uom = createUSUnit(enumeration);
 
 		if (uom != null) {
 			return uom;
 		}
 
 		// British
-		uom = createBRUnit((Unit) enumeration);
+		uom = createBRUnit(enumeration);
 
 		if (uom != null) {
 			return uom;
@@ -1225,8 +1221,8 @@ public class MeasurementSystem {
 	public UnitOfMeasure getUOM(Unit enumeration) throws Exception {
 		UnitOfMeasure uom = unitRegistry.get(enumeration);
 
-		if (uom == null && enumeration instanceof Unit) {
-			uom = createUOM((Unit) enumeration);
+		if (uom == null) {
+			uom = createUOM(enumeration);
 		}
 		return uom;
 	}
