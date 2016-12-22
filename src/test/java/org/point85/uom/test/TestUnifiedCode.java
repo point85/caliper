@@ -25,6 +25,7 @@ package org.point85.uom.test;
 
 import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 
@@ -277,10 +278,12 @@ public class TestUnifiedCode extends BaseTest {
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		from = new Quantity(amount, sys.getUOM(Unit.HERTZ));
-		to = from.convert(sys.getUOM(Unit.BECQUEREL));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		try {
+			to = from.convert(sys.getUOM(Unit.BECQUEREL));
+			convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+			fail("No conversion");
+		} catch (Exception e) {
+		}
 
 		// kWh to BTU
 		from = new Quantity(amount, kwh);

@@ -552,17 +552,31 @@ public class MeasurementSystem {
 
 		case OHM:
 			// resistance (ohm)
-			uom = createQuotientUOM(UnitType.ELECTRICAL_RESISTANCE, Unit.OHM, symbols.getString("ohm.name"),
+			uom = createQuotientUOM(UnitType.ELECTRIC_RESISTANCE, Unit.OHM, symbols.getString("ohm.name"),
 					symbols.getString("ohm.symbol"), symbols.getString("ohm.desc"), symbols.getString("ohm.unified"),
 					getUOM(Unit.VOLT), getUOM(Unit.AMPERE));
 			break;
 
 		case FARAD:
 			// capacitance (farad)
-			uom = createQuotientUOM(UnitType.CAPACITANCE, Unit.FARAD, symbols.getString("farad.name"),
+			uom = createQuotientUOM(UnitType.ELECTRIC_CAPACITANCE, Unit.FARAD, symbols.getString("farad.name"),
 					symbols.getString("farad.symbol"), symbols.getString("farad.desc"),
 					symbols.getString("farad.unified"), getUOM(Unit.COULOMB), getUOM(Unit.VOLT));
 			break;
+
+		case FARAD_PER_METRE:
+			// electric permittivity (farad/metre)
+			uom = createQuotientUOM(UnitType.ELECTRIC_PERMITTIVITY, Unit.FARAD_PER_METRE,
+					symbols.getString("fperm.name"), symbols.getString("fperm.symbol"), symbols.getString("fperm.desc"),
+					symbols.getString("fperm.unified"), getUOM(Unit.FARAD), getUOM(Unit.METRE));
+			break;
+			
+		case AMPERE_PER_METRE:
+			// electric field strength(ampere/metre)
+			uom = createQuotientUOM(UnitType.ELECTRIC_FIELD_STRENGTH, Unit.AMPERE_PER_METRE,
+					symbols.getString("aperm.name"), symbols.getString("aperm.symbol"), symbols.getString("aperm.desc"),
+					symbols.getString("aperm.unified"), getUOM(Unit.AMPERE), getUOM(Unit.METRE));
+			break;			
 
 		case WEBER:
 			// magnetic flux (weber)
@@ -580,14 +594,14 @@ public class MeasurementSystem {
 
 		case HENRY:
 			// inductance (henry)
-			uom = createQuotientUOM(UnitType.INDUCTANCE, Unit.HENRY, symbols.getString("henry.name"),
+			uom = createQuotientUOM(UnitType.ELECTRIC_INDUCTANCE, Unit.HENRY, symbols.getString("henry.name"),
 					symbols.getString("henry.symbol"), symbols.getString("henry.desc"),
 					symbols.getString("henry.unified"), getUOM(Unit.WEBER), getUOM(Unit.AMPERE));
 			break;
 
 		case SIEMENS:
 			// electrical conductance (siemens)
-			uom = createQuotientUOM(UnitType.ELECTRICAL_CONDUCTANCE, Unit.SIEMENS, symbols.getString("siemens.name"),
+			uom = createQuotientUOM(UnitType.ELECTRIC_CONDUCTANCE, Unit.SIEMENS, symbols.getString("siemens.name"),
 					symbols.getString("siemens.symbol"), symbols.getString("siemens.desc"),
 					symbols.getString("siemens.unified"), getUOM(Unit.AMPERE), getUOM(Unit.VOLT));
 			break;
@@ -617,23 +631,23 @@ public class MeasurementSystem {
 
 		case BECQUEREL:
 			// radioactivity (becquerel). Same base symbol as Hertz
-			conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.HERTZ));
-			uom = createScalarUOM(UnitType.FREQUENCY, Unit.BECQUEREL, symbols.getString("becquerel.name"),
+			// conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.HERTZ));
+			uom = createScalarUOM(UnitType.RADIOACTIVITY, Unit.BECQUEREL, symbols.getString("becquerel.name"),
 					symbols.getString("becquerel.symbol"), symbols.getString("becquerel.desc"),
 					symbols.getString("becquerel.unified"));
-			uom.setConversion(conversion);
+			// uom.setConversion(conversion);
 			break;
 
 		case GRAY:
 			// gray (Gy)
-			uom = createQuotientUOM(UnitType.RADIATION_DOSE, Unit.GRAY, symbols.getString("gray.name"),
+			uom = createQuotientUOM(UnitType.RADIATION_DOSE_ABSORBED, Unit.GRAY, symbols.getString("gray.name"),
 					symbols.getString("gray.symbol"), symbols.getString("gray.desc"), symbols.getString("gray.unified"),
 					getUOM(Unit.JOULE), getUOM(Unit.KILOGRAM));
 			break;
 
 		case SIEVERT:
 			// sievert (Sv)
-			uom = createQuotientUOM(UnitType.RADIATION_DOSE, Unit.SIEVERT, symbols.getString("sievert.name"),
+			uom = createQuotientUOM(UnitType.RADIATION_DOSE_EFFECTIVE, Unit.SIEVERT, symbols.getString("sievert.name"),
 					symbols.getString("sievert.symbol"), symbols.getString("sievert.desc"),
 					symbols.getString("sievert.unified"), getUOM(Unit.JOULE), getUOM(Unit.KILOGRAM));
 			break;

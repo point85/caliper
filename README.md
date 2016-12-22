@@ -169,6 +169,13 @@ Quantity q1 = new Quantity(BigDecimal.TEN, mps);
 Quantity q2 = q1.invert();
 ```
 
+For example, one's Body Mass Index can be calculated as:
+```java
+Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
+Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
+Quantity bmi = mass.divide(height.multiply(height));
+```
+
 To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getUOM() using a Prefix can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
 ```java
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
@@ -206,4 +213,13 @@ Caliper is a Gradle project with the following structure:
  * `/doc` documentation
  * `/src/main/java` - java source files
  * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol, description and UCUM symbol.
- * `/src/test/java` - JUnit test java source files  
+ * `/src/test/java` - JUnit test java source files 
+
+## JSR 363
+JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular,:
+* UnitOfMeasure class is similar to Unit interface
+* Quantity class is similar to Quantity interface
+* UnitType enum is similar to Dimension interface
+* MeasurementSystem class is similar to SystemOfUnits interface, and also incorporates aspects of ServiceProvider
+
+Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using BigDecimal amounts whereas JSR 363 uses Numbers.

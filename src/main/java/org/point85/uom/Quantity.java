@@ -85,7 +85,7 @@ public class Quantity {
 			Quantity otherQuantity = (Quantity) other;
 
 			// same amount and same unit of measure
-			if (getAmount().equals(otherQuantity.getAmount()) && getUOM().equals(otherQuantity.getUOM())) {
+			if (getAmount().compareTo(otherQuantity.getAmount()) == 0 && getUOM().equals(otherQuantity.getUOM())) {
 				answer = true;
 			}
 		}
@@ -199,9 +199,15 @@ public class Quantity {
 		Quantity toDivide = other;
 
 		BigDecimal amount = getAmount().divide(toDivide.getAmount(), UnitOfMeasure.MATH_CONTEXT);
-		UnitOfMeasure uom = getUOM().divide(toDivide.getUOM());
+		UnitOfMeasure newUOM = getUOM().divide(toDivide.getUOM());
 
-		Quantity quantity = new Quantity(amount, uom);
+		Quantity quantity = new Quantity(amount, newUOM);
+		return quantity;
+	}
+
+	public Quantity divide(BigDecimal divisor) throws Exception {
+		BigDecimal amount = getAmount().divide(divisor, UnitOfMeasure.MATH_CONTEXT);
+		Quantity quantity = new Quantity(amount, getUOM());
 		return quantity;
 	}
 
@@ -218,9 +224,24 @@ public class Quantity {
 		Quantity toMultiply = other;
 
 		BigDecimal amount = getAmount().multiply(toMultiply.getAmount(), UnitOfMeasure.MATH_CONTEXT);
-		UnitOfMeasure uom = getUOM().multiply(toMultiply.getUOM());
+		UnitOfMeasure newUOM = getUOM().multiply(toMultiply.getUOM());
 
-		Quantity quantity = new Quantity(amount, uom);
+		Quantity quantity = new Quantity(amount, newUOM);
+		return quantity;
+	}
+
+	/**
+	 * Multiply this quantity by the specified amount
+	 * 
+	 * @param multiplier
+	 *            Amount
+	 * @return new Quantity
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity multiply(BigDecimal multiplier) throws Exception {
+		BigDecimal amount = getAmount().multiply(multiplier, UnitOfMeasure.MATH_CONTEXT);
+		Quantity quantity = new Quantity(amount, getUOM());
 		return quantity;
 	}
 

@@ -292,6 +292,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
 		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m);
 		UnitOfMeasure oneOverM = sys.getUOM(Unit.DIOPTER);
+		UnitOfMeasure fperm = sys.getUOM(Unit.FARAD_PER_METRE);
 
 		Conversion conversion = new Conversion(Quantity.createAmount("100"), oneOverM);
 		UnitOfMeasure oneOverCm = sys.createScalarUOM(UnitType.CUSTOM, null, "1/cm", null);
@@ -404,6 +405,26 @@ public class TestQuantity extends BaseTest {
 		assertTrue(nm1.getBaseSymbol().equals(nm2.getBaseSymbol()));
 		q4 = q3.convert(sys.getUOM(Unit.JOULE));
 		assertTrue(q4.getUOM().equals(sys.getUOM(Unit.JOULE)));
+		
+		// farads
+		q1 = new Quantity(BigDecimal.TEN, fperm);
+		q2 = new Quantity(BigDecimal.ONE, m);
+		q3 = q1.multiply(q2);
+		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.FARAD)));
+		
+		// amps
+		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.AMPERE_PER_METRE));
+		q2 = new Quantity(BigDecimal.ONE, m);
+		q3 = q1.multiply(q2);
+		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.AMPERE)));
+		
+		// body mass index
+		Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
+		Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
+		Quantity bmi = mass.divide(height.multiply(height));
+		assertThat(bmi.getAmount(), closeTo(Quantity.createAmount("25"), DELTA6));
 	}
 	
 	@Test
@@ -781,6 +802,20 @@ public class TestQuantity extends BaseTest {
 		Quantity acidpH = new Quantity("4.5", sys.getUOM(Unit.PH));
 		Quantity neutralpH = new Quantity("7.0", sys.getUOM(Unit.PH));
 		assertTrue(acidpH.compare(neutralpH) == -1);
-
+	}
+	
+	@Test
+	public void testArithmetic() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		UnitOfMeasure in = sys.getUOM(Unit.INCH);
+		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
+		Quantity qcm = new Quantity("1", cm);
+		Quantity qin = new Quantity("1", in);
+		BigDecimal bd = Quantity.createAmount("2.54");
+		Quantity q1 = qcm.multiply(bd).convert(in);
+		assertTrue(q1.equals(qin)); 
+		Quantity q2 = q1.convert(cm);
+		assertThat(q2.getAmount(), closeTo(bd, DELTA6));
+		
 	}
 }

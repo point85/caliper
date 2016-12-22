@@ -327,7 +327,7 @@ public class TestUnits extends BaseTest {
 
 		assertThat(a2.getScalingFactor(), closeTo(two, DELTA6));
 		assertTrue(a2.getPowerBase().equals(a));
-		assertTrue(a2.getPower() == 2);
+		assertTrue(a2.getExponent() == 2);
 		assertThat(a2.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 		assertTrue(a2.getAbscissaUnit().equals(a2));
 
@@ -420,7 +420,6 @@ public class TestUnits extends BaseTest {
 		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
 
 		UnitOfMeasure foot = sys.getUOM(Unit.FOOT);
-		UnitOfMeasure second = sys.getSecond();
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
 		UnitOfMeasure flush = sys.createScalarUOM(UnitType.CUSTOM, "flush", "f", "");
 		UnitOfMeasure gpf = sys.createQuotientUOM(UnitType.CUSTOM, "gal per flush", "gpf", "", gal, flush);
@@ -640,7 +639,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(symbol.equals("m"));
 
 		UnitOfMeasure mm = sys.getUOM(Prefix.MILLI, metre);
-		assertTrue(Prefix.MILLI.toString()!= null);
+		assertTrue(Prefix.MILLI.toString() != null);
 
 		symbol = mm.getSymbol();
 		assertTrue(symbol.equals("mm"));
@@ -745,7 +744,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(symbol.equals(sb.toString()));
 
 		symbol = sys.getUOM(Unit.BECQUEREL).getBaseSymbol();
-		assertTrue(symbol.equals("Hz"));
+		assertTrue(symbol.equals("Bq"));
 
 		symbol = sys.getUOM(Unit.BECQUEREL).getSymbol();
 		assertTrue(symbol.equals("Bq"));
@@ -792,7 +791,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(inverted.equals(sys.getSecond()));
 
 		UnitOfMeasure perSec = sys.createPowerUOM(UnitType.TIME, "per second", "perSec", null, sys.getSecond(), -1);
-		UnitOfMeasure mult = oneDivSec.multiply(sys.getUOM(Unit.SECOND));
+		UnitOfMeasure mult = perSec.multiply(sys.getUOM(Unit.SECOND));
 		assertTrue(mult.equals(sys.getUOM(Unit.ONE)));
 
 		UnitOfMeasure u = sys.getSecond().invert();
@@ -805,7 +804,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(oneOverSec.getBaseSymbol().equals(oneDivSec.getBaseSymbol()));
 
 		inverted = oneOverSec.invert();
-		assertTrue(inverted.equals(sys.getSecond()));
+		assertTrue(inverted.getBaseSymbol().equals(sys.getSecond().getBaseSymbol()));
 
 		Conversion conversion = new Conversion(Quantity.createAmount("60"), sys.getUOM(Unit.SQUARE_SECOND));
 		UnitOfMeasure minTimesSec = sys.createProductUOM(UnitType.TIME_SQUARED, "minsec", "minxsec",
@@ -1102,19 +1101,17 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure sr = sys.getUOM(Unit.STERADIAN);
 		UnitOfMeasure cd = sys.getUOM(Unit.CANDELA);
 		UnitOfMeasure lumen = sys.getUOM(Unit.LUMEN);
-		UnitOfMeasure bq = sys.getUOM(Unit.BECQUEREL);
-		UnitOfMeasure hertz = sys.getUOM(Unit.HERTZ);
 		UnitOfMeasure gray = sys.getUOM(Unit.GRAY);
 		UnitOfMeasure sievert = sys.getUOM(Unit.SIEVERT);
 
 		UnitOfMeasure WeberPerSec = sys.createQuotientUOM(UnitType.ELECTROMOTIVE_FORCE, "W/s", "W/s", null, weber,
 				second);
-		UnitOfMeasure WeberPerAmp = sys.createQuotientUOM(UnitType.INDUCTANCE, "W/A", "W/A", null, weber, amp);
+		UnitOfMeasure WeberPerAmp = sys.createQuotientUOM(UnitType.ELECTRIC_INDUCTANCE, "W/A", "W/A", null, weber, amp);
 		UnitOfMeasure fTimesV = sys.createProductUOM(UnitType.ELECTRIC_CHARGE, "FxV", "FxV", null, farad, volt);
 		UnitOfMeasure WPerAmp = sys.createQuotientUOM(UnitType.ELECTROMOTIVE_FORCE, "Watt/A", "Watt/A", null, watt,
 				amp);
-		UnitOfMeasure VPerA = sys.createQuotientUOM(UnitType.ELECTRICAL_RESISTANCE, "V/A", "V/A", null, volt, amp);
-		UnitOfMeasure CPerV = sys.createQuotientUOM(UnitType.CAPACITANCE, "C/V", "C/V", null, coulomb, volt);
+		UnitOfMeasure VPerA = sys.createQuotientUOM(UnitType.ELECTRIC_RESISTANCE, "V/A", "V/A", null, volt, amp);
+		UnitOfMeasure CPerV = sys.createQuotientUOM(UnitType.ELECTRIC_CAPACITANCE, "C/V", "C/V", null, coulomb, volt);
 		UnitOfMeasure VTimesSec = sys.createProductUOM(UnitType.MAGNETIC_FLUX, "Vxs", "Vxs", null, volt, second);
 		UnitOfMeasure cdTimesSr = sys.createProductUOM(UnitType.LUMINOUS_FLUX, "cdxsr", "cdxsr", null, cd, sr);
 
@@ -1166,13 +1163,17 @@ public class TestUnits extends BaseTest {
 		bd = cdTimesSr.getConversionFactor(lumen);
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
-		bd = gray.getConversionFactor(sievert);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		try {
+			bd = gray.getConversionFactor(sievert);
+			fail("No conversion");
+		} catch (Exception e) {
+		}
 
-		bd = sievert.getConversionFactor(gray);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
-
-		assertTrue(bq.getBaseSymbol().equals(hertz.getSymbol()));
+		try {
+			bd = sievert.getConversionFactor(gray);
+			fail("No conversion");
+		} catch (Exception e) {
+		}
 
 	}
 

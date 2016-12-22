@@ -26,6 +26,7 @@ package org.point85.uom;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.MessageFormat;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -76,6 +77,7 @@ import java.util.TreeSet;
  * combinations, the {@link MeasurementSystem} is able to create units by
  * specifying the {@link Prefix} and target unit of measure. Similarly, computer
  * science has defined prefixes for bytes (e.g. "mega").
+ * 
  * @author Kent Randall
  *
  */
@@ -96,6 +98,10 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	private static final char POW = '^';
 	private static final char SQ = 0xB2;
 	private static final char CUBED = 0xB3;
+
+	// registry of unit conversion factor
+	private Map<UnitOfMeasure, BigDecimal> conversionRegistry = Collections
+			.synchronizedMap(new HashMap<UnitOfMeasure, BigDecimal>());
 
 	// name, for example "kilogram"
 	private String name;
@@ -129,7 +135,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	private UnitOfMeasure uom2;
 
 	// exponent, e.g. "2"
-	private int power = 1;
+	private int exponent = 1;
 
 	// cached base symbol
 	private transient String baseSymbol;
@@ -155,6 +161,13 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		this.conversion = new Conversion(this);
 	}
 
+	/**
+	 * Remove all cached conversions
+	 */
+	public void clearCache() {
+		conversionRegistry.clear();
+	}
+
 	private Category getCategory() {
 		return this.category;
 	}
@@ -172,7 +185,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		return symbol;
 	}
 
-	protected void setSymbol(String symbol) {
+	private void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}
 
@@ -640,7 +653,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		conversion.setAbscissaUnit(target);
 	}
 
-	protected BigDecimal convertScalarToScalar(UnitOfMeasure targetUOM) throws Exception {
+	private BigDecimal convertScalarToScalar(UnitOfMeasure targetUOM) throws Exception {
 		UnitOfMeasure thisUOM = this;
 
 		UnitOfMeasure thisAbscissa = thisUOM.getAbscissaUnit();
@@ -677,7 +690,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		return product;
 	}
 
-	protected BigDecimal convertUnit(UnitOfMeasure targetUOM) throws Exception {
+	private BigDecimal convertUnit(UnitOfMeasure targetUOM) throws Exception {
 
 		// get path factors in each system
 		PathParameters thisParameters = traversePath();
@@ -730,6 +743,13 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	public BigDecimal getConversionFactor(UnitOfMeasure targetUOM) throws Exception {
 		if (targetUOM == null) {
 			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
+		}
+
+		// first check the cache
+		BigDecimal cachedFactor = conversionRegistry.get(targetUOM);
+
+		if (cachedFactor != null) {
+			return cachedFactor;
 		}
 
 		checkTypes(this, targetUOM);
@@ -800,7 +820,13 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		} // from map
 
 		BigDecimal scaling = fromFactor.divide(toFactor, MATH_CONTEXT);
-		return factor.multiply(scaling, MATH_CONTEXT);
+		cachedFactor = factor.multiply(scaling, MATH_CONTEXT);
+
+		// cache it
+		conversionRegistry.put(targetUOM, cachedFactor);
+
+		return cachedFactor;
+
 	}
 
 	final PathParameters traversePath() throws Exception {
@@ -891,7 +917,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 		// power
 		sb.append(", ").append(symbolBundle.getString("power.text")).append(' ');
-		sb.append(getPower());
+		sb.append(getExponent());
 
 		return sb.toString();
 	}
@@ -922,7 +948,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		}
 
 		this.setPowerBase(base);
-		this.setPower(power);
+		this.setExponent(power);
 	}
 
 	/**
@@ -930,12 +956,12 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * 
 	 * @return Exponent
 	 */
-	public int getPower() {
-		return power;
+	public int getExponent() {
+		return exponent;
 	}
 
-	private void setPower(int power) {
-		this.power = power;
+	private void setExponent(int exponent) {
+		this.exponent = exponent;
 	}
 
 	/**
@@ -979,7 +1005,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		if (multiplier.getBaseUOM() != null && multiplicand.getBaseUOM() != null) {
 			if (multiplier.getBaseUOM().equals(multiplicand.getBaseUOM())) {
 				// the product can be expressed as a power UOM
-				setPower(multiplier.getPower() + multiplicand.getPower());
+				setExponent(multiplier.getExponent() + multiplicand.getExponent());
 			}
 		}
 	}
@@ -1158,7 +1184,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 				UnitOfMeasure baseUOM = powerBase.getBaseUOM();
 
 				BigDecimal factor = powerBase.getScalingFactor();
-				int power = abscissaUnit.getPower();
+				int power = abscissaUnit.getExponent();
 				BigDecimal powerScale = factor.pow(power, MATH_CONTEXT);
 
 				if (power < 1) {
@@ -1207,7 +1233,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 					}
 				} else if (baseUOM.getCategory().equals(Category.POWER)) {
 					UnitOfMeasure base = baseUOM.getPowerBase();
-					int basePower = baseUOM.getPower();
+					int basePower = baseUOM.getExponent();
 					mapPower *= basePower * power;
 					explodeRecursively(base, invert, counter);
 				}
