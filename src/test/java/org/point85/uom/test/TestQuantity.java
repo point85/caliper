@@ -45,7 +45,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testAllUnits() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		for (Unit u : Unit.values()) {
 			UnitOfMeasure uom1 = sys.getUOM(u);
@@ -60,7 +60,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testTime() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure second = sys.getSecond();
 		UnitOfMeasure minute = sys.getMinute();
@@ -95,7 +95,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testTemperature() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure K = sys.getUOM(Unit.KELVIN);
 		UnitOfMeasure C = sys.getUOM(Unit.CELSIUS);
@@ -151,7 +151,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testLength() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
@@ -241,7 +241,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testUSQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
 		UnitOfMeasure in3 = sys.getUOM(Unit.CUBIC_INCH);
@@ -280,7 +280,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testSIQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		BigDecimal ten = Quantity.createAmount("10");
 
@@ -429,7 +429,7 @@ public class TestQuantity extends BaseTest {
 	
 	@Test
 	public void testPowers() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure p2 = sys.createPowerUOM(UnitType.AREA, "m2^1", "m2^1", "square metres raised to power 1", m2, 1);
@@ -452,7 +452,7 @@ public class TestQuantity extends BaseTest {
 	@Test
 	public void testSIUnits() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -579,7 +579,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testPackaging() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		BigDecimal one = Quantity.createAmount("1");
 		BigDecimal four = Quantity.createAmount("4");
 		BigDecimal six = Quantity.createAmount("6");
@@ -638,7 +638,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testGenericQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
 
@@ -691,7 +691,7 @@ public class TestQuantity extends BaseTest {
 	@Test
 	public void testExceptions() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		UnitOfMeasure floz = sys.getUOM(Unit.BR_FLUID_OUNCE);
 
 		Quantity q1 = new Quantity(BigDecimal.TEN, sys.getDay());
@@ -724,7 +724,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testEquality() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -774,7 +774,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testComparison() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -806,7 +806,7 @@ public class TestQuantity extends BaseTest {
 	
 	@Test
 	public void testArithmetic() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		UnitOfMeasure in = sys.getUOM(Unit.INCH);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
 		Quantity qcm = new Quantity("1", cm);

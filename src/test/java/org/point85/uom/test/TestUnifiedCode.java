@@ -54,7 +54,7 @@ public class TestUnifiedCode extends BaseTest {
 	public void runTest() throws Exception {
 		String amount = "10";
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		Quantity from = null;
 		Quantity to = null;

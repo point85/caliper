@@ -41,7 +41,7 @@ A quantity is an amount (implemented as a BigDecimal for control of precision an
 ## Code Examples
 The singleton unified MeasurementSystem is obtained by calling:
 ```java
-MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+MeasurementSystem sys = MeasurementSystem.getSystem();
 ```
 The Unit.properties file defines the name, symbol, description and UCUM symbol for each of the predefined units in the following code examples.  The Unit.properties file is localizable.  For example, 'metres' can be changed to use the US spelling 'meters' or descriptions can be translated to another language.
 

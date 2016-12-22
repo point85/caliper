@@ -32,7 +32,7 @@ public class TestSnippet extends BaseTest {
 
 	@Test
 	public void testCase() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		assertTrue(sys != null);
 
 	}

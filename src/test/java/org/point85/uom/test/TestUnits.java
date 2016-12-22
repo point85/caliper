@@ -46,7 +46,7 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testExceptions() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		try {
 			sys.createProductUOM(UnitType.CUSTOM, null, "abcd", "", null, null);
@@ -155,7 +155,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testOne() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 
 		UnitOfMeasure u = metre.multiply(sys.getOne());
@@ -224,7 +224,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testGeneric() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure b = sys.getUOM("b");
 
@@ -417,7 +417,7 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testUSUnits() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure foot = sys.getUOM(Unit.FOOT);
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
@@ -452,7 +452,7 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testImperialUnits() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure impGal = sys.getUOM(Unit.BR_GALLON);
 		UnitOfMeasure impPint = sys.getUOM(Unit.BR_PINT);
@@ -498,7 +498,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testOperations() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		UnitOfMeasure u = null;
 		UnitOfMeasure hour = sys.getHour();
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -544,7 +544,7 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testTime() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure s2 = sys.getUOM(Unit.SQUARE_SECOND);
 		UnitOfMeasure second = sys.getSecond();
@@ -625,7 +625,7 @@ public class TestUnits extends BaseTest {
 		final char sq = 0xB2;
 		final char cu = 0xB3;
 		StringBuffer sb = new StringBuffer();
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 
@@ -761,7 +761,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testConversions1() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
@@ -956,7 +956,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testConversions2() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure degree = sys.getUOM(Unit.DEGREE);
@@ -1087,7 +1087,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testConversions3() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure weber = sys.getUOM(Unit.WEBER);
 		UnitOfMeasure coulomb = sys.getUOM(Unit.COULOMB);
@@ -1179,7 +1179,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testConversions4() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure K = sys.getUOM(Unit.KELVIN);
 		UnitOfMeasure C = sys.getUOM(Unit.CELSIUS);
@@ -1230,7 +1230,7 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testPerformance() throws Exception {
 		int its = 1000;
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
@@ -1262,7 +1262,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testScaledUnits() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 

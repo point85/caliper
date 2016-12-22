@@ -30,7 +30,7 @@ public class TestPerformance {
 
 	// @Test
 	public void runSingleTest() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		for (Unit u : Unit.values()) {
 			UnitOfMeasure uom = sys.getUOM(u);

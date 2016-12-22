@@ -43,7 +43,7 @@ public class TestSystems extends BaseTest {
 	@Test
 	public void testUnifiedSystem() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 		assertFalse(sys.equals(null));
 
 		// check the SI units
@@ -91,7 +91,7 @@ public class TestSystems extends BaseTest {
 
 	@Test
 	public void testCache() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getUnifiedSystem();
+		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		// unit cache
 		sys.getOne();

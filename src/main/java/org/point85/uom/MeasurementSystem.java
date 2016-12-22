@@ -98,11 +98,11 @@ public class MeasurementSystem {
 	// registry for units by enumeration
 	private Map<Unit, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<Unit, UnitOfMeasure>());
 
-	private MeasurementSystem() throws Exception {
+	private MeasurementSystem() {
 		initialize();
 	}
 
-	void initialize() throws Exception {
+	void initialize() {
 		// common unit strings
 		symbols = ResourceBundle.getBundle(UNIT_BUNDLE_NAME, Locale.getDefault());
 		messages = ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, Locale.getDefault());
@@ -118,10 +118,8 @@ public class MeasurementSystem {
 	 * SI, US, British Imperial as well as custom systems
 	 * 
 	 * @return {@link MeasurementSystem}
-	 * @throws Exception
-	 *             Exception
 	 */
-	public static MeasurementSystem getUnifiedSystem() throws Exception {
+	public static MeasurementSystem getSystem() {
 		if (unifiedSystem == null) {
 			createUnifiedSystem();
 		}
@@ -129,7 +127,7 @@ public class MeasurementSystem {
 		return unifiedSystem;
 	}
 
-	private static void createUnifiedSystem() throws Exception {
+	private static void createUnifiedSystem() {
 		unifiedSystem = new MeasurementSystem();
 	}
 
@@ -570,13 +568,13 @@ public class MeasurementSystem {
 					symbols.getString("fperm.name"), symbols.getString("fperm.symbol"), symbols.getString("fperm.desc"),
 					symbols.getString("fperm.unified"), getUOM(Unit.FARAD), getUOM(Unit.METRE));
 			break;
-			
+
 		case AMPERE_PER_METRE:
 			// electric field strength(ampere/metre)
 			uom = createQuotientUOM(UnitType.ELECTRIC_FIELD_STRENGTH, Unit.AMPERE_PER_METRE,
 					symbols.getString("aperm.name"), symbols.getString("aperm.symbol"), symbols.getString("aperm.desc"),
 					symbols.getString("aperm.unified"), getUOM(Unit.AMPERE), getUOM(Unit.METRE));
-			break;			
+			break;
 
 		case WEBER:
 			// magnetic flux (weber)
@@ -1414,7 +1412,7 @@ public class MeasurementSystem {
 		checkType(type);
 		checkExistance(symbol, id);
 
-		return new UnitOfMeasure(type, name, symbol, description, this);
+		return new UnitOfMeasure(type, name, symbol, description);
 	}
 
 	/**

@@ -122,9 +122,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	// unit type, e.g. MASS
 	private UnitType unitType;
 
-	// owning system
-	private MeasurementSystem ownerSystem;
-
 	// conversion to another Unit of Measure in a different measurement system
 	private Conversion bridge;
 
@@ -146,17 +143,19 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	// category
 	private Category category;
 
-	UnitOfMeasure(UnitType type, String name, String symbol, String description, MeasurementSystem measurementSystem) {
+	UnitOfMeasure() {
+		initialize();
+	}
+
+	UnitOfMeasure(UnitType type, String name, String symbol, String description) {
 		this.name = name;
 		this.symbol = symbol;
 		this.description = description;
-		this.setUnitType(type);
-		this.initialize(measurementSystem);
+		this.unitType = type;
+		initialize();
 	}
 
-	private void initialize(MeasurementSystem measurementSystem) {
-		this.ownerSystem = measurementSystem;
-
+	private void initialize() {
 		// a unit can always be converted to itself
 		this.conversion = new Conversion(this);
 	}
@@ -220,7 +219,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		String baseSymbol = getBaseSymbol();
 
 		if (baseSymbol != null) {
-			base = getMeasurementSystem().getUOM(baseSymbol);
+			base = MeasurementSystem.getSystem().getUOM(baseSymbol);
 		}
 		return base;
 	}
@@ -315,7 +314,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	}
 
 	public int hashCode() {
-		return getMeasurementSystem().hashCode() ^ (getEnumeration() == null ? 17 : getEnumeration().hashCode())
+		return MeasurementSystem.getSystem().hashCode() ^ (getEnumeration() == null ? 17 : getEnumeration().hashCode())
 				^ getSymbol().hashCode();
 	}
 
@@ -355,15 +354,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		return true;
 	}
 
-	/**
-	 * Get the system that owns the unit of measure
-	 * 
-	 * @return {@link MeasurementSystem}
-	 */
-	public MeasurementSystem getMeasurementSystem() {
-		return ownerSystem;
-	}
-
 	private void checkOffset(UnitOfMeasure other) throws Exception {
 		if (other.getOffset().compareTo(BigDecimal.ZERO) != 0) {
 			String msg = MessageFormat.format(MeasurementSystem.getMessage("offset.not.supported"), other.toString());
@@ -385,14 +375,14 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
 		}
 
-		if (multiplicand.equals(getMeasurementSystem().getOne())) {
+		if (multiplicand.equals(MeasurementSystem.getSystem().getOne())) {
 			return this;
 		}
 
 		checkOffset(this);
 		checkOffset(multiplicand);
 
-		UnitOfMeasure product = new UnitOfMeasure(null, null, null, null, getMeasurementSystem());
+		UnitOfMeasure product = new UnitOfMeasure();
 		product.setCategory(UnitOfMeasure.Category.PRODUCT);
 		product.setProductUnits(this, multiplicand);
 
@@ -440,7 +430,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		productPowerMap.setTerms(productMap);
 
 		String symbol = productPowerMap.buildString();
-		UnitOfMeasure uom = getMeasurementSystem().getUOM(symbol);
+		UnitOfMeasure uom = MeasurementSystem.getSystem().getUOM(symbol);
 
 		if (uom != null) {
 			product.setAbscissaUnit(uom);
@@ -466,7 +456,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
 		}
 
-		if (divisor.equals(getMeasurementSystem().getOne())) {
+		if (divisor.equals(MeasurementSystem.getSystem().getOne())) {
 			return this;
 		}
 
@@ -474,7 +464,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		checkOffset(divisor);
 
 		// create a quotient UOM
-		UnitOfMeasure quotient = new UnitOfMeasure(null, null, null, null, getMeasurementSystem());
+		UnitOfMeasure quotient = new UnitOfMeasure();
 		quotient.setCategory(Category.QUOTIENT);
 		quotient.setQuotientUnits(this, divisor);
 
@@ -527,7 +517,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		quotientPowerMap.setTerms(quotientMap);
 
 		String symbol = quotientPowerMap.buildString();
-		UnitOfMeasure uom = getMeasurementSystem().getUOM(symbol);
+		UnitOfMeasure uom = MeasurementSystem.getSystem().getUOM(symbol);
 
 		if (uom != null) {
 			quotient.setAbscissaUnit(uom);
@@ -551,7 +541,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		if (this.getCategory().equals(Category.QUOTIENT)) {
 			inverted = this.getDivisor().divide(this.getDividend());
 		} else {
-			inverted = getMeasurementSystem().getOne().divide(this);
+			inverted = MeasurementSystem.getSystem().getOne().divide(this);
 		}
 		return inverted;
 	}
@@ -873,7 +863,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		ResourceBundle symbolBundle = this.getMeasurementSystem().getSymbols();
+		ResourceBundle symbolBundle = MeasurementSystem.getSystem().getSymbols();
 
 		// unit enumeration
 		Unit enumeration = getEnumeration();
@@ -941,14 +931,14 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		this.unifiedSymbol = unifiedSymbol;
 	}
 
-	void setPowerUnits(UnitOfMeasure base, int power) throws Exception {
+	void setPowerUnits(UnitOfMeasure base, int exponent) throws Exception {
 		if (base == null) {
 			String msg = MessageFormat.format(MeasurementSystem.getMessage("base.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
 		}
 
 		this.setPowerBase(base);
-		this.setExponent(power);
+		this.setExponent(exponent);
 	}
 
 	/**
@@ -1270,7 +1260,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 					power = unitPower;
 				} else {
 					// increment existing power
-					if (!uom.equals(getMeasurementSystem().getOne())) {
+					if (!uom.equals(MeasurementSystem.getSystem().getOne())) {
 						power = terms.get(uom).intValue() + unitPower;
 					}
 				}
@@ -1281,7 +1271,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 					power = -unitPower;
 				} else {
 					// decrement existing power
-					if (!uom.equals(getMeasurementSystem().getOne())) {
+					if (!uom.equals(MeasurementSystem.getSystem().getOne())) {
 						power = terms.get(uom).intValue() - unitPower;
 					}
 				}
@@ -1291,7 +1281,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 				terms.remove(uom);
 			} else {
 
-				if (!uom.equals(getMeasurementSystem().getOne())) {
+				if (!uom.equals(MeasurementSystem.getSystem().getOne())) {
 					terms.put(uom, power);
 				}
 			}
@@ -1328,7 +1318,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 					}
 					denominatorCount++;
 
-				} else if (power >= 1 && !unit.equals(getMeasurementSystem().getOne())) {
+				} else if (power >= 1 && !unit.equals(MeasurementSystem.getSystem().getOne())) {
 					// positive, put in numerator
 					if (numerator.length() > 0) {
 						numerator.append(MULT);
