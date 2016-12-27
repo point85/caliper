@@ -36,5 +36,4 @@ public class BaseTest {
 	protected static final BigDecimal DELTA2 = Quantity.createAmount("0.01");
 	protected static final BigDecimal DELTA1 = Quantity.createAmount("0.1");
 	protected static final BigDecimal DELTA0 = Quantity.createAmount("1");
-
 }

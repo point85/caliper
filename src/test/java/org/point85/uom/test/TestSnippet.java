@@ -25,10 +25,23 @@ package org.point85.uom.test;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.point85.uom.MeasurementSystem;
+import org.point85.uom.Unit;
 
 public class TestSnippet extends BaseTest {
+	
+	@AfterClass
+	public static void cleanUp() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getSystem();
+		
+		for (Unit unit : Unit.values()) {
+			sys.getUOM(unit).clearCache();
+		}
+		
+		sys.clearCache();
+	}
 
 	@Test
 	public void testCase() throws Exception {
@@ -36,5 +49,4 @@ public class TestSnippet extends BaseTest {
 		assertTrue(sys != null);
 
 	}
-
 }

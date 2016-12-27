@@ -290,7 +290,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
-		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m);
+		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m); 
 		UnitOfMeasure oneOverM = sys.getUOM(Unit.DIOPTER);
 		UnitOfMeasure fperm = sys.getUOM(Unit.FARAD_PER_METRE);
 
@@ -365,6 +365,9 @@ public class TestQuantity extends BaseTest {
 			fail("divide by zero)");
 		} catch (Exception e) {
 		}
+		
+		q1 = q3.convert(cm).divide(ten);
+		assertThat(q1.getAmount(), closeTo(Quantity.createAmount("20"), DELTA6));
 
 		// invert
 		q1 = new Quantity(BigDecimal.TEN, mps);
@@ -470,9 +473,10 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure cv = sys.createProductUOM(UnitType.ENERGY, "CxV", "C·V", "Coulomb times Volt", coulomb, volt);
 		UnitOfMeasure ws = sys.createProductUOM(UnitType.ENERGY, "Wxs", "W·s", "Watt times second", watt,
 				sys.getSecond());
-
 		UnitOfMeasure ft3 = sys.getUOM(Unit.CUBIC_FOOT);
-
+		UnitOfMeasure mole = sys.getUOM(Unit.MOLE);		
+		UnitOfMeasure kat = sys.getUOM(Unit.KATAL);
+		
 		BigDecimal oneHundred = Quantity.createAmount("100");
 
 		assertTrue(nm.getBaseSymbol().equals(joule.getBaseSymbol()));
@@ -551,7 +555,8 @@ public class TestQuantity extends BaseTest {
 
 		// inversions
 		UnitOfMeasure u = metre.invert();
-		assertTrue(u.getSymbol().equals(sys.getUOM(Unit.DIOPTER).getSymbol()));
+		String sym = u.getConversion().getAbscissaUnit().getSymbol();
+		assertTrue(sym.equals(sys.getUOM(Unit.DIOPTER).getSymbol()));
 
 		u = mps.invert();
 		assertTrue(u.getSymbol().equals("s/m"));
@@ -575,6 +580,12 @@ public class TestQuantity extends BaseTest {
 
 		q3 = q2.convert(sys.getUOM(Unit.REV_PER_MIN));
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		
+		q1 = new Quantity(BigDecimal.ONE, kat);
+		q2 = new Quantity(BigDecimal.ONE, sys.getMinute());
+		q3 = q1.multiply(q2);
+		q4 = q3.convert(mole);
+		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("60"), DELTA6));
 	}
 
 	@Test
@@ -740,7 +751,7 @@ public class TestQuantity extends BaseTest {
 
 		// unity
 		Quantity q4 = q5.divide(q3);
-		assertTrue(q4.getUOM().getSymbol().equals(sys.getOne().getSymbol()));
+		assertTrue(q4.getUOM().getBaseSymbol().equals(sys.getOne().getSymbol()));
 		assertTrue(q4.getAmount().equals(amount));
 
 		// Newton-metre (Joules)
@@ -751,12 +762,12 @@ public class TestQuantity extends BaseTest {
 
 		// Newton
 		q5 = q4.divide(q2);
-		assertTrue(q5.getUOM().getSymbol().equals(q1.getUOM().getSymbol()));
+		assertTrue(q5.getUOM().getBaseSymbol().equals(q1.getUOM().getBaseSymbol()));
 		assertTrue(q5.equals(q1));
 
 		// metre
 		q5 = q4.divide(q1);
-		assertTrue(q5.getUOM().getSymbol().equals(q2.getUOM().getSymbol()));
+		assertTrue(q5.getUOM().getBaseSymbol().equals(q2.getUOM().getBaseSymbol()));
 		assertTrue(q5.equals(q2));
 
 		// square metre
@@ -767,7 +778,7 @@ public class TestQuantity extends BaseTest {
 
 		// metre
 		q4 = q5.divide(q2);
-		assertTrue(q4.getUOM().getSymbol().equals(q2.getUOM().getSymbol()));
+		assertTrue(q4.getUOM().getBaseSymbol().equals(q2.getUOM().getBaseSymbol()));
 		assertTrue(q4.equals(q2));
 
 	}
