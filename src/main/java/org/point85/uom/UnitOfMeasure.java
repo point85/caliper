@@ -83,7 +83,8 @@ import java.util.TreeSet;
  */
 public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
-	enum Category {
+	// type of the UOM
+	private enum Category {
 		SCALAR, PRODUCT, QUOTIENT, POWER;
 	}
 
@@ -125,23 +126,15 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	// conversion to another Unit of Measure in a different measurement system
 	private Conversion bridge;
 
-	// power base unit, product multiplier or quotient dividend
-	private UnitOfMeasure uom1;
-
-	// product multiplicand or quotient divisor
-	private UnitOfMeasure uom2;
-
-	// exponent, e.g. "2"
-	private int exponent = 1;
+	// this class holds the base UOMs and exponents for a product of two power
+	// UOMs
+	private PowerProduct powerProduct;
 
 	// cached base symbol
 	private transient String baseSymbol;
 
 	// UCUM symbol
 	private String unifiedSymbol;
-
-	// category
-	private Category category;
 
 	UnitOfMeasure() {
 		initialize();
@@ -158,6 +151,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	private void initialize() {
 		// a unit can always be converted to itself
 		this.conversion = new Conversion(this);
+		this.powerProduct = new PowerProduct();
 	}
 
 	/**
@@ -167,12 +161,8 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		conversionRegistry.clear();
 	}
 
-	private Category getCategory() {
-		return this.category;
-	}
-
-	void setCategory(Category category) {
-		this.category = category;
+	private Category getCategory() throws Exception {
+		return powerProduct.getCategory();
 	}
 
 	/**
@@ -451,7 +441,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		if (baseUOM != null) {
 			result.setAbscissaUnit(baseUOM);
 			result.setUnitType(baseUOM.getUnitType());
-		} 
+		}
 
 		if (!invert) {
 			result.setSymbol(result.generateProductSymbol());
@@ -891,8 +881,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 			throw new Exception(msg);
 		}
 
-		this.setPowerBase(base);
-		this.setExponent(exponent);
+		this.powerProduct = new PowerProduct(base, exponent, null, 0);
 	}
 
 	/**
@@ -900,12 +889,8 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * 
 	 * @return Exponent
 	 */
-	public int getExponent() {
-		return exponent;
-	}
-
-	private void setExponent(int exponent) {
-		this.exponent = exponent;
+	public Integer getPowerExponent() {
+		return powerProduct.getExponent1();
 	}
 
 	/**
@@ -914,11 +899,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getPowerBase() {
-		return uom1;
-	}
-
-	private void setPowerBase(UnitOfMeasure base) {
-		this.uom1 = base;
+		return powerProduct.getUOM1();
 	}
 
 	private String generateProductSymbol() {
@@ -943,16 +924,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 			throw new Exception(msg);
 		}
 
-		this.setMultiplier(multiplier);
-		this.setMultiplicand(multiplicand);
-		this.setCategory(Category.PRODUCT);
-
-		if (multiplier.getBaseUOM() != null && multiplicand.getBaseUOM() != null) {
-			if (multiplier.getBaseUOM().equals(multiplicand.getBaseUOM())) {
-				// the product can be expressed as a power UOM
-				setExponent(multiplier.getExponent() + multiplicand.getExponent());
-			}
-		}
+		this.powerProduct = new PowerProduct(multiplier, 1, multiplicand, 1);
 	}
 
 	/**
@@ -961,11 +933,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getMultiplier() {
-		return this.uom1;
-	}
-
-	private void setMultiplier(UnitOfMeasure multiplier) {
-		this.uom1 = multiplier;
+		return this.powerProduct.getUOM1();
 	}
 
 	/**
@@ -974,11 +942,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getMultiplicand() {
-		return this.uom2;
-	}
-
-	private void setMultiplicand(UnitOfMeasure multiplicand) {
-		this.uom2 = multiplicand;
+		return this.powerProduct.getUOM2();
 	}
 
 	String generateQuotientSymbol() {
@@ -998,9 +962,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 			throw new Exception(msg);
 		}
 
-		this.setDividend(dividend);
-		this.setDivisor(divisor);
-		this.setCategory(Category.QUOTIENT);
+		this.powerProduct = new PowerProduct(dividend, 1, divisor, -1);
 	}
 
 	/**
@@ -1009,11 +971,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getDividend() {
-		return uom1;
-	}
-
-	private void setDividend(UnitOfMeasure dividend) {
-		this.uom1 = dividend;
+		return powerProduct.getUOM1();
 	}
 
 	/**
@@ -1022,11 +980,66 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getDivisor() {
-		return uom2;
+		return this.powerProduct.getUOM2();
 	}
 
-	private void setDivisor(UnitOfMeasure divisor) {
-		this.uom2 = divisor;
+	// this class holds the base UOMs and exponents for a product of two power
+	// UOMs
+	private class PowerProduct {
+		// power base unit, product multiplier or quotient dividend
+		private UnitOfMeasure uom1;
+
+		// product multiplicand or quotient divisor
+		private UnitOfMeasure uom2;
+
+		// exponent
+		private int exponent1 = 0;
+
+		// second exponent
+		private int exponent2 = 0;
+		
+		private PowerProduct() {
+			
+		}
+
+		private PowerProduct(UnitOfMeasure uom1, int exponent1, UnitOfMeasure uom2, int exponent2) {
+			this.uom1 = uom1;
+			this.exponent1 = exponent1;
+			this.uom2 = uom2;
+			this.exponent2 = exponent2;
+		}
+
+		private Category getCategory() throws Exception {
+
+			Category cat = null;
+
+			if (uom2 == null) {
+				if (uom1 == null) {
+					cat = Category.SCALAR;
+				} else {
+					cat = Category.POWER;
+				}
+			} else {
+				if (exponent2 < 0) {
+					cat = Category.QUOTIENT;
+				} else {
+					cat = Category.PRODUCT;
+				}
+			}
+			return cat;
+		}
+
+		private int getExponent1() {
+			return exponent1;
+		}
+
+		private UnitOfMeasure getUOM1() {
+			return this.uom1;
+		}
+
+		private UnitOfMeasure getUOM2() {
+			return this.uom2;
+		}
 	}
 
 	// UOM, scaling factor and power cumulative along a conversion path
@@ -1034,16 +1047,16 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		private UnitOfMeasure pathUOM;
 		private BigDecimal pathFactor;
 
-		PathParameters(UnitOfMeasure pathUOM, BigDecimal pathFactor) {
+		private PathParameters(UnitOfMeasure pathUOM, BigDecimal pathFactor) {
 			this.pathUOM = pathUOM;
 			this.pathFactor = pathFactor;
 		}
 
-		UnitOfMeasure getPathUOM() {
+		private UnitOfMeasure getPathUOM() {
 			return pathUOM;
 		}
 
-		BigDecimal getPathFactor() {
+		private BigDecimal getPathFactor() {
 			return pathFactor;
 		}
 	}
@@ -1072,17 +1085,17 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 			return terms;
 		}
 
-		void setTerms(Map<UnitOfMeasure, Integer> terms) {
+		private void setTerms(Map<UnitOfMeasure, Integer> terms) {
 			this.terms = terms;
 		}
 
 		private void explode(UnitOfMeasure unit) throws Exception {
 			int counter = 0;
-			
+
 			boolean invert = false;
-			
+
 			// invert negative exponent
-			if (unit.getExponent() < 0) {
+			if (unit.getPowerExponent() < 0) {
 				invert = true;
 			}
 
@@ -1136,11 +1149,11 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 				UnitOfMeasure baseUOM = powerBase.getBaseUOM();
 
 				BigDecimal factor = powerBase.getScalingFactor();
-				int power = abscissaUnit.getExponent();
+				int power = abscissaUnit.getPowerExponent();
 				BigDecimal powerScale = factor.pow(power, MATH_CONTEXT);
 
 				// calculate overall scaling factor
-				mapScalingFactor = mapScalingFactor.multiply(powerScale, MATH_CONTEXT);				
+				mapScalingFactor = mapScalingFactor.multiply(powerScale, MATH_CONTEXT);
 
 				// if down to a scalar, add them
 				if (baseUOM.getCategory().equals(Category.SCALAR)) {
@@ -1196,7 +1209,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 					}
 				} else if (baseUOM.getCategory().equals(Category.POWER)) {
 					UnitOfMeasure base = baseUOM.getPowerBase();
-					int basePower = baseUOM.getExponent();
+					int basePower = baseUOM.getPowerExponent();
 					mapExponent *= basePower * power;
 					explodeRecursively(base, invert, counter);
 				}
@@ -1329,7 +1342,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 			return result;
 		} // end unit of measure iteration
-		
+
 		@Override
 		public String toString() {
 			return "Scaling: " + mapScalingFactor + ", Exponent: " + mapExponent + ", Terms: " + terms;

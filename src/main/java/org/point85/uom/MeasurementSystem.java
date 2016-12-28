@@ -1434,7 +1434,6 @@ public class MeasurementSystem {
 			String unified) throws Exception {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
-		uom.setCategory(UnitOfMeasure.Category.SCALAR);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
 		cacheUnit(uom);
@@ -1489,7 +1488,6 @@ public class MeasurementSystem {
 			String unified, UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
-		uom.setCategory(UnitOfMeasure.Category.QUOTIENT);
 		uom.setQuotientUnits(dividend, divisor);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
@@ -1549,7 +1547,6 @@ public class MeasurementSystem {
 			String unified, UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
-		uom.setCategory(UnitOfMeasure.Category.PRODUCT);
 		uom.setProductUnits(multiplier, multiplicand);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);
@@ -1609,7 +1606,6 @@ public class MeasurementSystem {
 			String unified, UnitOfMeasure base, int power) throws Exception {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
-		uom.setCategory(UnitOfMeasure.Category.POWER);
 		uom.setPowerUnits(base, power);
 		uom.setEnumeration(id);
 		uom.setUnifiedSymbol(unified);

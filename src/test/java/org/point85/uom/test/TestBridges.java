@@ -193,12 +193,10 @@ public class TestBridges extends BaseTest {
 
 		UnitOfMeasure uom = q3.getUOM();
 		UnitOfMeasure base = uom.getPowerBase();
-		int power = uom.getExponent();
 		BigDecimal sf = uom.getScalingFactor();
 
 		assertTrue(uom.getAbscissaUnit().equals(m2));
-		assertTrue(base.equals(m));
-		assertTrue(power == 2);
+		assertTrue(base.equals(m)); 
 		assertThat(sf, closeTo(BigDecimal.ONE, DELTA6));
 
 		Quantity q4 = q3.convert(acre);

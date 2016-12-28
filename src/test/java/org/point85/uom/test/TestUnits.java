@@ -325,7 +325,7 @@ public class TestUnits extends BaseTest {
 
 		assertThat(a2.getScalingFactor(), closeTo(two, DELTA6));
 		assertTrue(a2.getPowerBase().equals(a));
-		assertTrue(a2.getExponent() == 2);
+		assertTrue(a2.getPowerExponent() == 2);
 		assertThat(a2.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 		assertTrue(a2.getAbscissaUnit().equals(a2));
 
