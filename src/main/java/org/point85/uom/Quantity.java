@@ -72,11 +72,23 @@ public class Quantity {
 		this.uom = uom;
 	}
 
+	/**
+	 * Create a hash code
+	 * 
+	 * @return hash code
+	 */
 	@Override
 	public int hashCode() {
 		return getAmount().hashCode() ^ getUOM().hashCode();
 	}
 
+	/**
+	 * Compare this Quantity to another one
+	 * 
+	 * @param other
+	 *            Quantity
+	 * @return true if equal
+	 */
 	@Override
 	public boolean equals(Object other) {
 		boolean answer = false;
@@ -205,6 +217,15 @@ public class Quantity {
 		return quantity;
 	}
 
+	/**
+	 * Divide this quantity by the specified amount
+	 * 
+	 * @param divisor
+	 *            Amount
+	 * @return Quantity {@link Quantity}
+	 * @throws Exception
+	 *             Exception
+	 */
 	public Quantity divide(BigDecimal divisor) throws Exception {
 		BigDecimal amount = getAmount().divide(divisor, UnitOfMeasure.MATH_CONTEXT);
 		Quantity quantity = new Quantity(amount, getUOM());
@@ -253,7 +274,7 @@ public class Quantity {
 	 *             Exception
 	 */
 	public Quantity invert() throws Exception {
-		BigDecimal amount = BigDecimal.ONE.divide(this.getAmount(), UnitOfMeasure.MATH_CONTEXT);
+		BigDecimal amount = BigDecimal.ONE.divide(getAmount(), UnitOfMeasure.MATH_CONTEXT);
 		UnitOfMeasure uom = getUOM().invert();
 
 		Quantity quantity = new Quantity(amount, uom);

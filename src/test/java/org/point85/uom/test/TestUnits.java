@@ -1208,6 +1208,19 @@ public class TestUnits extends BaseTest {
 		Quantity inverted = from.invert();
 		assertThat(inverted.getAmount(), closeTo(Quantity.createAmount("0.1"), DELTA6));
 
+		UnitOfMeasure u = sys.createPowerUOM(UnitType.CUSTOM, "t*4", "t*4", "", K, 4);
+		assertTrue(u != null);
+
+		try {
+			u = C.multiply(C);
+			fail("Can't multiply Celcius");
+		} catch (Exception e) {
+			// ignore
+		}
+		
+		u = K.divide(K);
+		assertTrue(u.equals(sys.getOne()));
+
 	}
 
 	// uncomment to include in a JUnit run

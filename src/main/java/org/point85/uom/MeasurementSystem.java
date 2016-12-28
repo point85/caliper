@@ -30,11 +30,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A MeasurementSystem is a collection of units of measure that have a linear
@@ -89,14 +89,13 @@ public class MeasurementSystem {
 	static final String UNIT_BUNDLE_NAME = "Unit";
 
 	// unit resource bundle (e.g. time units)
-	private transient ResourceBundle symbols;
+	private ResourceBundle symbols;
 
 	// registry by unit symbol
-	private Map<String, UnitOfMeasure> symbolRegistry = Collections
-			.synchronizedMap(new HashMap<String, UnitOfMeasure>());
+	private Map<String, UnitOfMeasure> symbolRegistry = new ConcurrentHashMap<String, UnitOfMeasure>();
 
 	// registry for units by enumeration
-	private Map<Unit, UnitOfMeasure> unitRegistry = Collections.synchronizedMap(new HashMap<Unit, UnitOfMeasure>());
+	private Map<Unit, UnitOfMeasure> unitRegistry = new ConcurrentHashMap<Unit, UnitOfMeasure>();
 
 	private MeasurementSystem() {
 		initialize();
@@ -625,11 +624,9 @@ public class MeasurementSystem {
 
 		case BECQUEREL:
 			// radioactivity (becquerel). Same base symbol as Hertz
-			// conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.HERTZ));
 			uom = createScalarUOM(UnitType.RADIOACTIVITY, Unit.BECQUEREL, symbols.getString("becquerel.name"),
 					symbols.getString("becquerel.symbol"), symbols.getString("becquerel.desc"),
 					symbols.getString("becquerel.unified"));
-			// uom.setConversion(conversion);
 			break;
 
 		case GRAY:
@@ -1304,7 +1301,7 @@ public class MeasurementSystem {
 			throw new Exception(msg);
 		}
 
-		if (unitRegistry.containsKey(id)) {
+		if (id != null && unitRegistry.containsKey(id)) {
 			String msg = MessageFormat.format(MeasurementSystem.getMessage("already.created"), symbol,
 					unitRegistry.get(id).toString());
 			throw new Exception(msg);
@@ -1344,11 +1341,16 @@ public class MeasurementSystem {
 	 * @param uom
 	 *            {@link UnitOfMeasure} to remove
 	 */
-	public void unregisterUnit(UnitOfMeasure uom) {
-		if (uom != null) {
-			unitRegistry.remove(uom.getEnumeration());
-			symbolRegistry.remove(uom.getSymbol());
+	public synchronized void unregisterUnit(UnitOfMeasure uom) {
+		if (uom == null) {
+			return;
 		}
+		
+		if (uom.getEnumeration() != null) {
+			unitRegistry.remove(uom.getEnumeration());
+		}
+
+		symbolRegistry.remove(uom.getSymbol());
 	}
 
 	ResourceBundle getSymbols() {

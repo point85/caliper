@@ -18,6 +18,15 @@ public class TestPerformance {
 	// unit map
 	private Map<UnitType, List<UnitOfMeasure>> unitListMap = new HashMap<UnitType, List<UnitOfMeasure>>();
 
+	TestPerformance() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getSystem();
+
+		for (Unit u : Unit.values()) {
+			UnitOfMeasure uom = sys.getUOM(u);
+			this.addUnit(uom);
+		}
+	}
+
 	private void addUnit(UnitOfMeasure uom) {
 		List<UnitOfMeasure> unitList = unitListMap.get(uom.getUnitType());
 
@@ -28,15 +37,7 @@ public class TestPerformance {
 		unitList.add(uom);
 	}
 
-	// @Test
 	public void runSingleTest() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
-
-		for (Unit u : Unit.values()) {
-			UnitOfMeasure uom = sys.getUOM(u);
-			this.addUnit(uom);
-		}
-
 		// for each unit type, execute the quantity operations
 		for (Entry<UnitType, List<UnitOfMeasure>> entry : unitListMap.entrySet()) {
 			// run the matrix
