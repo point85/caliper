@@ -31,6 +31,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.junit.Test;
 import org.point85.uom.Conversion;
@@ -290,7 +291,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
-		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m); 
+		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m);
 		UnitOfMeasure oneOverM = sys.getUOM(Unit.DIOPTER);
 		UnitOfMeasure fperm = sys.getUOM(Unit.FARAD_PER_METRE);
 
@@ -365,7 +366,7 @@ public class TestQuantity extends BaseTest {
 			fail("divide by zero)");
 		} catch (Exception e) {
 		}
-		
+
 		q1 = q3.convert(cm).divide(ten);
 		assertThat(q1.getAmount(), closeTo(Quantity.createAmount("20"), DELTA6));
 
@@ -408,45 +409,46 @@ public class TestQuantity extends BaseTest {
 		assertTrue(nm1.getBaseSymbol().equals(nm2.getBaseSymbol()));
 		q4 = q3.convert(sys.getUOM(Unit.JOULE));
 		assertTrue(q4.getUOM().equals(sys.getUOM(Unit.JOULE)));
-		
+
 		// farads
 		q1 = new Quantity(BigDecimal.TEN, fperm);
 		q2 = new Quantity(BigDecimal.ONE, m);
 		q3 = q1.multiply(q2);
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.FARAD)));
-		
+
 		// amps
 		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.AMPERE_PER_METRE));
 		q2 = new Quantity(BigDecimal.ONE, m);
 		q3 = q1.multiply(q2);
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.AMPERE)));
-		
+
 		// body mass index
 		Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
 		Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
 		Quantity bmi = mass.divide(height.multiply(height));
 		assertThat(bmi.getAmount(), closeTo(Quantity.createAmount("25"), DELTA6));
 	}
-	
+
 	@Test
 	public void testPowers() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getSystem();
-		
+
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure p2 = sys.createPowerUOM(UnitType.AREA, "m2^1", "m2^1", "square metres raised to power 1", m2, 1);
-		UnitOfMeasure p4 = sys.createPowerUOM(UnitType.CUSTOM, "m2^2", "m2^2", "square metres raised to power 2", m2, 2);
-		
+		UnitOfMeasure p4 = sys.createPowerUOM(UnitType.CUSTOM, "m2^2", "m2^2", "square metres raised to power 2", m2,
+				2);
+
 		BigDecimal amount = Quantity.createAmount("10");
-		
+
 		Quantity q1 = new Quantity(amount, m2);
 		Quantity q3 = new Quantity(amount, p4);
-		
+
 		Quantity q4 = q3.divide(q1);
 		assertThat(q4.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(q4.getUOM().getBaseUOM().equals(m2));
-		
+
 		Quantity q2 = q1.convert(p2);
 		assertThat(q2.getAmount(), closeTo(amount, DELTA6));
 		assertTrue(q2.getUOM().getBaseUOM().equals(m2));
@@ -457,6 +459,7 @@ public class TestQuantity extends BaseTest {
 
 		MeasurementSystem sys = MeasurementSystem.getSystem();
 
+		UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
@@ -474,9 +477,9 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure ws = sys.createProductUOM(UnitType.ENERGY, "Wxs", "W·s", "Watt times second", watt,
 				sys.getSecond());
 		UnitOfMeasure ft3 = sys.getUOM(Unit.CUBIC_FOOT);
-		UnitOfMeasure mole = sys.getUOM(Unit.MOLE);		
+		UnitOfMeasure mole = sys.getUOM(Unit.MOLE);
 		UnitOfMeasure kat = sys.getUOM(Unit.KATAL);
-		
+
 		BigDecimal oneHundred = Quantity.createAmount("100");
 
 		assertTrue(nm.getBaseSymbol().equals(joule.getBaseSymbol()));
@@ -580,12 +583,21 @@ public class TestQuantity extends BaseTest {
 
 		q3 = q2.convert(sys.getUOM(Unit.REV_PER_MIN));
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
-		
+
 		q1 = new Quantity(BigDecimal.ONE, kat);
 		q2 = new Quantity(BigDecimal.ONE, sys.getMinute());
 		q3 = q1.multiply(q2);
 		q4 = q3.convert(mole);
 		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("60"), DELTA6));
+		
+		// E = mc^2
+		UnitOfMeasure c2 = sys.createPowerUOM(UnitType.CUSTOM, "c2", "c2", "speed of light squared", sys.getUOM(Unit.LIGHT_VELOCITY), 2);
+		Quantity oneC2 = new Quantity(BigDecimal.ONE, c2);
+		Quantity oneKg = new Quantity(BigDecimal.ONE, kg);
+		Quantity energy = oneKg.multiply(oneC2);
+		Quantity joules = energy.convert(joule);
+		assertThat(joules.getAmount(), closeTo(new BigDecimal("8.987551787368176E+16", UnitOfMeasure.MATH_CONTEXT), BigDecimal.ONE));
+		
 	}
 
 	@Test
@@ -657,14 +669,35 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
 		b.setConversion(conversion);
 
-		BigDecimal two = Quantity.multiplyAmounts("2", "2");
+		BigDecimal four = Quantity.multiplyAmounts("2", "2");
+
+		BigDecimal bd = Quantity.createAmount(new BigDecimal("4"));
+		assertTrue(bd.equals(four));
+
+		bd = Quantity.createAmount(new BigInteger("4"));
+		assertTrue(bd.equals(four));
+
+		bd = Quantity.createAmount(new Double(4.0d));
+		assertTrue(bd.equals(four));
+
+		bd = Quantity.createAmount(new Float(4.0f));
+		assertTrue(bd.equals(four));
+
+		bd = Quantity.createAmount(new Long(4l));
+		assertTrue(bd.equals(four));
+
+		bd = Quantity.createAmount(new Integer(4));
+		assertTrue(bd.equals(four));
+
+		bd = Quantity.createAmount(new Short((short) 4));
+		assertTrue(bd.equals(four));
 
 		// add
-		Quantity q1 = new Quantity(two, a);
+		Quantity q1 = new Quantity(four, a);
 
 		assertFalse(q1.equals(null));
 
-		Quantity q2 = new Quantity(two, b);
+		Quantity q2 = new Quantity(four, b);
 		Quantity q3 = q1.add(q2);
 
 		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
@@ -814,7 +847,7 @@ public class TestQuantity extends BaseTest {
 		Quantity neutralpH = new Quantity("7.0", sys.getUOM(Unit.PH));
 		assertTrue(acidpH.compare(neutralpH) == -1);
 	}
-	
+
 	@Test
 	public void testArithmetic() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getSystem();
@@ -824,9 +857,9 @@ public class TestQuantity extends BaseTest {
 		Quantity qin = new Quantity("1", in);
 		BigDecimal bd = Quantity.createAmount("2.54");
 		Quantity q1 = qcm.multiply(bd).convert(in);
-		assertTrue(q1.equals(qin)); 
+		assertTrue(q1.equals(qin));
 		Quantity q2 = q1.convert(cm);
 		assertThat(q2.getAmount(), closeTo(bd, DELTA6));
-		
+
 	}
 }

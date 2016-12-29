@@ -24,6 +24,7 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.MathContext;
 
 /**
@@ -106,7 +107,7 @@ public class Quantity {
 
 	/**
 	 * Create an amount of a quantity that adheres to precision and rounding
-	 * settings
+	 * settings from a String
 	 * 
 	 * @param value
 	 *            Text value of amount
@@ -116,6 +117,36 @@ public class Quantity {
 		// use String constructor for exact precision with rounding mode in math
 		// context
 		return new BigDecimal(value, UnitOfMeasure.MATH_CONTEXT);
+	}
+
+	/**
+	 * Create an amount of a quantity that adheres to precision and rounding
+	 * settings from a Number
+	 * 
+	 * @param number
+	 *            Value
+	 * @return Amount
+	 */
+	public static BigDecimal createAmount(Number number) {
+		BigDecimal result = null;
+
+		if (number instanceof BigDecimal) {
+			result = (BigDecimal) number;
+		} else if (number instanceof BigInteger) {
+			result = new BigDecimal((BigInteger) number, UnitOfMeasure.MATH_CONTEXT);
+		} else if (number instanceof Double) {
+			result = new BigDecimal((Double) number, UnitOfMeasure.MATH_CONTEXT);
+		} else if (number instanceof Float) {
+			result = new BigDecimal((Float) number, UnitOfMeasure.MATH_CONTEXT);
+		} else if (number instanceof Long) {
+			result = new BigDecimal((Long) number, UnitOfMeasure.MATH_CONTEXT);
+		} else if (number instanceof Integer) {
+			result = new BigDecimal((Integer) number, UnitOfMeasure.MATH_CONTEXT);
+		} else if (number instanceof Short) {
+			result = new BigDecimal((Short) number, UnitOfMeasure.MATH_CONTEXT);
+		}
+
+		return result;
 	}
 
 	/**
