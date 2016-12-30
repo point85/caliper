@@ -186,6 +186,17 @@ Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
 Quantity bmi = mass.divide(height.multiply(height));
 ```
 
+and Einstein's famous E = mc^2:
+```java
+UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
+UnitOfMeasure joule = sys.getUOM(Unit.JOULE);
+UnitOfMeasure c2 = sys.createPowerUOM(UnitType.CUSTOM, "c2", "c^2", "speed of light squared", sys.getUOM(Unit.LIGHT_VELOCITY), 2);
+Quantity oneC2 = new Quantity(BigDecimal.ONE, c2);
+Quantity oneKg = new Quantity(BigDecimal.ONE, kg);
+Quantity energy = oneKg.multiply(oneC2);
+Quantity joules = energy.convert(joule);
+```
+
 To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getUOM() using a Prefix can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
 ```java
 UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
