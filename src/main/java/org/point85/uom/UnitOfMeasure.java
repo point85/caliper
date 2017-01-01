@@ -390,14 +390,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		Map<UnitOfMeasure, Integer> otherMap = otherPowerMap.getTerms();
 		BigDecimal otherFactor = otherPowerMap.getScalingFactor();
 
-		BigDecimal resultFactor = null;
-		if (!invert) {
-			resultFactor = decimalMultiply(thisFactor, otherFactor);
-		} else {
-			resultFactor = decimalDivide(thisFactor, otherFactor);
-		}
-		result.setScalingFactor(resultFactor);
-
 		// create a map of the unit of measure powers
 		Map<UnitOfMeasure, Integer> resultMap = new HashMap<UnitOfMeasure, Integer>();
 
@@ -447,6 +439,14 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		UnitOfMeasure baseUOM = MeasurementSystem.getSystem().getUOM(baseSymbol);
 
 		if (baseUOM != null) {
+			// there is a conversion to the base UOM
+			BigDecimal resultFactor = null;
+			if (!invert) {
+				resultFactor = decimalMultiply(thisFactor, otherFactor);
+			} else {
+				resultFactor = decimalDivide(thisFactor, otherFactor);
+			}
+			result.setScalingFactor(resultFactor);
 			result.setAbscissaUnit(baseUOM);
 			result.setUnitType(baseUOM.getUnitType());
 		}
@@ -1108,11 +1108,13 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 				terms.clear();
 				return;
 			}
+			
+			BigDecimal scaling = unit.getScalingFactor();
 
 			if (!invert) {
-				mapScalingFactor = decimalMultiply(mapScalingFactor, unit.getScalingFactor());
+				mapScalingFactor = decimalMultiply(mapScalingFactor, scaling);
 			} else {
-				mapScalingFactor = decimalDivide(mapScalingFactor, unit.getScalingFactor());
+				mapScalingFactor = decimalDivide(mapScalingFactor, scaling);
 			}
 
 			// explode the abscissa unit

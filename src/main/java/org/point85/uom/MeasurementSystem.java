@@ -1290,24 +1290,6 @@ public class MeasurementSystem {
 		return symbolRegistry.get(symbol);
 	}
 
-	private void checkExistance(String symbol, Unit id) throws Exception {
-		if (symbol == null || symbol.length() == 0) {
-			throw new Exception(MeasurementSystem.getMessage("symbol.cannot.be.null"));
-		}
-
-		if (symbolRegistry.containsKey(symbol)) {
-			String msg = MessageFormat.format(MeasurementSystem.getMessage("already.created"), symbol,
-					symbolRegistry.get(symbol).toString());
-			throw new Exception(msg);
-		}
-
-		if (id != null && unitRegistry.containsKey(id)) {
-			String msg = MessageFormat.format(MeasurementSystem.getMessage("already.created"), symbol,
-					unitRegistry.get(id).toString());
-			throw new Exception(msg);
-		}
-	}
-
 	/**
 	 * Remove all cached units of measure
 	 */
@@ -1345,7 +1327,7 @@ public class MeasurementSystem {
 		if (uom == null) {
 			return;
 		}
-		
+
 		if (uom.getEnumeration() != null) {
 			unitRegistry.remove(uom.getEnumeration());
 		}
@@ -1357,11 +1339,24 @@ public class MeasurementSystem {
 		return symbols;
 	}
 
-	private void registerUnit(UnitOfMeasure uom) throws Exception {
+	private void cacheUnit(UnitOfMeasure uom) throws Exception {
+		String key = uom.getSymbol();
+
+		// get first by symbol
+		UnitOfMeasure current = symbolRegistry.get(key);
+
+		if (current != null) {
+			// already cached
+			return;
+		}
+
+		symbolRegistry.put(key, uom);
+
+		// next by unit enumeration
 		Unit id = uom.getEnumeration();
 
 		if (id != null) {
-			UnitOfMeasure current = unitRegistry.get(id);
+			current = unitRegistry.get(id);
 
 			if (current != null) {
 				String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(), id.toString(),
@@ -1371,26 +1366,8 @@ public class MeasurementSystem {
 
 			unitRegistry.put(id, uom);
 		}
-	}
 
-	private void cacheUnit(UnitOfMeasure uom) throws Exception {
-
-		String key = uom.getSymbol();
-
-		// register first by symbol
-		UnitOfMeasure current = symbolRegistry.get(key);
-
-		if (current != null) {
-			String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(), key,
-					current.toString());
-			throw new Exception(msg);
-		}
-		symbolRegistry.put(key, uom);
-
-		// next by unit enumeration
-		registerUnit(uom);
-
-		// finally by base symbol
+		// finally by base symbol too
 		key = uom.getBaseSymbol();
 
 		if (symbolRegistry.get(key) == null) {
@@ -1398,19 +1375,30 @@ public class MeasurementSystem {
 		}
 	}
 
-	private void checkType(UnitType type) throws Exception {
-		if (type == null) {
-			throw new Exception(getMessage("unit.type.cannot.be.null"));
-		}
-	}
-
 	private UnitOfMeasure createUOM(UnitType type, Unit id, String name, String symbol, String description)
 			throws Exception {
 
-		checkType(type);
-		checkExistance(symbol, id);
+		if (symbol == null || symbol.length() == 0) {
+			throw new Exception(MeasurementSystem.getMessage("symbol.cannot.be.null"));
+		}
 
-		return new UnitOfMeasure(type, name, symbol, description);
+		if (type == null) {
+			throw new Exception(getMessage("unit.type.cannot.be.null"));
+		}
+
+		UnitOfMeasure uom = null;
+
+		if (symbolRegistry.containsKey(symbol)) {
+			uom = symbolRegistry.get(symbol);
+		}
+
+		else if (id != null && unitRegistry.containsKey(id)) {
+			uom = unitRegistry.get(id);
+		} else {
+			// create a new one
+			uom = new UnitOfMeasure(type, name, symbol, description);
+		}
+		return uom;
 	}
 
 	/**

@@ -477,8 +477,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure ws = sys.createProductUOM(UnitType.ENERGY, "Wxs", "W·s", "Watt times second", watt,
 				sys.getSecond());
 		UnitOfMeasure ft3 = sys.getUOM(Unit.CUBIC_FOOT);
-		UnitOfMeasure mole = sys.getUOM(Unit.MOLE);
-		UnitOfMeasure kat = sys.getUOM(Unit.KATAL);
+		UnitOfMeasure hz = sys.getUOM(Unit.HERTZ);
 
 		BigDecimal oneHundred = Quantity.createAmount("100");
 
@@ -584,20 +583,21 @@ public class TestQuantity extends BaseTest {
 		q3 = q2.convert(sys.getUOM(Unit.REV_PER_MIN));
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
-		q1 = new Quantity(BigDecimal.ONE, kat);
+		q1 = new Quantity(BigDecimal.TEN, hz);
 		q2 = new Quantity(BigDecimal.ONE, sys.getMinute());
-		q3 = q1.multiply(q2);
-		q4 = q3.convert(mole);
-		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("60"), DELTA6));
-		
+		q3 = q1.multiply(q2).convert(sys.getOne());
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("600"), DELTA6));
+
 		// E = mc^2
-		UnitOfMeasure c2 = sys.createPowerUOM(UnitType.CUSTOM, "c2", "c2", "speed of light squared", sys.getUOM(Unit.LIGHT_VELOCITY), 2);
+		UnitOfMeasure c2 = sys.createPowerUOM(UnitType.CUSTOM, "c2", "c^2", "speed of light squared",
+				sys.getUOM(Unit.LIGHT_VELOCITY), 2);
 		Quantity oneC2 = new Quantity(BigDecimal.ONE, c2);
 		Quantity oneKg = new Quantity(BigDecimal.ONE, kg);
 		Quantity energy = oneKg.multiply(oneC2);
 		Quantity joules = energy.convert(joule);
-		assertThat(joules.getAmount(), closeTo(new BigDecimal("8.987551787368176E+16", UnitOfMeasure.MATH_CONTEXT), BigDecimal.ONE));
-		
+		assertThat(joules.getAmount(),
+				closeTo(new BigDecimal("8.987551787368176E+16", UnitOfMeasure.MATH_CONTEXT), BigDecimal.ONE));
+
 	}
 
 	@Test
@@ -663,7 +663,7 @@ public class TestQuantity extends BaseTest {
 	public void testGenericQuantity() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getSystem();
 
-		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "a", "A");
+		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "aUOM", "A");
 
 		Conversion conversion = new Conversion(BigDecimal.TEN, a);
 		UnitOfMeasure b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
@@ -715,13 +715,17 @@ public class TestQuantity extends BaseTest {
 		// multiply
 		q3 = q1.multiply(q2);
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("16"), DELTA6));
-		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.TEN, DELTA6));
+		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertThat(q3.getUOM().getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
-		Quantity q4 = q3.divide(q2);
+		UnitOfMeasure a2 = sys.createPowerUOM(UnitType.CUSTOM, "a*2", "a*2", "A squared", a, 2);
+		Quantity q4 = q3.convert(a2);
+		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("160"), DELTA6));
+		assertTrue(q4.getUOM().equals(a2));
+
+		q4 = q3.divide(q2);
+		assertTrue(q4.equals(q1));
 		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("4"), DELTA6));
-		q4 = q4.convert(b);
-		assertTrue(q4.equals(q2));
 
 		// divide
 		q3 = q1.divide(q2);
