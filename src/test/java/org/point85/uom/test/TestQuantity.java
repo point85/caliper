@@ -429,6 +429,32 @@ public class TestQuantity extends BaseTest {
 		Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
 		Quantity bmi = mass.divide(height.multiply(height));
 		assertThat(bmi.getAmount(), closeTo(Quantity.createAmount("25"), DELTA6));
+
+		// low frequency red light
+		UnitOfMeasure THz = sys.getUOM(Prefix.TERA, sys.getUOM(Unit.HERTZ));
+		Quantity lightFrequency = new Quantity("400", THz);
+
+		// Planck's constant
+		UnitOfMeasure h = sys.getUOM(Unit.PLANCK_CONSTANT);
+		Quantity planck = new Quantity(BigDecimal.ONE, h);
+
+		// photon energy in eV
+		Quantity ev = planck.multiply(lightFrequency).convert(sys.getUOM(Unit.ELECTRON_VOLT));
+
+		assertThat(ev.getAmount(), closeTo(Quantity.createAmount("1.65"), DELTA2));
+
+		// wavelength of red light in nanometres
+		Quantity vc = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.LIGHT_VELOCITY));
+		Quantity wavelength = vc.divide(lightFrequency).convert(sys.getUOM(Prefix.NANO, sys.getUOM(Unit.METRE)));
+
+		assertThat(wavelength.getAmount(), closeTo(Quantity.createAmount("749.48"), DELTA2));
+
+		// Boltzmann and Avogadro
+		Quantity boltzmann = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.BOLTZMANN_CONSTANT));
+		Quantity avogadro = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.AVAGADRO_CONSTANT));
+		Quantity gas = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.GAS_CONSTANT));
+		Quantity qR = boltzmann.multiply(avogadro);
+		assertThat(qR.getUOM().getScalingFactor(), closeTo(gas.getUOM().getScalingFactor(), DELTA6));
 	}
 
 	@Test

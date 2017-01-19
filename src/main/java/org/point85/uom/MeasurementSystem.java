@@ -133,6 +133,13 @@ public class MeasurementSystem {
 	private UnitOfMeasure createUOM(Unit enumeration) throws Exception {
 		UnitOfMeasure uom = null;
 
+		// fundamental constants of nature
+		uom = createFundamentalConstant(enumeration);
+
+		if (uom != null) {
+			return uom;
+		}
+
 		// SI
 		uom = createSIUnit(enumeration);
 
@@ -159,6 +166,87 @@ public class MeasurementSystem {
 
 		if (uom != null) {
 			return uom;
+		}
+
+		return uom;
+	}
+
+	private UnitOfMeasure createFundamentalConstant(Unit unit) throws Exception {
+
+		UnitOfMeasure uom = null;
+		Conversion conversion = null;
+
+		switch (unit) {
+		case MOLE:
+			// substance amount
+			conversion = new Conversion(Quantity.createAmount("6.02214085774E+23"), getOne());
+			uom = createScalarUOM(UnitType.SUBSTANCE_AMOUNT, Unit.MOLE, symbols.getString("mole.name"),
+					symbols.getString("mole.symbol"), symbols.getString("mole.desc"),
+					symbols.getString("mole.unified"));
+			uom.setConversion(conversion);
+			break;
+
+		case AVAGADRO_CONSTANT:
+			conversion = new Conversion(Quantity.createAmount("6.02214085774E+23"), getOne());
+			uom = createQuotientUOM(UnitType.UNCLASSIFIED, Unit.AVAGADRO_CONSTANT, symbols.getString("avo.name"),
+					symbols.getString("avo.symbol"), symbols.getString("avo.desc"), symbols.getString("avo.unified"),
+					getOne(), getUOM(Unit.MOLE));
+			uom.setConversion(conversion);
+
+			break;
+
+		case GRAVITY:
+			// acceleration of gravity
+			conversion = new Conversion(Quantity.createAmount("9.80665"), getUOM(Unit.METRE_PER_SECOND_SQUARED));
+			uom = createScalarUOM(UnitType.ACCELERATION, Unit.GRAVITY, symbols.getString("gravity.name"),
+					symbols.getString("gravity.symbol"), symbols.getString("gravity.desc"),
+					symbols.getString("gravity.unified"));
+			uom.setConversion(conversion);
+			break;
+
+		case LIGHT_VELOCITY:
+			// speed of light
+			conversion = new Conversion(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
+			uom = createScalarUOM(UnitType.VELOCITY, Unit.LIGHT_VELOCITY, symbols.getString("light.name"),
+					symbols.getString("light.symbol"), symbols.getString("light.desc"),
+					symbols.getString("light.unified"));
+			uom.setConversion(conversion);
+			break;
+
+		case LIGHT_YEAR:
+			// distance light travels in a vacuum in one year
+			uom = createProductUOM(UnitType.LENGTH, Unit.LIGHT_YEAR, symbols.getString("ly.name"),
+					symbols.getString("ly.symbol"), symbols.getString("ly.desc"), symbols.getString("ly.unified"),
+					getUOM(Unit.LIGHT_VELOCITY), getUOM(Unit.JULIAN_YEAR));
+			break;
+
+		case PLANCK_CONSTANT:
+			conversion = new Conversion(Quantity.createAmount("6.62607004081E-34"), getUOM(Unit.JOULE_SECOND));
+			uom = createScalarUOM(UnitType.QUANTUM_OF_ACTION, Unit.PLANCK_CONSTANT, symbols.getString("planck.name"),
+					symbols.getString("planck.symbol"), symbols.getString("planck.desc"),
+					symbols.getString("planck.unified"));
+			uom.setConversion(conversion);
+			break;
+
+		case BOLTZMANN_CONSTANT:
+			conversion = new Conversion(Quantity.createAmount("1.3806485279E-23"), getUOM(Unit.JOULE_KELVIN));
+			uom = createScalarUOM(UnitType.UNCLASSIFIED, Unit.BOLTZMANN_CONSTANT, symbols.getString("boltzmann.name"),
+					symbols.getString("boltzmann.symbol"), symbols.getString("boltzmann.desc"),
+					symbols.getString("boltzmann.unified"));
+			uom.setConversion(conversion);
+			break;
+
+		case GAS_CONSTANT:
+			UnitOfMeasure kN = getUOM(Unit.BOLTZMANN_CONSTANT).multiply(getUOM(Unit.AVAGADRO_CONSTANT));
+			conversion = new Conversion(Quantity.createAmount("8.314459848"), kN);
+			uom = createScalarUOM(UnitType.UNCLASSIFIED, Unit.GAS_CONSTANT, symbols.getString("gas.name"),
+					symbols.getString("gas.symbol"), symbols.getString("gas.desc"), symbols.getString("gas.unified"));
+			uom.setConversion(conversion);
+			break;
+
+		default:
+			break;
+
 		}
 
 		return uom;
@@ -318,25 +406,10 @@ public class MeasurementSystem {
 					symbols.getString("cd.symbol"), symbols.getString("cd.desc"), symbols.getString("cd.unified"));
 			break;
 
-		case MOLE:
-			// substance amount
-			conversion = new Conversion(Quantity.createAmount("6.0221367E+23"), getOne());
-			uom = createScalarUOM(UnitType.SUBSTANCE_AMOUNT, Unit.MOLE, symbols.getString("mole.name"),
-					symbols.getString("mole.symbol"), symbols.getString("mole.desc"),
-					symbols.getString("mole.unified"));
-			uom.setConversion(conversion);
-			break;
-
 		case PH:
 			// molar concentration
 			uom = createScalarUOM(UnitType.MOLAR_CONCENTRATION, Unit.PH, symbols.getString("ph.name"),
 					symbols.getString("ph.symbol"), symbols.getString("ph.desc"), symbols.getString("ph.unified"));
-			break;
-
-		case LIGHT_YEAR:
-			uom = createProductUOM(UnitType.LENGTH, Unit.LIGHT_YEAR, symbols.getString("ly.name"),
-					symbols.getString("ly.symbol"), symbols.getString("ly.desc"), symbols.getString("ly.unified"),
-					getUOM(Unit.LIGHT_VELOCITY), getUOM(Unit.JULIAN_YEAR));
 			break;
 
 		case GRAM:
@@ -650,24 +723,6 @@ public class MeasurementSystem {
 					symbols.getString("katal.unified"), getUOM(Unit.MOLE), getSecond());
 			break;
 
-		case GRAVITY:
-			// acceleration of gravity
-			conversion = new Conversion(Quantity.createAmount("9.80665"), getUOM(Unit.METRE_PER_SECOND_SQUARED));
-			uom = createScalarUOM(UnitType.ACCELERATION, Unit.GRAVITY, symbols.getString("gravity.name"),
-					symbols.getString("gravity.symbol"), symbols.getString("gravity.desc"),
-					symbols.getString("gravity.unified"));
-			uom.setConversion(conversion);
-			break;
-
-		case LIGHT_VELOCITY:
-			// speed of light
-			conversion = new Conversion(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
-			uom = createScalarUOM(UnitType.VELOCITY, Unit.LIGHT_VELOCITY, symbols.getString("light.name"),
-					symbols.getString("light.symbol"), symbols.getString("light.desc"),
-					symbols.getString("light.unified"));
-			uom.setConversion(conversion);
-			break;
-
 		case ANGSTROM:
 			// length
 			UnitOfMeasure nm = this.getUOM(Prefix.NANO, getUOM(Unit.METRE));
@@ -676,6 +731,18 @@ public class MeasurementSystem {
 					symbols.getString("angstrom.symbol"), symbols.getString("angstrom.desc"),
 					symbols.getString("angstrom.unified"));
 			uom.setConversion(conversion);
+			break;
+
+		case JOULE_SECOND:
+			uom = createProductUOM(UnitType.QUANTUM_OF_ACTION, symbols.getString("js.name"),
+					symbols.getString("js.symbol"), symbols.getString("js.desc"), getUOM(Unit.JOULE), getSecond());
+			uom.setUnifiedSymbol(symbols.getString("js.unified"));
+			break;
+
+		case JOULE_KELVIN:
+			uom = createQuotientUOM(UnitType.UNCLASSIFIED, symbols.getString("jk.name"), symbols.getString("jk.symbol"),
+					symbols.getString("jk.desc"), getUOM(Unit.JOULE), getUOM(Unit.KELVIN));
+			uom.setUnifiedSymbol(symbols.getString("jk.unified"));
 			break;
 
 		case BIT:
@@ -1656,5 +1723,4 @@ public class MeasurementSystem {
 		}
 		return scaled;
 	}
-
 }

@@ -61,7 +61,10 @@ public class StressTestRunner {
 
 	public static void main(String[] args) throws Exception {
 		StressTestRunner runner = new StressTestRunner();
+		System.out.println("Running all tests");
 		runner.runTests();
+		
+		System.out.println("Running single test");
 		runner.runSingleTest();
 	}
 }

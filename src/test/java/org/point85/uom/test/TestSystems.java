@@ -29,7 +29,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -46,6 +48,8 @@ public class TestSystems extends BaseTest {
 		MeasurementSystem sys = MeasurementSystem.getSystem();
 		assertFalse(sys.equals(null));
 
+		Map<String, UnitOfMeasure> unitMap = new HashMap<>();
+
 		// check the SI units
 		for (Unit unit : Unit.values()) {
 			UnitOfMeasure uom = sys.getUOM(unit);
@@ -60,6 +64,10 @@ public class TestSystems extends BaseTest {
 			assertNotNull(uom.getScalingFactor());
 			assertNotNull(uom.getOffset());
 			assertNotNull(uom.getUnifiedSymbol());
+
+			// symbol uniqueness
+			assertFalse(unitMap.containsKey(uom.getSymbol()));
+			unitMap.put(uom.getSymbol(), uom);
 		}
 
 		List<Unit> allUnits = new ArrayList<Unit>();

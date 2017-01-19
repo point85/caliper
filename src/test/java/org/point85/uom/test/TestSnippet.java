@@ -39,7 +39,7 @@ public class TestSnippet extends BaseTest {
 		for (Unit unit : Unit.values()) {
 			sys.getUOM(unit).clearCache();
 		}
-		
+
 		sys.unregisterUnit(sys.getUOM(Unit.METRE));
 
 		sys.clearCache();

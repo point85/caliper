@@ -42,9 +42,13 @@ public enum Unit {
 	DEGREE,
 	// ratio
 	DECIBEL,
+	
+	// fundamental constants
+	MOLE, LIGHT_VELOCITY, LIGHT_YEAR, GRAVITY, PLANCK_CONSTANT, BOLTZMANN_CONSTANT, AVAGADRO_CONSTANT, GAS_CONSTANT,
+	
 	// SI units follow
 	// length
-	METRE, ANGSTROM, LIGHT_YEAR, DIOPTER,
+	METRE, ANGSTROM, DIOPTER,
 	// area
 	SQUARE_METRE,
 	// temperature
@@ -75,8 +79,8 @@ public enum Unit {
 	PASCAL, BAR, ATMOSPHERE,
 	// electrical
 	AMPERE, AMPERE_PER_METRE, COULOMB, ELEMENTARY_CHARGE, VOLT, OHM, FARAD, FARAD_PER_METRE, WEBER, TESLA, HENRY, SIEMENS,
-	// substance amount or concentration
-	MOLE, PH,
+	// concentration
+	PH,
 	// luminosity
 	CANDELA, LUMEN, LUX,
 	// radioactivity
@@ -87,10 +91,13 @@ public enum Unit {
 	KILOGRAM_PER_CUBIC_METRE,
 	// torque (moment of force and energy)
 	NEWTON_METRE,
-	// constants
-	GRAVITY, LIGHT_VELOCITY,
+	// quantum action
+	JOULE_SECOND,
+	// unclassified
+	JOULE_KELVIN,
 	// IT
 	BIT, BYTE,
+	
 	// Customary Units follow
 	// length
 	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL, POINT,
@@ -118,6 +125,7 @@ public enum Unit {
 	BTU,
 	// pressure
 	PSI, IN_HG,
+	
 	// US Units follow
 	// volume
 	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, US_BUSHEL,

@@ -197,6 +197,24 @@ Quantity energy = oneKg.multiply(oneC2);
 Quantity joules = energy.convert(joule);
 ```
 
+and photon energy using Planck's constant:
+```java
+		// low frequency red light
+		UnitOfMeasure THz = sys.getUOM(Prefix.TERA, sys.getUOM(Unit.HERTZ));
+		Quantity lightFrequency = new Quantity("400", THz);
+
+		// Planck's constant
+		UnitOfMeasure h = sys.getUOM(Unit.PLANCKS_CONSTANT);
+		Quantity planck = new Quantity(BigDecimal.ONE, h);
+
+		// photon energy (approx. 1.65 eV)
+		Quantity ev = planck.multiply(lightFrequency).convert(sys.getUOM(Unit.ELECTRON_VOLT));
+
+		// wavelength of red light in nanometres (approx 749.48)
+		Quantity vc = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.LIGHT_VELOCITY));
+		Quantity wavelength = vc.divide(lightFrequency).convert(sys.getUOM(Prefix.NANO, sys.getUOM(Unit.METRE)));
+```
+
 To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getUOM() using a Prefix can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
 ```java
 UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
