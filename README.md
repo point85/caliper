@@ -248,13 +248,15 @@ already.created = The unit of measure with symbol {0} has already been created b
 ## Project Structure
 Caliper depends upon Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request). 
 
-Caliper is a Gradle project with the following structure:
+Caliper, when built with Gradle, has the following structure:
  * `/build/docs/javadoc` javadoc files
  * `/build/libs` compiled caliper.jar 
  * `/doc` documentation
  * `/src/main/java` - java source files
  * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol, description and UCUM symbol.
  * `/src/test/java` - JUnit test java source files 
+ 
+When Caliper is built with Maven, the javadoc and jar files are in the 'target' folder.
 
 ## JSR 363
 JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular:
