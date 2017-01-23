@@ -61,7 +61,7 @@ public class Quantity {
 	}
 
 	/**
-	 * Create a quantity with an amount and unit of measure
+	 * Create a quantity with a String amount and unit of measure
 	 * 
 	 * @param amount
 	 *            Amount
@@ -71,6 +71,34 @@ public class Quantity {
 	public Quantity(String amount, UnitOfMeasure uom) {
 		this.amount = createAmount(amount);
 		this.uom = uom;
+	}
+
+	/**
+	 * Create a quantity with an amount and unit
+	 * 
+	 * @param amount
+	 *            Amount
+	 * @param unit
+	 *            {@link Unit}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity(BigDecimal amount, Unit unit) throws Exception {
+		this(amount, MeasurementSystem.getSystem().getUOM(unit));
+	}
+
+	/**
+	 * Create a quantity with a String amount and unit
+	 * 
+	 * @param amount
+	 *            Amount
+	 * @param unit
+	 *            {@link Unit}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity(String amount, Unit unit) throws Exception {
+		this(createAmount(amount), MeasurementSystem.getSystem().getUOM(unit));
 	}
 
 	/**
@@ -346,6 +374,34 @@ public class Quantity {
 
 		// create the quantity now
 		return new Quantity(newAmount, toUOM);
+	}
+
+	/**
+	 * Convert this quantity to the target unit
+	 * 
+	 * @param unit
+	 *            {@link Unit}
+	 * @return {@link Quantity}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity convert(Unit unit) throws Exception {
+		return convert(MeasurementSystem.getSystem().getUOM(unit));
+	}
+
+	/**
+	 * Convert this quantity to the target unit with the specified prefix
+	 * 
+	 * @param prefix
+	 *            {@link Prefix}
+	 * @param unit
+	 *            {@link Unit}
+	 * @return {@link Quantity}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity convert(Prefix prefix, Unit unit) throws Exception {
+		return convert(MeasurementSystem.getSystem().getUOM(prefix, unit));
 	}
 
 	/**

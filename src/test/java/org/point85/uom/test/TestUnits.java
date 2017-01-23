@@ -32,6 +32,7 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 
 import org.junit.Test;
+import org.point85.uom.Constant;
 import org.point85.uom.Conversion;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
@@ -821,7 +822,8 @@ public class TestUnits extends BaseTest {
 		bd = ft.getConversionFactor(m);
 		assertThat(bd, closeTo(Quantity.createAmount("0.3048"), DELTA6));
 
-		bd = sys.getUOM(Unit.GRAVITY).getConversionFactor(sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
+		Quantity g = sys.getQuantity(Constant.GRAVITY).convert(sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
+		bd = g.getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("32.17404855"), DELTA6));
 
 		bd = lbf.getConversionFactor(N);

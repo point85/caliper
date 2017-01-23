@@ -91,7 +91,7 @@ public class TestSystems extends BaseTest {
 				}
 			}
 
-			if (found == null && !unitType.equals(UnitType.CUSTOM)) {
+			if (found == null && !unitType.equals(UnitType.CUSTOM) && !unitType.equals(UnitType.UNCLASSIFIED)) {
 				fail("No unit found for type " + unitType);
 			}
 		}

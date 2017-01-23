@@ -30,6 +30,7 @@ import static org.junit.Assert.fail;
 import java.math.BigDecimal;
 
 import org.junit.Test;
+import org.point85.uom.Constant;
 import org.point85.uom.Conversion;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
@@ -59,6 +60,27 @@ public class TestUnifiedCode extends BaseTest {
 		Quantity from = null;
 		Quantity to = null;
 		BigDecimal convertedAmount = null;
+		
+		// mole
+		from = new Quantity(amount, sys.getUOM(Unit.MOLE));
+		to = from.convert(sys.getUOM(Unit.MOLE));
+
+		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		
+		// velocity of light
+		from = sys.getQuantity(Constant.LIGHT_VELOCITY);
+		to = from.convert(sys.getUOM(Unit.MILES_PER_HOUR));
+
+		convertedAmount = wsConvert("2.99792458E+08", from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, BigDecimal.ONE));
+		
+		// acceleration of gravity
+		from = sys.getQuantity(Constant.GRAVITY);
+		to = from.convert(sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
+
+		convertedAmount = wsConvert("9.80665", from.getUOM(), to.getUOM());
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
 
 		// feet to in
 		from = new Quantity(amount, sys.getUOM(Unit.FOOT));
@@ -139,20 +161,6 @@ public class TestUnifiedCode extends BaseTest {
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
-		// acceleration of gravity
-		from = new Quantity(amount, sys.getUOM(Unit.GRAVITY));
-		to = from.convert(sys.getUOM(Unit.METRE_PER_SECOND_SQUARED));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// mole
-		from = new Quantity(amount, sys.getUOM(Unit.MOLE));
-		to = from.convert(sys.getUOM(Unit.MOLE));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
 		// calorie to Joule
 		from = new Quantity(amount, sys.getUOM(Unit.CALORIE));
 		to = from.convert(sys.getUOM(Unit.JOULE));
@@ -212,13 +220,6 @@ public class TestUnifiedCode extends BaseTest {
 		// kg to pound mass
 		from = new Quantity(amount, kg);
 		to = from.convert(sys.getUOM(Unit.POUND_MASS));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// velocity of light
-		from = new Quantity(amount, sys.getUOM(Unit.LIGHT_VELOCITY));
-		to = from.convert(sys.getUOM(Unit.LIGHT_VELOCITY));
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
@@ -336,17 +337,6 @@ public class TestUnifiedCode extends BaseTest {
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
-
-		// light year to metres
-		from = new Quantity(amount, sys.getUOM(Unit.LIGHT_YEAR));
-		to = from.convert(sys.getUOM(Unit.METRE));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-
-		convertedQty = new Quantity(convertedAmount, sys.getUOM(Unit.METRE));
-		back = convertedQty.convert(sys.getUOM(Unit.LIGHT_YEAR));
-
-		assertThat(back.getAmount(), closeTo(from.getAmount(), DELTA6));
 
 		// fathom to metre
 		from = new Quantity(amount, sys.getUOM(Unit.FATHOM));

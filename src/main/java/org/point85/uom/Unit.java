@@ -36,15 +36,14 @@ public enum Unit {
 	ONE,
 	// time
 	SECOND, MINUTE, HOUR, DAY, WEEK, JULIAN_YEAR, SQUARE_SECOND,
+	// substance amount
+	MOLE,
 	// angle
 	RADIAN, STERADIAN,
 	// degree of arc
 	DEGREE,
 	// ratio
 	DECIBEL,
-	
-	// fundamental constants
-	MOLE, LIGHT_VELOCITY, LIGHT_YEAR, GRAVITY, PLANCK_CONSTANT, BOLTZMANN_CONSTANT, AVAGADRO_CONSTANT, GAS_CONSTANT,
 	
 	// SI units follow
 	// length
@@ -91,10 +90,7 @@ public enum Unit {
 	KILOGRAM_PER_CUBIC_METRE,
 	// torque (moment of force and energy)
 	NEWTON_METRE,
-	// quantum action
-	JOULE_SECOND,
-	// unclassified
-	JOULE_KELVIN,
+
 	// IT
 	BIT, BYTE,
 	

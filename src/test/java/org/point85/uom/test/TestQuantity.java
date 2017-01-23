@@ -34,8 +34,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.junit.Test;
+import org.point85.uom.Constant;
 import org.point85.uom.Conversion;
 import org.point85.uom.MeasurementSystem;
+import org.point85.uom.NamedQuantity;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -424,35 +426,10 @@ public class TestQuantity extends BaseTest {
 		assertThat(q3.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 		assertTrue(q3.getUOM().equals(sys.getUOM(Unit.AMPERE)));
 
-		// body mass index
-		Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
-		Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
-		Quantity bmi = mass.divide(height.multiply(height));
-		assertThat(bmi.getAmount(), closeTo(Quantity.createAmount("25"), DELTA6));
-
-		// low frequency red light
-		UnitOfMeasure THz = sys.getUOM(Prefix.TERA, sys.getUOM(Unit.HERTZ));
-		Quantity lightFrequency = new Quantity("400", THz);
-
-		// Planck's constant
-		UnitOfMeasure h = sys.getUOM(Unit.PLANCK_CONSTANT);
-		Quantity planck = new Quantity(BigDecimal.ONE, h);
-
-		// photon energy in eV
-		Quantity ev = planck.multiply(lightFrequency).convert(sys.getUOM(Unit.ELECTRON_VOLT));
-
-		assertThat(ev.getAmount(), closeTo(Quantity.createAmount("1.65"), DELTA2));
-
-		// wavelength of red light in nanometres
-		Quantity vc = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.LIGHT_VELOCITY));
-		Quantity wavelength = vc.divide(lightFrequency).convert(sys.getUOM(Prefix.NANO, sys.getUOM(Unit.METRE)));
-
-		assertThat(wavelength.getAmount(), closeTo(Quantity.createAmount("749.48"), DELTA2));
-
 		// Boltzmann and Avogadro
-		Quantity boltzmann = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.BOLTZMANN_CONSTANT));
-		Quantity avogadro = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.AVAGADRO_CONSTANT));
-		Quantity gas = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.GAS_CONSTANT));
+		Quantity boltzmann = sys.getQuantity(Constant.BOLTZMANN_CONSTANT);
+		Quantity avogadro = sys.getQuantity(Constant.AVAGADRO_CONSTANT);
+		Quantity gas = sys.getQuantity(Constant.GAS_CONSTANT);
 		Quantity qR = boltzmann.multiply(avogadro);
 		assertThat(qR.getUOM().getScalingFactor(), closeTo(gas.getUOM().getScalingFactor(), DELTA6));
 	}
@@ -485,7 +462,6 @@ public class TestQuantity extends BaseTest {
 
 		MeasurementSystem sys = MeasurementSystem.getSystem();
 
-		UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
@@ -614,15 +590,72 @@ public class TestQuantity extends BaseTest {
 		q3 = q1.multiply(q2).convert(sys.getOne());
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("600"), DELTA6));
 
+	}
+
+	@Test
+	public void testEquations() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getSystem();
+
+		// body mass index
+		Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
+		Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
+		Quantity bmi = mass.divide(height.multiply(height));
+		assertThat(bmi.getAmount(), closeTo(Quantity.createAmount("25"), DELTA6));
+
 		// E = mc^2
-		UnitOfMeasure c2 = sys.createPowerUOM(UnitType.CUSTOM, "c2", "c^2", "speed of light squared",
-				sys.getUOM(Unit.LIGHT_VELOCITY), 2);
-		Quantity oneC2 = new Quantity(BigDecimal.ONE, c2);
-		Quantity oneKg = new Quantity(BigDecimal.ONE, kg);
-		Quantity energy = oneKg.multiply(oneC2);
-		Quantity joules = energy.convert(joule);
-		assertThat(joules.getAmount(),
+		NamedQuantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+		Quantity m = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.KILOGRAM));
+		Quantity e = m.multiply(c).multiply(c);
+		assertThat(e.getAmount(),
 				closeTo(new BigDecimal("8.987551787368176E+16", UnitOfMeasure.MATH_CONTEXT), BigDecimal.ONE));
+
+		// Ideal Gas Law, PV = nRT
+		// A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.
+		// How many moles of argon are in the cylinder?
+		Quantity p = new Quantity("18.4", Unit.ATMOSPHERE).convert(Unit.PASCAL);
+		Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
+		Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
+		Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
+		assertThat(n.getAmount(), closeTo(Quantity.createAmount("28.018673"), DELTA6));
+
+		// energy of red light photon = Planck's constant times the frequency
+		Quantity frequency = new Quantity("400", sys.getUOM(Prefix.TERA, Unit.HERTZ));
+		Quantity ev = sys.getQuantity(Constant.PLANCK_CONSTANT).multiply(frequency).convert(Unit.ELECTRON_VOLT);
+		assertThat(ev.getAmount(), closeTo(Quantity.createAmount("1.65"), DELTA2));
+
+		// wavelength of red light in nanometres
+		Quantity wavelength = sys.getQuantity(Constant.LIGHT_VELOCITY).divide(frequency)
+				.convert(sys.getUOM(Prefix.NANO, Unit.METRE));
+		assertThat(wavelength.getAmount(), closeTo(Quantity.createAmount("749.48"), DELTA2));
+
+		// Newton's second law of motion (F = ma). Weight of 1 kg in lbf
+		Quantity mkg = new Quantity(BigDecimal.ONE, Unit.KILOGRAM);
+		Quantity f = mkg.multiply(sys.getQuantity(Constant.GRAVITY)).convert(Unit.POUND_FORCE);
+		assertThat(f.getAmount(), closeTo(Quantity.createAmount("2.20462"), DELTA5));
+
+		// remove Hz from cache to avoid Katal conflict
+		sys.unregisterUnit(sys.getUOM(Unit.HERTZ));
+
+		// units per volume of solution, C = A x (m/V)
+		// create the "U" unit of measure
+		UnitOfMeasure catUnit = sys.createScalarUOM(UnitType.CATALYTIC_ACTIVITY, "Units of Activity", "U",
+				"The amount of enzyme that catalyzes the conversion of 1 micromole of substrate per minute.");
+		Conversion conversion = new Conversion(Quantity.createAmount("1.667E-08"), sys.getUOM(Unit.KATAL));
+		catUnit.setConversion(conversion);
+
+		// create the "A" unit of measure
+		UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.CUSTOM, "activity", "ACT", "activity of material",
+				catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
+
+		// calculate concentration
+		Quantity activity = new Quantity(BigDecimal.ONE, activityUnit);
+		Quantity grams = new Quantity(BigDecimal.ONE, Unit.GRAM).convert(Prefix.MILLI, Unit.GRAM);
+		Quantity volume = new Quantity(BigDecimal.ONE, sys.getUOM(Prefix.MILLI, Unit.LITRE));
+		Quantity concentration = activity.multiply(grams.divide(volume));
+		assertThat(concentration.getAmount(), closeTo(Quantity.createAmount("1000"), DELTA6));
+
+		Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE)).convert(Unit.KATAL);
+		assertThat(katals.getAmount(), closeTo(Quantity.createAmount("0.01667"), DELTA6));
 
 	}
 
