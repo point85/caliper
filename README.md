@@ -179,42 +179,6 @@ Quantity q1 = new Quantity(BigDecimal.TEN, mps);
 Quantity q2 = q1.invert();
 ```
 
-One's Body Mass Index (BMI) can be calculated as:
-```java
-Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
-Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
-Quantity bmi = mass.divide(height.multiply(height));
-```
-
-and Einstein's famous E = mc^2:
-```java
-UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
-UnitOfMeasure joule = sys.getUOM(Unit.JOULE);
-UnitOfMeasure c2 = sys.createPowerUOM(UnitType.CUSTOM, "c2", "c^2", "speed of light squared", sys.getUOM(Unit.LIGHT_VELOCITY), 2);
-Quantity oneC2 = new Quantity(BigDecimal.ONE, c2);
-Quantity oneKg = new Quantity(BigDecimal.ONE, kg);
-Quantity energy = oneKg.multiply(oneC2);
-Quantity joules = energy.convert(joule);
-```
-
-and photon energy using Planck's constant:
-```java
-// low frequency red light
-UnitOfMeasure THz = sys.getUOM(Prefix.TERA, sys.getUOM(Unit.HERTZ));
-Quantity lightFrequency = new Quantity("400", THz);
-
-// Planck's constant
-UnitOfMeasure h = sys.getUOM(Unit.PLANCKS_CONSTANT);
-Quantity planck = new Quantity(BigDecimal.ONE, h);
-
-// photon energy (approx. 1.65 eV)
-Quantity ev = planck.multiply(lightFrequency).convert(sys.getUOM(Unit.ELECTRON_VOLT));
-
-// wavelength of red light in nanometres (approx 749.48)
-Quantity vc = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.LIGHT_VELOCITY));
-Quantity wavelength = vc.divide(lightFrequency).convert(sys.getUOM(Prefix.NANO, sys.getUOM(Unit.METRE)));
-```
-
 To make working with linearly scaled units of measure (with no offset) easier, the MeasurementSystem's getUOM() using a Prefix can be used.  This method accepts a Prefix enum and the unit of measure that it is scaled against.  The resulting unit of measure has a name concatented with the Prefix's name and target unit name.  The symbol is formed similarly.  For example, a centilitre (cL) is created from the pre-defined litre by:
 ```java
 UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
@@ -222,8 +186,68 @@ UnitOfMeasure cL = sys.getUOM(Prefix.CENTI, litre);
 ```
 and, a megabyte (MB = 2^20 bytes) is created by:
 ```java
-UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, sys.getUOM(Unit.BYTE));
+UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, Unit.BYTE);
 ```
+
+## Equation Examples
+
+One's Body Mass Index (BMI) can be calculated as:
+```java
+Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
+Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
+Quantity bmi = mass.divide(height.multiply(height));
+```
+
+Einstein's famous E = mc^2:
+```java
+NamedQuantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+Quantity m = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.KILOGRAM));
+Quantity e = m.multiply(c).multiply(c);
+```
+
+Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.  How many moles of argon are in the cylinder?
+```java
+Quantity p = new Quantity("18.4", Unit.ATMOSPHERE).convert(Unit.PASCAL);
+Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
+Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
+Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
+```
+
+Photon energy using Planck's constant:
+```java
+// energy of red light photon = Planck's constant times the frequency
+Quantity frequency = new Quantity("400", sys.getUOM(Prefix.TERA, Unit.HERTZ));
+Quantity ev = sys.getQuantity(Constant.PLANCK_CONSTANT).multiply(frequency).convert(Unit.ELECTRON_VOLT);
+
+// wavelength of red light in nanometres (approx 749.48)
+Quantity wavelength = sys.getQuantity(Constant.LIGHT_VELOCITY).divide(frequency).convert(sys.getUOM(Prefix.NANO, Unit.METRE));
+```
+
+Newton's second law of motion (F = ma). Weight of 1 kg in lbf:
+```java
+Quantity mkg = new Quantity(BigDecimal.ONE, Unit.KILOGRAM);
+Quantity f = mkg.multiply(sys.getQuantity(Constant.GRAVITY)).convert(Unit.POUND_FORCE);
+```
+Units per volume of solution, C = A x (m/V)
+```java
+// create the "U" unit of measure
+UnitOfMeasure catUnit = sys.createScalarUOM(UnitType.CATALYTIC_ACTIVITY, "Units of Activity", "U",
+	"The amount of enzyme that catalyzes the conversion of 1 micromole of substrate per minute.");
+Conversion conversion = new Conversion(Quantity.createAmount("1.667E-08"), sys.getUOM(Unit.KATAL));
+catUnit.setConversion(conversion);
+
+// create the "A" unit of measure
+UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.CUSTOM, "activity", "ACT", "activity of material",
+	catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
+
+// calculate concentration
+Quantity activity = new Quantity(BigDecimal.ONE, activityUnit);
+Quantity grams = new Quantity(BigDecimal.ONE, Unit.GRAM).convert(Prefix.MILLI, Unit.GRAM);
+Quantity volume = new Quantity(BigDecimal.ONE, sys.getUOM(Prefix.MILLI, Unit.LITRE));
+Quantity concentration = activity.multiply(grams.divide(volume));
+Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE)).convert(Unit.KATAL);
+```
+
 ###Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
 
