@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.junit.Test;
+import org.point85.uom.Constant;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
@@ -93,6 +94,11 @@ public class TestSystems extends BaseTest {
 			if (found == null && !unitType.equals(UnitType.CUSTOM) && !unitType.equals(UnitType.UNCLASSIFIED)) {
 				fail("No unit found for type " + unitType);
 			}
+		}
+		
+		// constants
+		for (Constant c : Constant.values()) {
+			assertTrue(sys.getQuantity(c) != null);
 		}
 	}
 

@@ -65,6 +65,16 @@ public class TestQuantity extends BaseTest {
 		Quantity eps0 = sys.getQuantity(Constant.ELECTRIC_PERMITTIVITY);
 		assertThat(eps0.getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
 		assertThat(eps0.convert(fm).getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
+		
+		// atomic masses
+		NamedQuantity u = new  NamedQuantity(Quantity.createAmount("1.66053904020E-24"), sys.getUOM(Unit.GRAM));
+		NamedQuantity me = sys.getQuantity(Constant.ELECTRON_MASS);
+		BigDecimal bd = me.divide(u).getAmount();
+		assertThat(bd, closeTo(Quantity.createAmount("5.48579909016E-04"), DELTA6));
+		
+		NamedQuantity mp = sys.getQuantity(Constant.PROTON_MASS);
+		bd = mp.divide(u).getAmount();
+		assertThat(bd, closeTo(Quantity.createAmount("1.00727646687991"), DELTA6));
 	}
 
 	@Test
@@ -496,8 +506,8 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure volt = sys.getUOM(Unit.VOLT);
 		UnitOfMeasure watt = sys.getUOM(Unit.WATT);
 		UnitOfMeasure cm2 = sys.createProductUOM(UnitType.AREA, "square centimetres", "cm" + (char) 0xB2, "", cm, cm);
-		UnitOfMeasure cv = sys.createProductUOM(UnitType.ENERGY, "CxV", "C·V", "Coulomb times Volt", coulomb, volt);
-		UnitOfMeasure ws = sys.createProductUOM(UnitType.ENERGY, "Wxs", "W·s", "Watt times second", watt,
+		UnitOfMeasure cv = sys.createProductUOM(UnitType.ENERGY, "CxV", "CÂ·V", "Coulomb times Volt", coulomb, volt);
+		UnitOfMeasure ws = sys.createProductUOM(UnitType.ENERGY, "Wxs", "WÂ·s", "Watt times second", watt,
 				sys.getSecond());
 		UnitOfMeasure ft3 = sys.getUOM(Unit.CUBIC_FOOT);
 		UnitOfMeasure hz = sys.getUOM(Unit.HERTZ);
@@ -635,7 +645,7 @@ public class TestQuantity extends BaseTest {
 				closeTo(new BigDecimal("8.987551787368176E+16", UnitOfMeasure.MATH_CONTEXT), BigDecimal.ONE));
 
 		// Ideal Gas Law, PV = nRT
-		// A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.
+		// A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 Â°C.
 		// How many moles of argon are in the cylinder?
 		Quantity p = new Quantity("18.4", Unit.ATMOSPHERE).convert(Unit.PASCAL);
 		Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);

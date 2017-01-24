@@ -165,26 +165,26 @@ public class MeasurementSystem {
 	}
 
 	public NamedQuantity getQuantity(Constant constant) throws Exception {
-		NamedQuantity constantQuantity = null;
+		NamedQuantity named = null;
 
 		switch (constant) {
 		case LIGHT_VELOCITY:
-			constantQuantity = new NamedQuantity(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
-			constantQuantity.setId(symbols.getString("light.name"), symbols.getString("light.symbol"),
+			named = new NamedQuantity(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
+			named.setId(symbols.getString("light.name"), symbols.getString("light.symbol"),
 					symbols.getString("light.desc"));
 			break;
 
 		case LIGHT_YEAR:
 			NamedQuantity year = new NamedQuantity(BigDecimal.ONE, getUOM(Unit.JULIAN_YEAR));
-			constantQuantity = new NamedQuantity(getQuantity(Constant.LIGHT_VELOCITY).multiply(year));
-			constantQuantity.setId(symbols.getString("ly.name"), symbols.getString("ly.symbol"),
+			named = new NamedQuantity(getQuantity(Constant.LIGHT_VELOCITY).multiply(year));
+			named.setId(symbols.getString("ly.name"), symbols.getString("ly.symbol"),
 					symbols.getString("ly.desc"));
 			break;
 
 		case GRAVITY:
-			constantQuantity = new NamedQuantity(Quantity.createAmount("9.80665"),
+			named = new NamedQuantity(Quantity.createAmount("9.80665"),
 					getUOM(Unit.METRE_PER_SECOND_SQUARED));
-			constantQuantity.setId(symbols.getString("gravity.name"), symbols.getString("gravity.symbol"),
+			named.setId(symbols.getString("gravity.name"), symbols.getString("gravity.symbol"),
 					symbols.getString("gravity.desc"));
 			break;
 
@@ -193,8 +193,8 @@ public class MeasurementSystem {
 					symbols.getString("js.symbol"), symbols.getString("js.desc"), getUOM(Unit.JOULE), getSecond());
 			js.setUnifiedSymbol(symbols.getString("js.unified"));
 
-			constantQuantity = new NamedQuantity(Quantity.createAmount("6.62607004081E-34"), js);
-			constantQuantity.setId(symbols.getString("planck.name"), symbols.getString("planck.symbol"),
+			named = new NamedQuantity(Quantity.createAmount("6.62607004081E-34"), js);
+			named.setId(symbols.getString("planck.name"), symbols.getString("planck.symbol"),
 					symbols.getString("planck.desc"));
 			break;
 
@@ -204,37 +204,37 @@ public class MeasurementSystem {
 					getUOM(Unit.KELVIN));
 			jk.setUnifiedSymbol(symbols.getString("jk.unified"));
 
-			constantQuantity = new NamedQuantity(Quantity.createAmount("1.3806485279E-23"), jk);
-			constantQuantity.setId(symbols.getString("boltzmann.name"), symbols.getString("boltzmann.symbol"),
+			named = new NamedQuantity(Quantity.createAmount("1.3806485279E-23"), jk);
+			named.setId(symbols.getString("boltzmann.name"), symbols.getString("boltzmann.symbol"),
 					symbols.getString("boltzmann.desc"));
 			break;
 
 		case AVAGADRO_CONSTANT:
 			// NA
-			constantQuantity = new NamedQuantity(Quantity.createAmount("6.02214085774E+23"), getOne());
-			constantQuantity.setId(symbols.getString("avo.name"), symbols.getString("avo.symbol"),
+			named = new NamedQuantity(Quantity.createAmount("6.02214085774E+23"), getOne());
+			named.setId(symbols.getString("avo.name"), symbols.getString("avo.symbol"),
 					symbols.getString("avo.desc"));
 			break;
 
 		case GAS_CONSTANT:
 			// R
-			constantQuantity = new NamedQuantity(
+			named = new NamedQuantity(
 					getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
-			constantQuantity.setId(symbols.getString("gas.name"), symbols.getString("gas.symbol"),
+			named.setId(symbols.getString("gas.name"), symbols.getString("gas.symbol"),
 					symbols.getString("gas.desc"));
 			break;
 			
 		case ELEMENTARY_CHARGE:
 			// e
-			constantQuantity = new NamedQuantity(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
-			constantQuantity.setId(symbols.getString("e.name"), symbols.getString("e.symbol"), symbols.getString("e.desc"));
+			named = new NamedQuantity(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
+			named.setId(symbols.getString("e.name"), symbols.getString("e.symbol"), symbols.getString("e.desc"));
 			break;
 
 		case FARADAY_CONSTANT:
 			// F = e.NA
 			Quantity qe = getQuantity(Constant.ELEMENTARY_CHARGE);
-			constantQuantity = new NamedQuantity(qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
-			constantQuantity.setId(symbols.getString("faraday.name"), symbols.getString("faraday.symbol"),
+			named = new NamedQuantity(qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
+			named.setId(symbols.getString("faraday.name"), symbols.getString("faraday.symbol"),
 					symbols.getString("faraday.desc"));
 			break;
 
@@ -242,8 +242,8 @@ public class MeasurementSystem {
 			// epsilon0 = 1/(mu0*c^2)
 			NamedQuantity vc = getQuantity(Constant.LIGHT_VELOCITY);
 			Quantity eps0 = getQuantity(Constant.MAGNETIC_PERMEABILITY).multiply(vc).multiply(vc).invert();
-			constantQuantity = new NamedQuantity(eps0);
-			constantQuantity.setId(symbols.getString("eps0.name"), symbols.getString("eps0.symbol"),
+			named = new NamedQuantity(eps0);
+			named.setId(symbols.getString("eps0.name"), symbols.getString("eps0.symbol"),
 					symbols.getString("eps0.desc"));
 			break;
 
@@ -256,16 +256,28 @@ public class MeasurementSystem {
 
 			BigDecimal fourPi = new BigDecimal(4.0 * Math.PI).multiply(new BigDecimal("1.0E-07"),
 					UnitOfMeasure.MATH_CONTEXT);
-			constantQuantity = new NamedQuantity(fourPi, hm);
-			constantQuantity.setId(symbols.getString("mu0.name"), symbols.getString("mu0.symbol"),
+			named = new NamedQuantity(fourPi, hm);
+			named.setId(symbols.getString("mu0.name"), symbols.getString("mu0.symbol"),
 					symbols.getString("mu0.desc"));
+			break;
+			
+		case ELECTRON_MASS:
+			// me
+			named = new NamedQuantity(Quantity.createAmount("9.1093835611E-28"), getUOM(Unit.GRAM));
+			named.setId(symbols.getString("me.name"), symbols.getString("me.symbol"), symbols.getString("me.desc"));
+			break;
+			
+		case PROTON_MASS:
+			// mp
+			named = new NamedQuantity(Quantity.createAmount("1.67262189821E-24"), getUOM(Unit.GRAM));
+			named.setId(symbols.getString("mp.name"), symbols.getString("mp.symbol"), symbols.getString("mp.desc"));
 			break;
 
 		default:
 			break;
 		}
 
-		return constantQuantity;
+		return named;
 	}
 
 	private UnitOfMeasure createSIUnit(Unit unit) throws Exception {
