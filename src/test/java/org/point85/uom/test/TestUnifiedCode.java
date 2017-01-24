@@ -49,7 +49,7 @@ public class TestUnifiedCode extends BaseTest {
 	private static final String TO = "to/";
 	private static final String BASE_URL = "http://www.xml4pharmaserver.com:8080/CDISCCTService/rest/ucumtransform/";
 
-	private Gson gson = new Gson();
+	private Gson gson = new Gson(); 
 
 	@Test
 	public void runTest() throws Exception {
@@ -60,6 +60,13 @@ public class TestUnifiedCode extends BaseTest {
 		Quantity from = null;
 		Quantity to = null;
 		BigDecimal convertedAmount = null;
+		
+		// elementary charge to Coulombs
+		from = sys.getQuantity(Constant.ELEMENTARY_CHARGE);
+		to = from.convert(sys.getUOM(Unit.COULOMB));
+
+		convertedAmount = wsConvert(from.getAmount().toString(), from.getUOM(), to.getUOM());
+		assertThat(from.getAmount(), closeTo(convertedAmount, DELTA6));
 		
 		// mole
 		from = new Quantity(amount, sys.getUOM(Unit.MOLE));
@@ -303,13 +310,6 @@ public class TestUnifiedCode extends BaseTest {
 		// days to weeks
 		from = new Quantity(amount, sys.getUOM(Unit.DAY));
 		to = from.convert(sys.getUOM(Unit.WEEK));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// elementary charge to Coulombs
-		from = new Quantity(amount, sys.getUOM(Unit.ELEMENTARY_CHARGE));
-		to = from.convert(sys.getUOM(Unit.COULOMB));
 
 		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));

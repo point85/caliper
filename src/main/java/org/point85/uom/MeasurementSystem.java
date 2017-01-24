@@ -210,16 +210,55 @@ public class MeasurementSystem {
 			break;
 
 		case AVAGADRO_CONSTANT:
+			// NA
 			constantQuantity = new NamedQuantity(Quantity.createAmount("6.02214085774E+23"), getOne());
 			constantQuantity.setId(symbols.getString("avo.name"), symbols.getString("avo.symbol"),
 					symbols.getString("avo.desc"));
 			break;
 
 		case GAS_CONSTANT:
+			// R
 			constantQuantity = new NamedQuantity(
 					getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
 			constantQuantity.setId(symbols.getString("gas.name"), symbols.getString("gas.symbol"),
 					symbols.getString("gas.desc"));
+			break;
+			
+		case ELEMENTARY_CHARGE:
+			// e
+			constantQuantity = new NamedQuantity(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
+			constantQuantity.setId(symbols.getString("e.name"), symbols.getString("e.symbol"), symbols.getString("e.desc"));
+			break;
+
+		case FARADAY_CONSTANT:
+			// F = e.NA
+			Quantity qe = getQuantity(Constant.ELEMENTARY_CHARGE);
+			constantQuantity = new NamedQuantity(qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
+			constantQuantity.setId(symbols.getString("faraday.name"), symbols.getString("faraday.symbol"),
+					symbols.getString("faraday.desc"));
+			break;
+
+		case ELECTRIC_PERMITTIVITY:
+			// epsilon0 = 1/(mu0*c^2)
+			NamedQuantity vc = getQuantity(Constant.LIGHT_VELOCITY);
+			Quantity eps0 = getQuantity(Constant.MAGNETIC_PERMEABILITY).multiply(vc).multiply(vc).invert();
+			constantQuantity = new NamedQuantity(eps0);
+			constantQuantity.setId(symbols.getString("eps0.name"), symbols.getString("eps0.symbol"),
+					symbols.getString("eps0.desc"));
+			break;
+
+		case MAGNETIC_PERMEABILITY:
+			// mu0
+			UnitOfMeasure hm = createQuotientUOM(UnitType.UNCLASSIFIED, symbols.getString("hm.name"),
+					symbols.getString("hm.symbol"), symbols.getString("hm.desc"), getUOM(Unit.HENRY),
+					getUOM(Unit.METRE));
+			hm.setUnifiedSymbol(symbols.getString("hm.unified"));
+
+			BigDecimal fourPi = new BigDecimal(4.0 * Math.PI).multiply(new BigDecimal("1.0E-07"),
+					UnitOfMeasure.MATH_CONTEXT);
+			constantQuantity = new NamedQuantity(fourPi, hm);
+			constantQuantity.setId(symbols.getString("mu0.name"), symbols.getString("mu0.symbol"),
+					symbols.getString("mu0.desc"));
 			break;
 
 		default:
@@ -505,6 +544,7 @@ public class MeasurementSystem {
 					symbols.getString("newton.symbol"), symbols.getString("newton.desc"),
 					symbols.getString("newton.unified"), getUOM(Unit.KILOGRAM), getUOM(Unit.METRE_PER_SECOND_SQUARED));
 			break;
+			
 		case NEWTON_METRE:
 			// newton-metre
 			uom = createProductUOM(UnitType.ENERGY, Unit.NEWTON_METRE, symbols.getString("n_m.name"),
@@ -521,9 +561,11 @@ public class MeasurementSystem {
 
 		case ELECTRON_VOLT:
 			// ev
+			NamedQuantity e = this.getQuantity(Constant.ELEMENTARY_CHARGE);
 			uom = createProductUOM(UnitType.ENERGY, Unit.ELECTRON_VOLT, symbols.getString("ev.name"),
 					symbols.getString("ev.symbol"), symbols.getString("ev.desc"), symbols.getString("ev.unified"),
-					getUOM(Unit.ELEMENTARY_CHARGE), getUOM(Unit.VOLT));
+					e.getUOM(), getUOM(Unit.VOLT));
+			uom.setScalingFactor(e.getAmount());
 			break;
 
 		case WATT_HOUR:
@@ -587,14 +629,6 @@ public class MeasurementSystem {
 					symbols.getString("coulomb.unified"), getUOM(Unit.AMPERE), getSecond());
 			break;
 
-		case ELEMENTARY_CHARGE:
-			// e
-			conversion = new Conversion(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
-			uom = createScalarUOM(UnitType.ELECTRIC_CHARGE, Unit.ELEMENTARY_CHARGE, symbols.getString("e.name"),
-					symbols.getString("e.symbol"), symbols.getString("e.desc"), symbols.getString("e.unified"));
-			uom.setConversion(conversion);
-			break;
-
 		case VOLT:
 			// voltage (volt)
 			uom = createQuotientUOM(UnitType.ELECTROMOTIVE_FORCE, Unit.VOLT, symbols.getString("volt.name"),
@@ -617,7 +651,7 @@ public class MeasurementSystem {
 			break;
 
 		case FARAD_PER_METRE:
-			// electric permittivity (farad/metre)
+			// electric permittivity (farad/metre) 
 			uom = createQuotientUOM(UnitType.ELECTRIC_PERMITTIVITY, Unit.FARAD_PER_METRE,
 					symbols.getString("fperm.name"), symbols.getString("fperm.symbol"), symbols.getString("fperm.desc"),
 					symbols.getString("fperm.unified"), getUOM(Unit.FARAD), getUOM(Unit.METRE));

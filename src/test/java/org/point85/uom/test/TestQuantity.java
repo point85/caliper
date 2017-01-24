@@ -45,6 +45,27 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestQuantity extends BaseTest {
+	
+	@Test 
+	public void testNamedQuantity() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getSystem();
+		
+		// faraday
+		Quantity f = sys.getQuantity(Constant.FARADAY_CONSTANT);
+		Quantity qe = sys.getQuantity(Constant.ELEMENTARY_CHARGE);
+		Quantity na = sys.getQuantity(Constant.AVAGADRO_CONSTANT);
+		Quantity eNA = qe.multiply(na);
+		assertThat(f.getAmount(), closeTo(eNA.getAmount(), DELTA6));
+		assertThat(f.getAmount(), closeTo(Quantity.createAmount("96485.3328959"), DELTA5));
+		
+		// epsilon 0
+		UnitOfMeasure fm = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "Farad per metre",
+				"F/m", "Farad per metre", sys.getUOM(Unit.FARAD),
+				sys.getUOM(Unit.METRE));
+		Quantity eps0 = sys.getQuantity(Constant.ELECTRIC_PERMITTIVITY);
+		assertThat(eps0.getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
+		assertThat(eps0.convert(fm).getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
+	}
 
 	@Test
 	public void testAllUnits() throws Exception {
@@ -589,6 +610,10 @@ public class TestQuantity extends BaseTest {
 		q2 = new Quantity(BigDecimal.ONE, sys.getMinute());
 		q3 = q1.multiply(q2).convert(sys.getOne());
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("600"), DELTA6));
+		
+		q1 = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.ELECTRON_VOLT));
+		q2 = q1.convert(sys.getUOM(Unit.JOULE));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("1.60217656535E-19"), DELTA6));
 
 	}
 

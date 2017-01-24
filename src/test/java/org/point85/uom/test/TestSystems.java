@@ -63,7 +63,6 @@ public class TestSystems extends BaseTest {
 			assertNotNull(uom.getAbscissaUnit());
 			assertNotNull(uom.getScalingFactor());
 			assertNotNull(uom.getOffset());
-			assertNotNull(uom.getUnifiedSymbol());
 
 			// symbol uniqueness
 			assertFalse(unitMap.containsKey(uom.getSymbol()));
