@@ -24,14 +24,13 @@ SOFTWARE.
 package org.point85.uom;
 
 /**
- * Unit is an enumeration of units of measure types in the International
+ * Unit is an enumeration of common units of measure in the International
  * Customary, SI, US and British Imperial systems.
  * 
  * @author Kent Randall
  *
  */
 public enum Unit {
-	// common units
 	// dimension-less "1" or unity
 	ONE,
 	// time
@@ -75,7 +74,7 @@ public enum Unit {
 	// frequency
 	HERTZ, RAD_PER_SEC,
 	// pressure
-	PASCAL, BAR, ATMOSPHERE,
+	PASCAL, BAR, 
 	// electrical
 	AMPERE, AMPERE_PER_METRE, COULOMB, VOLT, OHM, FARAD, FARAD_PER_METRE, WEBER, TESLA, HENRY, SIEMENS,
 	// concentration

@@ -140,7 +140,7 @@ public class TestUnifiedCode extends BaseTest {
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// atmosphere to pascal
-		from = new Quantity(amount, sys.getUOM(Unit.ATMOSPHERE));
+		from = sys.getQuantity(Constant.ATMOSPHERE).multiply(Quantity.createAmount(amount));
 		to = from.convert(sys.getUOM(Unit.PASCAL));
 
 		convertedAmount = wsConvert(amount, "atm", "Pa");

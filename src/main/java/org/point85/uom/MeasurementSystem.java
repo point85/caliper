@@ -66,7 +66,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <br>
  * The MeasurementSystem class creates:
  * <ul>
- * <li>the 7 SI fundamental units of measure</li>
+ * <li>7 SI fundamental units of measure</li>
  * <li>20 SI units derived from these fundamental units</li>
  * <li>other units in the International Customary, US and British Imperial
  * systems</li>
@@ -164,24 +164,24 @@ public class MeasurementSystem {
 		return uom;
 	}
 
-	public NamedQuantity getQuantity(Constant constant) throws Exception {
-		NamedQuantity named = null;
+	public Quantity getQuantity(Constant constant) throws Exception {
+		Quantity named = null;
 
 		switch (constant) {
 		case LIGHT_VELOCITY:
-			named = new NamedQuantity(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
+			named = new Quantity(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
 			named.setId(symbols.getString("light.name"), symbols.getString("light.symbol"),
 					symbols.getString("light.desc"));
 			break;
 
 		case LIGHT_YEAR:
-			NamedQuantity year = new NamedQuantity(BigDecimal.ONE, getUOM(Unit.JULIAN_YEAR));
-			named = new NamedQuantity(getQuantity(Constant.LIGHT_VELOCITY).multiply(year));
+			Quantity year = new Quantity(BigDecimal.ONE, getUOM(Unit.JULIAN_YEAR));
+			named = getQuantity(Constant.LIGHT_VELOCITY).multiply(year);
 			named.setId(symbols.getString("ly.name"), symbols.getString("ly.symbol"), symbols.getString("ly.desc"));
 			break;
 
 		case GRAVITY:
-			named = new NamedQuantity(Quantity.createAmount("9.80665"), getUOM(Unit.METRE_PER_SECOND_SQUARED));
+			named = new Quantity(Quantity.createAmount("9.80665"), getUOM(Unit.METRE_PER_SECOND_SQUARED));
 			named.setId(symbols.getString("gravity.name"), symbols.getString("gravity.symbol"),
 					symbols.getString("gravity.desc"));
 			break;
@@ -190,7 +190,7 @@ public class MeasurementSystem {
 			UnitOfMeasure js = createProductUOM(UnitType.UNCLASSIFIED, symbols.getString("js.name"),
 					symbols.getString("js.symbol"), symbols.getString("js.desc"), getUOM(Unit.JOULE), getSecond());
 
-			named = new NamedQuantity(Quantity.createAmount("6.62607004081E-34"), js);
+			named = new Quantity(Quantity.createAmount("6.62607004081E-34"), js);
 			named.setId(symbols.getString("planck.name"), symbols.getString("planck.symbol"),
 					symbols.getString("planck.desc"));
 			break;
@@ -200,43 +200,41 @@ public class MeasurementSystem {
 					symbols.getString("jk.symbol"), symbols.getString("jk.desc"), getUOM(Unit.JOULE),
 					getUOM(Unit.KELVIN));
 
-			named = new NamedQuantity(Quantity.createAmount("1.3806485279E-23"), jk);
+			named = new Quantity(Quantity.createAmount("1.3806485279E-23"), jk);
 			named.setId(symbols.getString("boltzmann.name"), symbols.getString("boltzmann.symbol"),
 					symbols.getString("boltzmann.desc"));
 			break;
 
 		case AVAGADRO_CONSTANT:
 			// NA
-			named = new NamedQuantity(Quantity.createAmount("6.02214085774E+23"), getOne());
+			named = new Quantity(Quantity.createAmount("6.02214085774E+23"), getOne());
 			named.setId(symbols.getString("avo.name"), symbols.getString("avo.symbol"), symbols.getString("avo.desc"));
 			break;
 
 		case GAS_CONSTANT:
 			// R
-			named = new NamedQuantity(
-					getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
+			named = getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVAGADRO_CONSTANT));
 			named.setId(symbols.getString("gas.name"), symbols.getString("gas.symbol"), symbols.getString("gas.desc"));
 			break;
 
 		case ELEMENTARY_CHARGE:
 			// e
-			named = new NamedQuantity(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
+			named = new Quantity(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
 			named.setId(symbols.getString("e.name"), symbols.getString("e.symbol"), symbols.getString("e.desc"));
 			break;
 
 		case FARADAY_CONSTANT:
 			// F = e.NA
 			Quantity qe = getQuantity(Constant.ELEMENTARY_CHARGE);
-			named = new NamedQuantity(qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT)));
+			named = qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT));
 			named.setId(symbols.getString("faraday.name"), symbols.getString("faraday.symbol"),
 					symbols.getString("faraday.desc"));
 			break;
 
 		case ELECTRIC_PERMITTIVITY:
 			// epsilon0 = 1/(mu0*c^2)
-			NamedQuantity vc = getQuantity(Constant.LIGHT_VELOCITY);
-			Quantity eps0 = getQuantity(Constant.MAGNETIC_PERMEABILITY).multiply(vc).multiply(vc).invert();
-			named = new NamedQuantity(eps0);
+			Quantity vc = getQuantity(Constant.LIGHT_VELOCITY);
+			named = getQuantity(Constant.MAGNETIC_PERMEABILITY).multiply(vc).multiply(vc).invert();
 			named.setId(symbols.getString("eps0.name"), symbols.getString("eps0.symbol"),
 					symbols.getString("eps0.desc"));
 			break;
@@ -249,20 +247,26 @@ public class MeasurementSystem {
 
 			BigDecimal fourPi = new BigDecimal(4.0 * Math.PI).multiply(new BigDecimal("1.0E-07"),
 					UnitOfMeasure.MATH_CONTEXT);
-			named = new NamedQuantity(fourPi, hm);
+			named = new Quantity(fourPi, hm);
 			named.setId(symbols.getString("mu0.name"), symbols.getString("mu0.symbol"), symbols.getString("mu0.desc"));
 			break;
 
 		case ELECTRON_MASS:
 			// me
-			named = new NamedQuantity(Quantity.createAmount("9.1093835611E-28"), getUOM(Unit.GRAM));
+			named = new Quantity(Quantity.createAmount("9.1093835611E-28"), getUOM(Unit.GRAM));
 			named.setId(symbols.getString("me.name"), symbols.getString("me.symbol"), symbols.getString("me.desc"));
 			break;
 
 		case PROTON_MASS:
 			// mp
-			named = new NamedQuantity(Quantity.createAmount("1.67262189821E-24"), getUOM(Unit.GRAM));
+			named = new Quantity(Quantity.createAmount("1.67262189821E-24"), getUOM(Unit.GRAM));
 			named.setId(symbols.getString("mp.name"), symbols.getString("mp.symbol"), symbols.getString("mp.desc"));
+			break;
+
+		case ATMOSPHERE:
+			// pressure
+			named = new Quantity(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
+			named.setId(symbols.getString("atm.name"), symbols.getString("atm.symbol"), symbols.getString("atm.desc"));
 			break;
 
 		default:
@@ -547,7 +551,7 @@ public class MeasurementSystem {
 
 		case ELECTRON_VOLT:
 			// ev
-			NamedQuantity e = this.getQuantity(Constant.ELEMENTARY_CHARGE);
+			Quantity e = this.getQuantity(Constant.ELEMENTARY_CHARGE);
 			uom = createProductUOM(UnitType.ENERGY, Unit.ELECTRON_VOLT, symbols.getString("ev.name"),
 					symbols.getString("ev.symbol"), symbols.getString("ev.desc"), e.getUOM(), getUOM(Unit.VOLT));
 			uom.setScalingFactor(e.getAmount());
@@ -586,14 +590,6 @@ public class MeasurementSystem {
 			uom = createQuotientUOM(UnitType.PRESSURE, Unit.PASCAL, symbols.getString("pascal.name"),
 					symbols.getString("pascal.symbol"), symbols.getString("pascal.desc"), getUOM(Unit.NEWTON),
 					getUOM(Unit.SQUARE_METRE));
-			break;
-
-		case ATMOSPHERE:
-			// pressure
-			conversion = new Conversion(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
-			uom = createScalarUOM(UnitType.PRESSURE, Unit.ATMOSPHERE, symbols.getString("atm.name"),
-					symbols.getString("atm.symbol"), symbols.getString("atm.desc"));
-			uom.setConversion(conversion);
 			break;
 
 		case BAR:

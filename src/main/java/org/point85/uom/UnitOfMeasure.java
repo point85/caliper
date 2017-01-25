@@ -67,9 +67,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * in the fundamental units of length (metre), mass (kilogram), time (second),
  * temperature (Kelvin), plane angle (radian), electric charge (Coulomb) and
  * luminous intensity (candela). This base symbol is used in unit of measure
- * conversions to uniquely identify the target unit. A unit of measure can also
- * have a unique symbol assigned by the Unified Code for Units of Measure (UCUM)
- * specification (http://unitsofmeasure.org/ucum.html).
+ * conversions to uniquely identify the target unit.
  * </p>
  * <p>
  * The SI system has defined prefixes (e.g. "centi") for 1/100th of another unit
@@ -81,7 +79,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Kent Randall
  *
  */
-public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
+public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure> {
 
 	// category of the UOM
 	private enum Category {
@@ -102,15 +100,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 	// registry of unit conversion factor
 	private Map<UnitOfMeasure, BigDecimal> conversionRegistry = new ConcurrentHashMap<UnitOfMeasure, BigDecimal>();
-
-	// name, for example "kilogram"
-	private String name;
-
-	// symbol or abbreviation, e.g. "kg"
-	private String symbol;
-
-	// description
-	private String description;
 
 	// conversion to another Unit of Measure in the same recognized measurement
 	// system (y = ax + b)
@@ -133,13 +122,12 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	private String baseSymbol;
 
 	UnitOfMeasure() {
+		super();
 		initialize();
 	}
 
 	UnitOfMeasure(UnitType type, String name, String symbol, String description) {
-		this.name = name;
-		this.symbol = symbol;
-		this.description = description;
+		super(name, symbol, description);
 		this.unitType = type;
 		initialize();
 	}
@@ -159,37 +147,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 	private Category getCategory() throws Exception {
 		return powerProduct.getCategory();
-	}
-
-	/**
-	 * Get the unit of measure's symbol
-	 * 
-	 * @return Symbol
-	 */
-	public String getSymbol() {
-		return symbol;
-	}
-
-	private void setSymbol(String symbol) {
-		this.symbol = symbol;
-	}
-
-	/**
-	 * Get the name of the unit of measure.
-	 * 
-	 * @return Name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * Get the description of the unit of measure.
-	 * 
-	 * @return Description
-	 */
-	public String getDescription() {
-		return description;
 	}
 
 	/**

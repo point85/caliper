@@ -918,9 +918,8 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure inHg = sys.createScalarUOM(UnitType.PRESSURE, "inHg", "inHg", "inHg");
 		inHg.setConversion(conversion);
 
-		conversion = new Conversion(Quantity.createAmount("101325"), pascal);
-		UnitOfMeasure atm = sys.getUOM(Unit.ATMOSPHERE);
-		atm.setConversion(conversion);
+		Quantity  atm = sys.getQuantity(Constant.ATMOSPHERE);
+		assertThat(atm.getAmount(), closeTo(Quantity.createAmount("101325"), DELTA6));
 
 		UnitOfMeasure ft2ft = sys.createProductUOM(UnitType.VOLUME, "ft2ft", "ft2ft", null, ft2, ft);
 
@@ -994,11 +993,11 @@ public class TestUnits extends BaseTest {
 		bd = inHg.getConversionFactor(pascal);
 		assertThat(bd, closeTo(Quantity.createAmount("3386.389"), DELTA6));
 
-		bd = atm.getConversionFactor(inHg);
+		bd = atm.convert(inHg).getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("29.92125240189478"), DELTA6));
 
-		bd = inHg.getConversionFactor(atm);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0334210609425117"), DELTA6));
+		bd = inHg.getConversionFactor(atm.getUOM());
+		assertThat(bd, closeTo(Quantity.createAmount("3386.389"), DELTA6));
 
 		bd = btu.getConversionFactor(joule);
 		assertThat(bd, closeTo(Quantity.createAmount("1055.05585262"), DELTA6));

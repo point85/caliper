@@ -47,7 +47,8 @@ public class Conversion {
 	private UnitOfMeasure abscissaUnit;
 
 	/**
-	 * Construct a conversion with a scaling factor of 1 and offset of 0
+	 * Construct a conversion with a scaling factor of 1 and offset of 0 for the
+	 * specified abscissa unit of measure.
 	 * 
 	 * @param abscissaUnit
 	 *            {@link UnitOfMeasure}
@@ -57,7 +58,8 @@ public class Conversion {
 	}
 
 	/**
-	 * Construct a conversion with an offset of 0
+	 * Construct a conversion with an offset of 0 for the specified scaling
+	 * factor and abscissa unit of measure.
 	 * 
 	 * @param scalingFactor
 	 *            Factor
@@ -70,7 +72,8 @@ public class Conversion {
 	}
 
 	/**
-	 * Construct a conversion
+	 * Construct a conversion with the specified scaling factor, abscissa unit
+	 * of measure and scaling factor.
 	 * 
 	 * @param scalingFactor
 	 *            Factor

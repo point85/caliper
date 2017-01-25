@@ -1,7 +1,5 @@
 package org.point85.uom;
 
-import java.math.BigDecimal;
-
 /**
  * This class represents a fundamental physical quantity that is invariant, for
  * example "speed of light"
@@ -9,7 +7,7 @@ import java.math.BigDecimal;
  * @author Kent Randall
  *
  */
-public class NamedQuantity extends Quantity {
+abstract class Symbolic {
 	// name, for example "speed of light"
 	private String name;
 
@@ -18,38 +16,22 @@ public class NamedQuantity extends Quantity {
 
 	// description
 	private String description;
-
-	/**
-	 * Construct a named quantity from another quantity
-	 * 
-	 * @param quantity
-	 *            {@link Quantity}
-	 */
-	public NamedQuantity(final Quantity quantity) {
-		super(quantity.getAmount(), quantity.getUOM());
+	
+	protected Symbolic() {
+		
 	}
 
-	/**
-	 * Construct a named quantity from a decimal amount and unit of measure
-	 * 
-	 * @param amount
-	 *            Amount
-	 * @param uom
-	 *            {@link UnitOfMeasure}
-	 */
-	public NamedQuantity(final BigDecimal amount, final UnitOfMeasure uom) {
-		super(amount, uom);
+	protected Symbolic(String name, String symbol, String description) {
+		this.name = name;
+		this.symbol = symbol;
+		this.description = description;
 	}
-
+	
 	/**
-	 * Identity this named quantity
-	 * 
-	 * @param name
-	 *            Name
-	 * @param symbol
-	 *            Symbol
-	 * @param description
-	 *            Description
+	 * Set the name, symbol and description
+	 * @param name Name
+	 * @param symbol Symbol
+	 * @param description Description
 	 */
 	public void setId(String name, String symbol, String description) {
 		this.name = name;
@@ -58,16 +40,20 @@ public class NamedQuantity extends Quantity {
 	}
 
 	/**
-	 * Get the unit of measure's symbol
+	 * Get the symbol
 	 * 
 	 * @return Symbol
 	 */
 	public String getSymbol() {
 		return symbol;
 	}
+	
+	protected void setSymbol(String symbol) {
+		this.symbol = symbol;
+	}
 
 	/**
-	 * Get the name of the unit of measure.
+	 * Get the name
 	 * 
 	 * @return Name
 	 */
@@ -76,7 +62,7 @@ public class NamedQuantity extends Quantity {
 	}
 
 	/**
-	 * Get the description of the unit of measure.
+	 * Get the description
 	 * 
 	 * @return Description
 	 */
@@ -85,7 +71,7 @@ public class NamedQuantity extends Quantity {
 	}
 
 	/**
-	 * Create a String representation of this NamedQuantity
+	 * Create a String representation
 	 */
 	@Override
 	public String toString() {
@@ -109,6 +95,6 @@ public class NamedQuantity extends Quantity {
 			sb.append(", ").append(description).append(')');
 		}
 
-		return super.toString() + sb.toString();
+		return sb.toString();
 	}
 }

@@ -28,7 +28,8 @@ import java.math.BigInteger;
 import java.math.MathContext;
 
 /**
- * The Quantity class represents an amount and {@link UnitOfMeasure}.
+ * The Quantity class represents an amount and {@link UnitOfMeasure}. A constant
+ * quantity can be named and given a symbol, e.g. the speed of light.
  * <p>
  * The amount is expressed as a BigDecimal in order to control the precision of
  * floating point arithmetic. A MathContext is used with a precision setting
@@ -39,7 +40,7 @@ import java.math.MathContext;
  * @author Kent Randall
  *
  */
-public class Quantity {
+public class Quantity extends Symbolic {
 
 	// the amount
 	private BigDecimal amount;
@@ -326,7 +327,8 @@ public class Quantity {
 	}
 
 	/**
-	 * Invert this quantity, i.e. 1/quantity to create another quantity
+	 * Invert this quantity, i.e. 1 divided by this quantity to create another
+	 * quantity
 	 * 
 	 * @return {@link Quantity}
 	 * @throws Exception

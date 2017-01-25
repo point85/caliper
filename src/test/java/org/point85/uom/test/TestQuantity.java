@@ -36,7 +36,6 @@ import java.math.BigInteger;
 import org.junit.Test;
 import org.point85.uom.Constant;
 import org.point85.uom.Conversion;
-import org.point85.uom.NamedQuantity;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -64,12 +63,12 @@ public class TestQuantity extends BaseTest {
 		assertThat(eps0.convert(fm).getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
 
 		// atomic masses
-		NamedQuantity u = new NamedQuantity(Quantity.createAmount("1.66053904020E-24"), sys.getUOM(Unit.GRAM));
-		NamedQuantity me = sys.getQuantity(Constant.ELECTRON_MASS);
+		Quantity u = new Quantity(Quantity.createAmount("1.66053904020E-24"), sys.getUOM(Unit.GRAM));
+		Quantity me = sys.getQuantity(Constant.ELECTRON_MASS);
 		BigDecimal bd = me.divide(u).getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("5.48579909016E-04"), DELTA6));
 
-		NamedQuantity mp = sys.getQuantity(Constant.PROTON_MASS);
+		Quantity mp = sys.getQuantity(Constant.PROTON_MASS);
 		bd = mp.divide(u).getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("1.00727646687991"), DELTA6));
 	}
@@ -625,7 +624,7 @@ public class TestQuantity extends BaseTest {
 		assertThat(bmi.getAmount(), closeTo(Quantity.createAmount("25"), DELTA6));
 
 		// E = mc^2
-		NamedQuantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+		Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
 		Quantity m = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.KILOGRAM));
 		Quantity e = m.multiply(c).multiply(c);
 		assertThat(e.getAmount(),
@@ -634,7 +633,7 @@ public class TestQuantity extends BaseTest {
 		// Ideal Gas Law, PV = nRT
 		// A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.
 		// How many moles of argon are in the cylinder?
-		Quantity p = new Quantity("18.4", Unit.ATMOSPHERE).convert(Unit.PASCAL);
+		Quantity p = sys.getQuantity(Constant.ATMOSPHERE).multiply(Quantity.createAmount("18.4"));
 		Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
 		Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
 		Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
