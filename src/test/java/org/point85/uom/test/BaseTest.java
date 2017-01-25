@@ -25,6 +25,7 @@ package org.point85.uom.test;
 
 import java.math.BigDecimal;
 
+import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Quantity;
 
 public class BaseTest {
@@ -36,4 +37,6 @@ public class BaseTest {
 	protected static final BigDecimal DELTA2 = Quantity.createAmount("0.01");
 	protected static final BigDecimal DELTA1 = Quantity.createAmount("0.1");
 	protected static final BigDecimal DELTA0 = Quantity.createAmount("1");
+
+	protected static MeasurementSystem sys = MeasurementSystem.getSystem();
 }

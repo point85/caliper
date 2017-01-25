@@ -36,7 +36,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
-import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
@@ -46,7 +45,6 @@ public class TestSystems extends BaseTest {
 	@Test
 	public void testUnifiedSystem() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 		assertFalse(sys.equals(null));
 
 		Map<String, UnitOfMeasure> unitMap = new HashMap<>();
@@ -95,7 +93,7 @@ public class TestSystems extends BaseTest {
 				fail("No unit found for type " + unitType);
 			}
 		}
-		
+
 		// constants
 		for (Constant c : Constant.values()) {
 			assertTrue(sys.getQuantity(c) != null);
@@ -104,7 +102,6 @@ public class TestSystems extends BaseTest {
 
 	@Test
 	public void testCache() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		// unit cache
 		sys.getOne();

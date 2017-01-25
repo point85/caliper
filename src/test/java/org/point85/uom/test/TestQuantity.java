@@ -36,7 +36,6 @@ import java.math.BigInteger;
 import org.junit.Test;
 import org.point85.uom.Constant;
 import org.point85.uom.Conversion;
-import org.point85.uom.MeasurementSystem;
 import org.point85.uom.NamedQuantity;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
@@ -45,11 +44,10 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestQuantity extends BaseTest {
-	
-	@Test 
+
+	@Test
 	public void testNamedQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
-		
+
 		// faraday
 		Quantity f = sys.getQuantity(Constant.FARADAY_CONSTANT);
 		Quantity qe = sys.getQuantity(Constant.ELEMENTARY_CHARGE);
@@ -57,21 +55,20 @@ public class TestQuantity extends BaseTest {
 		Quantity eNA = qe.multiply(na);
 		assertThat(f.getAmount(), closeTo(eNA.getAmount(), DELTA6));
 		assertThat(f.getAmount(), closeTo(Quantity.createAmount("96485.3328959"), DELTA5));
-		
+
 		// epsilon 0
-		UnitOfMeasure fm = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "Farad per metre",
-				"F/m", "Farad per metre", sys.getUOM(Unit.FARAD),
-				sys.getUOM(Unit.METRE));
+		UnitOfMeasure fm = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "Farad per metre", "F/m", "Farad per metre",
+				sys.getUOM(Unit.FARAD), sys.getUOM(Unit.METRE));
 		Quantity eps0 = sys.getQuantity(Constant.ELECTRIC_PERMITTIVITY);
 		assertThat(eps0.getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
 		assertThat(eps0.convert(fm).getAmount(), closeTo(Quantity.createAmount("8.854187817E-12"), DELTA6));
-		
+
 		// atomic masses
-		NamedQuantity u = new  NamedQuantity(Quantity.createAmount("1.66053904020E-24"), sys.getUOM(Unit.GRAM));
+		NamedQuantity u = new NamedQuantity(Quantity.createAmount("1.66053904020E-24"), sys.getUOM(Unit.GRAM));
 		NamedQuantity me = sys.getQuantity(Constant.ELECTRON_MASS);
 		BigDecimal bd = me.divide(u).getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("5.48579909016E-04"), DELTA6));
-		
+
 		NamedQuantity mp = sys.getQuantity(Constant.PROTON_MASS);
 		bd = mp.divide(u).getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("1.00727646687991"), DELTA6));
@@ -79,7 +76,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testAllUnits() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		for (Unit u : Unit.values()) {
 			UnitOfMeasure uom1 = sys.getUOM(u);
@@ -94,7 +90,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testTime() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure second = sys.getSecond();
 		UnitOfMeasure minute = sys.getMinute();
@@ -129,7 +124,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testTemperature() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure K = sys.getUOM(Unit.KELVIN);
 		UnitOfMeasure C = sys.getUOM(Unit.CELSIUS);
@@ -185,7 +179,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testLength() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
@@ -275,7 +268,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testUSQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
 		UnitOfMeasure in3 = sys.getUOM(Unit.CUBIC_INCH);
@@ -314,7 +306,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testSIQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		BigDecimal ten = Quantity.createAmount("10");
 
@@ -467,7 +458,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testPowers() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure p2 = sys.createPowerUOM(UnitType.AREA, "m2^1", "m2^1", "square metres raised to power 1", m2, 1);
@@ -490,8 +480,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testSIUnits() throws Exception {
-
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -620,7 +608,7 @@ public class TestQuantity extends BaseTest {
 		q2 = new Quantity(BigDecimal.ONE, sys.getMinute());
 		q3 = q1.multiply(q2).convert(sys.getOne());
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("600"), DELTA6));
-		
+
 		q1 = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.ELECTRON_VOLT));
 		q2 = q1.convert(sys.getUOM(Unit.JOULE));
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("1.60217656535E-19"), DELTA6));
@@ -629,7 +617,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testEquations() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		// body mass index
 		Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
@@ -696,7 +683,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testPackaging() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
+
 		BigDecimal one = Quantity.createAmount("1");
 		BigDecimal four = Quantity.createAmount("4");
 		BigDecimal six = Quantity.createAmount("6");
@@ -755,7 +742,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testGenericQuantity() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "aUOM", "A");
 
@@ -833,7 +819,6 @@ public class TestQuantity extends BaseTest {
 	@Test
 	public void testExceptions() throws Exception {
 
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 		UnitOfMeasure floz = sys.getUOM(Unit.BR_FLUID_OUNCE);
 
 		Quantity q1 = new Quantity(BigDecimal.TEN, sys.getDay());
@@ -866,7 +851,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testEquality() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -916,7 +900,6 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testComparison() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -948,7 +931,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testArithmetic() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
+
 		UnitOfMeasure in = sys.getUOM(Unit.INCH);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
 		Quantity qcm = new Quantity("1", cm);

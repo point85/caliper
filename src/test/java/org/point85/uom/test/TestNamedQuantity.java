@@ -4,13 +4,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
-import org.point85.uom.MeasurementSystem;
 import org.point85.uom.NamedQuantity;
 
 public class TestNamedQuantity extends BaseTest {
 	@Test
 	public void testCase() throws Exception {
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		for (Constant value : Constant.values()) {
 			NamedQuantity q = sys.getQuantity(value);

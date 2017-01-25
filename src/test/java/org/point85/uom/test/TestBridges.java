@@ -32,7 +32,6 @@ import java.math.MathContext;
 
 import org.junit.Test;
 import org.point85.uom.Conversion;
-import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -43,8 +42,6 @@ public class TestBridges extends BaseTest {
 
 	@Test
 	public void testBridges() throws Exception {
-
-		MeasurementSystem sys = MeasurementSystem.getSystem();
 
 		// SI
 		UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
@@ -196,7 +193,7 @@ public class TestBridges extends BaseTest {
 		BigDecimal sf = uom.getScalingFactor();
 
 		assertTrue(uom.getAbscissaUnit().equals(m2));
-		assertTrue(base.equals(m)); 
+		assertTrue(base.equals(m));
 		assertThat(sf, closeTo(BigDecimal.ONE, DELTA6));
 
 		Quantity q4 = q3.convert(acre);
@@ -204,7 +201,7 @@ public class TestBridges extends BaseTest {
 		assertTrue(q4.getUOM().equals(acre));
 
 		UnitOfMeasure usSec = sys.getSecond();
-		
+
 		UnitOfMeasure v1 = sys.getUOM("m/hr");
 
 		UnitOfMeasure v2 = sys.getUOM(Unit.METRE_PER_SECOND);

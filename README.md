@@ -58,30 +58,27 @@ The Unit.properties file defines the name, symbol, description and UCUM symbol f
 The metre scalar UOM is created by the MeasurementSystem as follows:
 ```java
 UnitOfMeasure uom = createScalarUOM(UnitType.LENGTH, Unit.METRE, symbols.getString("m.name"),
-					symbols.getString("m.symbol"), symbols.getString("m.desc"), symbols.getString("m.unified"));
+	symbols.getString("m.symbol"), symbols.getString("m.desc"));
 ``` 
 
 The square metre power UOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.getString("m2.name"),
-					symbols.getString("m2.symbol"), symbols.getString("m2.desc"), symbols.getString("m2.unified"),
-					getUOM(Unit.METRE), 2);
+	symbols.getString("m2.symbol"), symbols.getString("m2.desc"), getUOM(Unit.METRE), 2);
 ```
 
 The metre per second quotient UOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, 
-					symbols.getString("mps.name"), symbols.getString("mps.symbol"), 
-					symbols.getString("mps.desc"), symbols.getString("mps.unified"), 
-					getUOM(Unit.METRE), getSecond());
+	symbols.getString("mps.name"), symbols.getString("mps.symbol"), symbols.getString("mps.desc"),  
+	getUOM(Unit.METRE), getSecond());
 ```
 
 The Newton product UOM is created by the MeasurementSystem as follows: 
 ```java
 UnitOfMeasure uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getString("newton.name"),
-					symbols.getString("newton.symbol"), symbols.getString("newton.desc"),
-					symbols.getString("newton.unified"), getUOM(Unit.KILOGRAM), 
-					getUOM(Unit.METRE_PER_SECOND_SQUARED));
+	symbols.getString("newton.symbol"), symbols.getString("newton.desc"),
+	getUOM(Unit.KILOGRAM), getUOM(Unit.METRE_PER_SECOND_SQUARED));
 ```
 
 A millisecond is 1/1000th of a second with a defined prefix and created as:
@@ -95,16 +92,14 @@ For a second example, a US gallon = 231 cubic inches:
 ```java			
 Conversion	conversion = new Conversion(Quantity.createAmount("231"), getUOM(Unit.CUBIC_INCH));
 UnitOfMeasure uom = createScalarUOM(UnitType.VOLUME, Unit.US_GALLON, symbols.getString("us_gallon.name"),
-					symbols.getString("us_gallon.symbol"), symbols.getString("us_gallon.desc"),
-					symbols.getString("us_gallon.unified"));
+	symbols.getString("us_gallon.symbol"), symbols.getString("us_gallon.desc"));
 uom.setConversion(conversion);
 ```
 
 When creating the foot unit of measure in the unified measurement system, a bridge conversion to metre is defined (1 foot = 0.3048m):
 ```java
 UnitOfMeasure uom = createScalarUOM(UnitType.LENGTH, Unit.FOOT, symbols.getString("foot.name"),
-					symbols.getString("foot.symbol"), symbols.getString("foot.desc"),
-					symbols.getString("foot.unified"));
+	symbols.getString("foot.symbol"), symbols.getString("foot.desc"));
 
 // bridge to SI
 Conversion conversion = new Conversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
@@ -254,14 +249,13 @@ A unit of measure once created is registered in two hashmaps, one by its base sy
 The BigDecimal value of a unit of measure conversion is also cached.  This performance optimization eliminates the need to calculate the conversion multiple times if many quantities are being converted at once; for example, operations upon a vector or matrix of quantities all with the same unit of measure.
 
 ## Localization
-All externally visible text is defined in two resource bundle .properties files.  The Unit.properties file has the name (.name), symbol (.symbol), description (.desc) and UCUM symbol (.unified) for a unit of measure as well as toString() method text.  The Message.properties file has the text for an exception.  A default English file for each is included in the project.  The files can be translated to another language by following the Java locale naming conventions for the properties file, or the English version can be edited, e.g. to change "metre" to "meter".  For example, a metre's text is:
+All externally visible text is defined in two resource bundle .properties files.  The Unit.properties file has the name (.name), symbol (.symbol) and description (.desc) for a unit of measure as well as toString() method text.  The Message.properties file has the text for an exception.  A default English file for each is included in the project.  The files can be translated to another language by following the Java locale naming conventions for the properties file, or the English version can be edited, e.g. to change "metre" to "meter".  For example, a metre's text is:
 
 ```java
 # metre
 m.name = metre
 m.symbol = m
 m.desc = The length of the path travelled by light in vacuum during a time interval of 1/299792458 of a second.
-m.unified = m
 ```
 
 and for an exception:

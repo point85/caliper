@@ -32,7 +32,6 @@ import java.math.BigDecimal;
 import org.junit.Test;
 import org.point85.uom.Constant;
 import org.point85.uom.Conversion;
-import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -49,51 +48,87 @@ public class TestUnifiedCode extends BaseTest {
 	private static final String TO = "to/";
 	private static final String BASE_URL = "http://www.xml4pharmaserver.com:8080/CDISCCTService/rest/ucumtransform/";
 
-	private Gson gson = new Gson(); 
+	private Gson gson = new Gson();
 
 	@Test
 	public void runTest() throws Exception {
 		String amount = "10";
 
-		MeasurementSystem sys = MeasurementSystem.getSystem();
-
 		Quantity from = null;
 		Quantity to = null;
 		BigDecimal convertedAmount = null;
 		
+		// in Hg to PSI
+		from = new Quantity(amount, sys.getUOM(Unit.IN_HG));
+		to = from.convert(sys.getUOM(Unit.PSI));
+
+		convertedAmount = wsConvert(amount, "[in_i'Hg]", "[psi]");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
+		
+		// days to weeks
+		from = new Quantity(amount, sys.getUOM(Unit.DAY));
+		to = from.convert(sys.getUOM(Unit.WEEK));
+
+		convertedAmount = wsConvert(amount, "d", "wk");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		
+		// kilowatt-hours to Joules
+		UnitOfMeasure kwh = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT_HOUR));
+		UnitOfMeasure kJ = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.JOULE));
+		from = new Quantity(amount, kwh);
+		to = from.convert(kJ);
+
+		convertedAmount = wsConvert(amount, "kW.h", "kJ");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
+		
+		// hour to second
+		from = new Quantity(amount, sys.getHour());
+		to = from.convert(sys.getSecond());
+
+		convertedAmount = wsConvert(amount, "h", "s");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+		
+		/// US gal to litres
+		// hour to second
+		from = new Quantity(amount, Unit.US_GALLON);
+		to = from.convert(Unit.LITRE);
+
+		convertedAmount = wsConvert(amount, "[gal_us]", "l");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
+
 		// elementary charge to Coulombs
 		from = sys.getQuantity(Constant.ELEMENTARY_CHARGE);
 		to = from.convert(sys.getUOM(Unit.COULOMB));
 
-		convertedAmount = wsConvert(from.getAmount().toString(), from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(from.getAmount().toString(), "[e]", "C");
 		assertThat(from.getAmount(), closeTo(convertedAmount, DELTA6));
-		
+
 		// mole
 		from = new Quantity(amount, sys.getUOM(Unit.MOLE));
 		to = from.convert(sys.getUOM(Unit.MOLE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "mol", "mol");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-		
+
 		// velocity of light
 		from = sys.getQuantity(Constant.LIGHT_VELOCITY);
 		to = from.convert(sys.getUOM(Unit.MILES_PER_HOUR));
 
-		convertedAmount = wsConvert("2.99792458E+08", from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert("2.99792458E+08", "m/s", "[mi_i]/h");
 		assertThat(to.getAmount(), closeTo(convertedAmount, BigDecimal.ONE));
-		
+
 		// acceleration of gravity
 		from = sys.getQuantity(Constant.GRAVITY);
 		to = from.convert(sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
 
-		convertedAmount = wsConvert("9.80665", from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert("9.80665", "m/s2", "[ft_i]/s2");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
 
 		// feet to in
 		from = new Quantity(amount, sys.getUOM(Unit.FOOT));
 		to = from.convert(sys.getUOM(Unit.INCH));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[ft_i]", "[in_i]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// in to cm
@@ -101,44 +136,35 @@ public class TestUnifiedCode extends BaseTest {
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
 		to = from.convert(cm);
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[in_i]", "cm");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// atmosphere to pascal
 		from = new Quantity(amount, sys.getUOM(Unit.ATMOSPHERE));
 		to = from.convert(sys.getUOM(Unit.PASCAL));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "atm", "Pa");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// ft-lbf to Newton
 		from = new Quantity(amount, sys.getUOM(Unit.FOOT_POUND_FORCE));
 		to = from.convert(sys.getUOM(Unit.NEWTON_METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[ft_i].[lbf_av]", "N.m");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// kilowatt-hours to Joules
-		UnitOfMeasure kwh = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT_HOUR));
-		UnitOfMeasure kJ = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.JOULE));
-		from = new Quantity(amount, kwh);
-		to = from.convert(kJ);
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
 
 		// acres to square metres
 		from = new Quantity(amount, sys.getUOM(Unit.ACRE));
 		to = from.convert(sys.getUOM(Unit.SQUARE_METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[acr_us]", "m2");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA0));
 
 		// US gallon to Imperial gal
 		from = new Quantity(amount, sys.getUOM(Unit.US_GALLON));
 		to = from.convert(sys.getUOM(Unit.BR_GALLON));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[gal_us]", "[gal_br]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
 
 		// US gal to cm3
@@ -146,11 +172,10 @@ public class TestUnifiedCode extends BaseTest {
 
 		UnitOfMeasure cm3 = sys.createScalarUOM(UnitType.VOLUME, "cubic cm", "cm3", null);
 		cm3.setConversion(new Conversion(Prefix.MICRO.getScalingFactor(), sys.getUOM(Unit.CUBIC_METRE)));
-		cm3.setUnifiedSymbol("cm3");
 
 		to = from.convert(cm3);
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[gal_us]", "cm3");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA3));
 
 		// lbm to kg
@@ -158,32 +183,31 @@ public class TestUnifiedCode extends BaseTest {
 		UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
 		to = from.convert(kg);
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[lb_av]", "kg");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// N to lbf
 		from = new Quantity(amount, sys.getUOM(Unit.NEWTON));
 		to = from.convert(sys.getUOM(Unit.POUND_FORCE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "N", "[lbf_av]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
-		// calorie to Joule
+		// thermochemical calorie to Joule
 		from = new Quantity(amount, sys.getUOM(Unit.CALORIE));
 		to = from.convert(sys.getUOM(Unit.JOULE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "cal_th", "J");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// kilocalorie to BTU
 		UnitOfMeasure kcal = sys.createScalarUOM(UnitType.ENERGY, "kcal", "kcal", "kilocalorie");
 		kcal.setConversion(new Conversion(Prefix.KILO.getScalingFactor(), sys.getUOM(Unit.CALORIE)));
-		kcal.setUnifiedSymbol("kcal_th");
 
 		from = new Quantity(amount, kcal);
 		to = from.convert(sys.getUOM(Unit.BTU));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "kcal_th", "[Btu_IT]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// psi to kilopascal
@@ -191,58 +215,58 @@ public class TestUnifiedCode extends BaseTest {
 		UnitOfMeasure kPa = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.PASCAL));
 		to = from.convert(kPa);
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[psi]", "kPa");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
-		// HP to watt
+		// HP to kilowatt
 		from = new Quantity(amount, sys.getUOM(Unit.HP));
-		UnitOfMeasure kW = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT));
+		UnitOfMeasure kW = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT)); 
 		to = from.convert(kW);
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[HP]", "kW");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// N.m to ft-lbf torque
 		from = new Quantity(amount, sys.getUOM(Unit.NEWTON_METRE));
 		to = from.convert(sys.getUOM(Unit.FOOT_POUND_FORCE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "N.m", "[ft_i].[lbf_av]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// grain to pound mass
 		from = new Quantity(amount, sys.getUOM(Unit.GRAIN));
 		to = from.convert(sys.getUOM(Unit.POUND_MASS));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[gr]", "[lb_av]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
-		// mg to grain
+		// kg to grain
 		kg = sys.getUOM(Unit.KILOGRAM);
 		from = new Quantity(amount, kg);
 		to = from.convert(sys.getUOM(Unit.GRAIN));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "kg", "[gr]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA2));
 
 		// kg to pound mass
 		from = new Quantity(amount, kg);
 		to = from.convert(sys.getUOM(Unit.POUND_MASS));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "kg", "[lb_av]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// degrees to radians
 		from = new Quantity(amount, sys.getUOM(Unit.DEGREE));
 		to = from.convert(sys.getUOM(Unit.RADIAN));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "deg", "rad");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// knots to mi/hr
 		from = new Quantity(amount, sys.getUOM(Unit.KNOT));
 		to = from.convert(sys.getUOM(Unit.MILES_PER_HOUR));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[kn_br]", "[mi_i]/h");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
 
 		// kg to grains
@@ -250,7 +274,7 @@ public class TestUnifiedCode extends BaseTest {
 		from = new Quantity(amount, kg);
 		to = from.convert(sys.getUOM(Unit.GRAIN));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "kg", "[gr]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA2));
 
 		// a deg Fahrenheit to a deg Celsius
@@ -258,7 +282,7 @@ public class TestUnifiedCode extends BaseTest {
 		UnitOfMeasure degC = sys.getUOM(Unit.CELSIUS);
 		BigDecimal factor = degF.getConversionFactor(degC);
 
-		convertedAmount = wsConvert("1", degF, degC);
+		convertedAmount = wsConvert("1", "[degF]", "Cel");
 		assertThat(factor, closeTo(convertedAmount, DELTA6));
 
 		// a deg Kelvin to a deg Rankine
@@ -266,29 +290,29 @@ public class TestUnifiedCode extends BaseTest {
 		UnitOfMeasure degR = sys.getUOM(Unit.RANKINE);
 		factor = degK.getConversionFactor(degR);
 
-		convertedAmount = wsConvert("1", degK, degR);
+		convertedAmount = wsConvert("1", "K", "[degR]");
 		assertThat(factor, closeTo(convertedAmount, DELTA6));
 
 		// lux
 		Quantity lumen = new Quantity(amount, sys.getUOM(Unit.LUMEN));
 		Quantity m2 = new Quantity("1", sys.getUOM(Unit.SQUARE_METRE));
 		Quantity lux = lumen.divide(m2);
-		lux.getUOM().setUnifiedSymbol("lm/m2");
 
-		convertedAmount = wsConvert(lux.getAmount().toPlainString(), lux.getUOM(), sys.getUOM(Unit.LUX));
+		convertedAmount = wsConvert(lux.getAmount().toPlainString(), "lm/m2", "lx");
 		assertThat(lux.getAmount(), closeTo(convertedAmount, DELTA2));
 
 		// carat to ounces
 		from = new Quantity(amount, sys.getUOM(Unit.CARAT));
 		to = from.convert(sys.getUOM(Unit.OUNCE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[car_m]", "[oz_av]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
+		// Hertz and Becquerel
 		from = new Quantity(amount, sys.getUOM(Unit.HERTZ));
 		try {
 			to = from.convert(sys.getUOM(Unit.BECQUEREL));
-			convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+			convertedAmount = wsConvert(amount, "Hz", "Bq");
 			fail("No conversion");
 		} catch (Exception e) {
 		}
@@ -297,35 +321,28 @@ public class TestUnifiedCode extends BaseTest {
 		from = new Quantity(amount, kwh);
 		to = from.convert(sys.getUOM(Unit.BTU));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "kW.h", "[Btu_IT]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA3));
 
 		// Angstrom to inch
 		from = new Quantity(amount, sys.getUOM(Unit.ANGSTROM));
 		to = from.convert(sys.getUOM(Unit.INCH));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// days to weeks
-		from = new Quantity(amount, sys.getUOM(Unit.DAY));
-		to = from.convert(sys.getUOM(Unit.WEEK));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "Ao", "[in_i]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// eV to joules
 		from = new Quantity(amount, sys.getUOM(Unit.ELECTRON_VOLT));
 		to = from.convert(sys.getUOM(Unit.JOULE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[e].V", "J");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// joules to electron-volts
 		from = new Quantity(amount, sys.getUOM(Unit.JOULE));
 		to = from.convert(sys.getUOM(Unit.ELECTRON_VOLT));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "J", "[e].V");
 		Quantity convertedQty = new Quantity(convertedAmount, sys.getUOM(Unit.ELECTRON_VOLT));
 		Quantity back = convertedQty.convert(sys.getUOM(Unit.JOULE));
 
@@ -335,28 +352,28 @@ public class TestUnifiedCode extends BaseTest {
 		from = new Quantity(amount, sys.getUOM(Unit.JULIAN_YEAR));
 		to = from.convert(sys.getUOM(Unit.WEEK));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount,"a_j", "wk");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
 
 		// fathom to metre
 		from = new Quantity(amount, sys.getUOM(Unit.FATHOM));
 		to = from.convert(sys.getUOM(Unit.METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount,"[fth_i]", "m");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// square metres to square yards
 		from = new Quantity(amount, sys.getUOM(Unit.SQUARE_METRE));
 		to = from.convert(sys.getUOM(Unit.SQUARE_YARD));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "m2", "[syd_i]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// cubic yards to cubic metres
 		from = new Quantity(amount, sys.getUOM(Unit.CUBIC_YARD));
 		to = from.convert(sys.getUOM(Unit.CUBIC_METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[cyd_i]", "m3");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// mils to millmetres
@@ -364,84 +381,71 @@ public class TestUnifiedCode extends BaseTest {
 		UnitOfMeasure mm = sys.getUOM(Prefix.MILLI, sys.getUOM(Unit.METRE));
 		to = from.convert(mm);
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[mil_i]", "mm");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
-		// cubic meters to US barrels
+		// US barrels to cubic meters
 		from = new Quantity(amount, sys.getUOM(Unit.US_BARREL));
 		to = from.convert(sys.getUOM(Unit.CUBIC_METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[bbl_us]", "m3");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// cord to cubic metres
 		from = new Quantity(amount, sys.getUOM(Unit.CORD));
 		to = from.convert(sys.getUOM(Unit.CUBIC_METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[crd_us]", "m3");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// cubic metres to US bushels
 		from = new Quantity(amount, sys.getUOM(Unit.CUBIC_METRE));
 		to = from.convert(sys.getUOM(Unit.US_BUSHEL));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "m3", "[bu_us]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
 
 		// British bushels to cubic metres
 		from = new Quantity(amount, sys.getUOM(Unit.BR_BUSHEL));
 		to = from.convert(sys.getUOM(Unit.CUBIC_METRE));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[bu_br]", "m3");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// point to inches
 		from = new Quantity(amount, sys.getUOM(Unit.POINT));
 		to = from.convert(sys.getUOM(Unit.INCH));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "[pnt]", "[in_i]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// in Hg to kiloPascal
-		from = new Quantity(amount, sys.getUOM(Unit.IN_HG));
-		to = from.convert(sys.getUOM(Unit.PSI));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
 
 		// bytes to bits
 		from = new Quantity(amount, sys.getUOM(Unit.BYTE));
 		to = from.convert(sys.getUOM(Unit.BIT));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		from = new Quantity(amount, sys.getUOM(Unit.BYTE));
-		to = from.convert(sys.getUOM(Unit.BIT));
-
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "By","bit");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// rpm to Hz
 		from = new Quantity(amount, sys.getUOM(Unit.REV_PER_MIN));
 		to = from.convert(sys.getUOM(Unit.HERTZ));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount,"min-1", "Hz");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// tonne to lbm
 		from = new Quantity(amount, sys.getUOM(Unit.TONNE));
 		to = from.convert(sys.getUOM(Unit.POUND_MASS));
 
-		convertedAmount = wsConvert(amount, from.getUOM(), to.getUOM());
+		convertedAmount = wsConvert(amount, "t", "[lb_av]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA3));
 
 	}
 
-	private BigDecimal wsConvert(String amount, UnitOfMeasure from, UnitOfMeasure to)
+	private BigDecimal wsConvert(String amount, String fromUnifiedSymbol, String toUnifiedSymbol)
 			throws HttpRequestException, Exception {
-		String fromUnit = prep(from.getUnifiedSymbol());
-		String toUnit = prep(to.getUnifiedSymbol());
+		String fromUnit = prep(fromUnifiedSymbol);
+		String toUnit = prep(toUnifiedSymbol);
 
 		String conversionUrl = amount + "/" + FROM + fromUnit + "/" + TO + toUnit;
 		String url = BASE_URL + conversionUrl;

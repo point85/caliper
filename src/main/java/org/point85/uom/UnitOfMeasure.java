@@ -82,7 +82,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
-	
+
 	// category of the UOM
 	private enum Category {
 		SCALAR, PRODUCT, QUOTIENT, POWER;
@@ -131,9 +131,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 	// cached base symbol
 	private String baseSymbol;
-
-	// UCUM symbol
-	private String unifiedSymbol;
 
 	UnitOfMeasure() {
 		initialize();
@@ -277,7 +274,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		this.unitType = unitType;
 	}
 
-	
 	private BigDecimal getBridgeFactor(UnitOfMeasure uom) {
 		// common units have a factor of 1
 		if (getSymbol().equals(uom.getSymbol()) && getEnumeration().equals(uom.getEnumeration())) {
@@ -305,6 +301,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 	/**
 	 * Get the hash code
+	 * 
 	 * @return hash code
 	 */
 	public int hashCode() {
@@ -314,6 +311,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 	/**
 	 * Compare this unit of measure to another
+	 * 
 	 * @return true if equal
 	 */
 	public boolean equals(Object other) {
@@ -615,7 +613,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		} else if (thisUOM.equals(targetAbscissa)) {
 			scalingFactor = decimalDivide(BigDecimal.ONE, targetFactor);
 		} else if (thisAbscissa.equals(targetAbscissa)) {
-			scalingFactor =  decimalDivide(getScalingFactor(), targetUOM.getScalingFactor());
+			scalingFactor = decimalDivide(getScalingFactor(), targetUOM.getScalingFactor());
 		} else {
 			scalingFactor = convertUnit(targetUOM);
 		}
@@ -793,6 +791,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 	/**
 	 * Create a String representation of this unit of measure
+	 * 
 	 * @return String representation
 	 */
 	public String toString() {
@@ -840,25 +839,6 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 		}
 
 		return sb.toString();
-	}
-
-	/**
-	 * Get the Unified Code for Unit of Measure Conversion's (UCUM) symbol
-	 * 
-	 * @return Symbol
-	 */
-	public String getUnifiedSymbol() {
-		return unifiedSymbol;
-	}
-
-	/**
-	 * Set the Unified Code for Unit of Measure Conversion (UCUM)
-	 * 
-	 * @param unifiedSymbol
-	 *            UCUM symbol
-	 */
-	public void setUnifiedSymbol(String unifiedSymbol) {
-		this.unifiedSymbol = unifiedSymbol;
 	}
 
 	void setPowerUnits(UnitOfMeasure base, int exponent) throws Exception {
@@ -968,14 +948,14 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 	public UnitOfMeasure getDivisor() {
 		return this.powerProduct.getUOM2();
 	}
-	
-	// this method is for optimization of BigDecimal multiplication 
-	private BigDecimal decimalMultiply(BigDecimal a, BigDecimal b) {		
+
+	// this method is for optimization of BigDecimal multiplication
+	private BigDecimal decimalMultiply(BigDecimal a, BigDecimal b) {
 		return a.multiply(b, MATH_CONTEXT);
 	}
 
-	// this method is for optimization of BigDecimal division 
-	private BigDecimal decimalDivide(BigDecimal a, BigDecimal b) {		
+	// this method is for optimization of BigDecimal division
+	private BigDecimal decimalDivide(BigDecimal a, BigDecimal b) {
 		return a.divide(b, MATH_CONTEXT);
 	}
 
@@ -1108,7 +1088,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 				terms.clear();
 				return;
 			}
-			
+
 			BigDecimal scaling = unit.getScalingFactor();
 
 			if (!invert) {
@@ -1153,7 +1133,7 @@ public class UnitOfMeasure implements Comparable<UnitOfMeasure> {
 
 				BigDecimal factor = powerBase.getScalingFactor();
 				int power = abscissaUnit.getPowerExponent();
-				
+
 				BigDecimal powerScale = decimalPower(factor, power);
 
 				// calculate overall scaling factor
