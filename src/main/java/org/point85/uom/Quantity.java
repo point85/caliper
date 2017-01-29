@@ -412,7 +412,8 @@ public class Quantity extends Symbolic {
 	@Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		sb.append(this.getAmount()).append(", [").append(getUOM().toString()).append(']');
+		sb.append(this.getAmount()).append(", [").append(getUOM().toString()).append("] ");
+		sb.append(super.toString());
 		return sb.toString();
 	}
 

@@ -45,6 +45,70 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testExceptions() throws Exception {
 
+		UnitOfMeasure uom1 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom1", "uom1", "");
+		UnitOfMeasure uom2 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom2", "uom2", "");
+		UnitOfMeasure uom3 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom3", "uom3", "");
+
+		uom1.setConversion(new Conversion(BigDecimal.ONE, uom3, BigDecimal.TEN));
+		uom2.setConversion(new Conversion(BigDecimal.ONE, uom3, BigDecimal.ONE));
+		assertFalse(uom1.equals(uom2));
+
+		try {
+			sys.createQuotientUOM(UnitType.UNCLASSIFIED, "uom4", "uom4", "", sys.getUOM(Unit.METRE), null);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createQuotientUOM(UnitType.UNCLASSIFIED, "uom4", "uom4", "", null, sys.getUOM(Unit.METRE));
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createProductUOM(UnitType.UNCLASSIFIED, "uom4", "uom4", "", sys.getUOM(Unit.METRE), null);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createProductUOM(UnitType.UNCLASSIFIED, "uom4", "uom4", "", null, sys.getUOM(Unit.METRE));
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			Quantity q = new Quantity(BigDecimal.TEN, Unit.METRE);
+			q.convert(Unit.SECOND);
+			fail("no conversion");
+		} catch (Exception e) {
+		}
+
+		sys.unregisterUnit(null);
+
+		UnitOfMeasure u = sys.createScalarUOM(UnitType.CUSTOM, null, "123", "123", "123");
+		sys.unregisterUnit(u);
+
+		try {
+			u = sys.createScalarUOM(UnitType.TIME, null, "123", "123", "123");
+			u.setBridge(new Conversion(null, sys.getUOM(Unit.WEEK)));
+			new Quantity(BigDecimal.TEN, u).convert(Unit.WEEK);
+			fail("no conversion");
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createScalarUOM(UnitType.CUSTOM, "456", null, "description");
+			fail("no symbol");
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createScalarUOM(UnitType.CUSTOM, "456", "", "description");
+			fail("no symbol");
+		} catch (Exception e) {
+		}
+
 		try {
 			sys.createProductUOM(UnitType.CUSTOM, null, "abcd", "", null, null);
 			fail("null");
@@ -76,7 +140,7 @@ public class TestUnits extends BaseTest {
 		} catch (Exception e) {
 		}
 
-		UnitOfMeasure u = sys.createQuotientUOM(UnitType.CUSTOM, "1/1", "1/1", "", sys.getOne(), sys.getOne());
+		u = sys.createQuotientUOM(UnitType.CUSTOM, "1/1", "1/1", "", sys.getOne(), sys.getOne());
 		Quantity q1 = new Quantity(BigDecimal.TEN, u);
 		Quantity q2 = q1.convert(sys.getOne());
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
@@ -357,6 +421,9 @@ public class TestUnits extends BaseTest {
 		sb.append("cUnit").append(MULT).append("xUnit/eUnit");
 		str = sb.toString();
 		assertTrue(cde.getBaseSymbol().indexOf(str) != -1);
+
+		u = sys.createScalarUOM(UnitType.CUSTOM, null, "not null", null);
+		assertTrue(u.toString() != null);
 	}
 
 	@Test
@@ -918,7 +985,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure inHg = sys.createScalarUOM(UnitType.PRESSURE, "inHg", "inHg", "inHg");
 		inHg.setConversion(conversion);
 
-		Quantity  atm = sys.getQuantity(Constant.ATMOSPHERE);
+		Quantity atm = sys.getQuantity(Constant.ATMOSPHERE);
 		assertThat(atm.getAmount(), closeTo(Quantity.createAmount("101325"), DELTA6));
 
 		UnitOfMeasure ft2ft = sys.createProductUOM(UnitType.VOLUME, "ft2ft", "ft2ft", null, ft2, ft);
@@ -1318,6 +1385,9 @@ public class TestUnits extends BaseTest {
 		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0833333333333333"), DELTA6));
 
 		u = newtonm1.multiply(newton);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
+
+		u = newton.multiply(newtonm1);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = minminus1.multiply(s);

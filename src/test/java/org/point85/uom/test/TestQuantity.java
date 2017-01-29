@@ -46,6 +46,10 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testNamedQuantity() throws Exception {
+		
+		Quantity q = new Quantity(BigDecimal.TEN, Unit.CELSIUS);
+		q.setId(null, null, null);
+		assertTrue(q.toString() != null);
 
 		// faraday
 		Quantity f = sys.getQuantity(Constant.FARADAY_CONSTANT);

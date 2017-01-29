@@ -25,7 +25,6 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -157,14 +156,10 @@ public class MeasurementSystem {
 		// British
 		uom = createBRUnit(enumeration);
 
-		if (uom != null) {
-			return uom;
-		}
-
 		return uom;
 	}
 
-	public Quantity getQuantity(Constant constant) throws Exception {
+	public final Quantity getQuantity(Constant constant) throws Exception {
 		Quantity named = null;
 
 		switch (constant) {
@@ -1366,14 +1361,6 @@ public class MeasurementSystem {
 		Unit id = uom.getEnumeration();
 
 		if (id != null) {
-			current = unitRegistry.get(id);
-
-			if (current != null) {
-				String msg = MessageFormat.format(getMessage("already.registered"), uom.toString(), id.toString(),
-						current.toString());
-				throw new Exception(msg);
-			}
-
 			unitRegistry.put(id, uom);
 		}
 
@@ -1400,10 +1387,6 @@ public class MeasurementSystem {
 
 		if (symbolRegistry.containsKey(symbol)) {
 			uom = symbolRegistry.get(symbol);
-		}
-
-		else if (id != null && unitRegistry.containsKey(id)) {
-			uom = unitRegistry.get(id);
 		} else {
 			// create a new one
 			uom = new UnitOfMeasure(type, name, symbol, description);

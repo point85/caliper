@@ -157,14 +157,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 *             Exception
 	 */
 	public UnitOfMeasure getBaseUOM() throws Exception {
-		UnitOfMeasure base = null;
-
 		String baseSymbol = getBaseSymbol();
-
-		if (baseSymbol != null) {
-			base = MeasurementSystem.getSystem().getUOM(baseSymbol);
-		}
-		return base;
+		return MeasurementSystem.getSystem().getUOM(baseSymbol);
 	}
 
 	/**
@@ -232,11 +226,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	private BigDecimal getBridgeFactor(UnitOfMeasure uom) {
-		// common units have a factor of 1
-		if (getSymbol().equals(uom.getSymbol()) && getEnumeration().equals(uom.getEnumeration())) {
-			return BigDecimal.ONE;
-		}
-
 		BigDecimal factor = null;
 
 		// check for our bridge
@@ -763,9 +752,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// symbol
 		String symbol = getSymbol();
-		if (symbol != null) {
-			sb.append(symbolBundle.getString("symbol.text")).append(' ').append(symbol);
-		}
+		sb.append(symbolBundle.getString("symbol.text")).append(' ').append(symbol);
 		sb.append(", ").append(symbolBundle.getString("conversion.text")).append(' ');
 
 		// scaling factor
@@ -1174,11 +1161,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		private void addTerm(UnitOfMeasure uom, boolean invert) throws Exception {
 			int unitPower = 1;
 			int power = 0;
-
-			if (!(uom.getCategory().equals(Category.SCALAR))) {
-				String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), uom.getSymbol());
-				throw new Exception(msg);
-			}
 
 			if (!invert) {
 				// get existing power

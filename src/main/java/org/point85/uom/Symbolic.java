@@ -16,9 +16,9 @@ abstract class Symbolic {
 
 	// description
 	private String description;
-	
+
 	protected Symbolic() {
-		
+
 	}
 
 	protected Symbolic(String name, String symbol, String description) {
@@ -26,12 +26,16 @@ abstract class Symbolic {
 		this.symbol = symbol;
 		this.description = description;
 	}
-	
+
 	/**
 	 * Set the name, symbol and description
-	 * @param name Name
-	 * @param symbol Symbol
-	 * @param description Description
+	 * 
+	 * @param name
+	 *            Name
+	 * @param symbol
+	 *            Symbol
+	 * @param description
+	 *            Description
 	 */
 	public void setId(String name, String symbol, String description) {
 		this.name = name;
@@ -47,7 +51,7 @@ abstract class Symbolic {
 	public String getSymbol() {
 		return symbol;
 	}
-	
+
 	protected void setSymbol(String symbol) {
 		this.symbol = symbol;
 	}

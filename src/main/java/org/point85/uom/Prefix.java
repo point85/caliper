@@ -123,10 +123,7 @@ public enum Prefix {
 			return decimalFactor;
 		}
 
-		if (scalingFactor != null) {
-			decimalFactor = new BigDecimal(scalingFactor);
-		}
-		return decimalFactor;
+		return new BigDecimal(scalingFactor);
 	}
 
 	/**
