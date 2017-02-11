@@ -46,7 +46,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testNamedQuantity() throws Exception {
-		
+
 		Quantity q = new Quantity(BigDecimal.TEN, Unit.CELSIUS);
 		q.setId(null, null, null);
 		assertTrue(q.toString() != null);
@@ -318,12 +318,12 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
-		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.CUSTOM, null, "s/m", null, sys.getSecond(), m);
+		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.UNCLASSIFIED, null, "s/m", null, sys.getSecond(), m);
 		UnitOfMeasure oneOverM = sys.getUOM(Unit.DIOPTER);
 		UnitOfMeasure fperm = sys.getUOM(Unit.FARAD_PER_METRE);
 
 		Conversion conversion = new Conversion(Quantity.createAmount("100"), oneOverM);
-		UnitOfMeasure oneOverCm = sys.createScalarUOM(UnitType.CUSTOM, null, "1/cm", null);
+		UnitOfMeasure oneOverCm = sys.createScalarUOM(UnitType.UNCLASSIFIED, null, "1/cm", null);
 		oneOverCm.setConversion(conversion);
 
 		Quantity q1 = new Quantity(ten, litre);
@@ -464,8 +464,8 @@ public class TestQuantity extends BaseTest {
 
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure p2 = sys.createPowerUOM(UnitType.AREA, "m2^1", "m2^1", "square metres raised to power 1", m2, 1);
-		UnitOfMeasure p4 = sys.createPowerUOM(UnitType.CUSTOM, "m2^2", "m2^2", "square metres raised to power 2", m2,
-				2);
+		UnitOfMeasure p4 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m2^2", "m2^2", "square metres raised to power 2",
+				m2, 2);
 
 		BigDecimal amount = Quantity.createAmount("10");
 
@@ -587,7 +587,8 @@ public class TestQuantity extends BaseTest {
 		u = mps.invert();
 		assertTrue(u.getSymbol().equals("s/m"));
 
-		UnitOfMeasure uom = sys.createQuotientUOM(UnitType.CUSTOM, "1/F", "1/F", "one over farad", sys.getOne(), farad);
+		UnitOfMeasure uom = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "1/F", "1/F", "one over farad", sys.getOne(),
+				farad);
 		assertTrue(uom.getSymbol().equals("1/F"));
 
 		// hz to radians per sec
@@ -658,9 +659,6 @@ public class TestQuantity extends BaseTest {
 		Quantity f = mkg.multiply(sys.getQuantity(Constant.GRAVITY)).convert(Unit.POUND_FORCE);
 		assertThat(f.getAmount(), closeTo(Quantity.createAmount("2.20462"), DELTA5));
 
-		// remove Hz from cache to avoid Katal conflict
-		sys.unregisterUnit(sys.getUOM(Unit.HERTZ));
-
 		// units per volume of solution, C = A x (m/V)
 		// create the "U" unit of measure
 		UnitOfMeasure catUnit = sys.createScalarUOM(UnitType.CATALYTIC_ACTIVITY, "Units of Activity", "U",
@@ -669,8 +667,8 @@ public class TestQuantity extends BaseTest {
 		catUnit.setConversion(conversion);
 
 		// create the "A" unit of measure
-		UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.CUSTOM, "activity", "ACT", "activity of material",
-				catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
+		UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "activity", "act",
+				"activity of material", catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
 
 		// calculate concentration
 		Quantity activity = new Quantity(BigDecimal.ONE, activityUnit);
@@ -681,6 +679,16 @@ public class TestQuantity extends BaseTest {
 
 		Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE)).convert(Unit.KATAL);
 		assertThat(katals.getAmount(), closeTo(Quantity.createAmount("0.01667"), DELTA6));
+
+		// The Stefan–Boltzmann law states that the power emitted per unit area
+		// of the surface of a black body is directly proportional to the fourth
+		// power of its absolute temperature: sigma * T^4
+
+		// calculate at 1000 Kelvin
+		Quantity temp = new Quantity("1000", Unit.KELVIN);
+		Quantity t4 = temp.multiply(temp).multiply(temp).multiply(temp);
+		Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(t4);
+		assertThat(intensity.getAmount(), closeTo(Quantity.createAmount("56700"), DELTA6));
 
 	}
 
@@ -746,10 +754,10 @@ public class TestQuantity extends BaseTest {
 	@Test
 	public void testGenericQuantity() throws Exception {
 
-		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "aUOM", "A");
+		UnitOfMeasure a = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a", "aUOM", "A");
 
 		Conversion conversion = new Conversion(BigDecimal.TEN, a);
-		UnitOfMeasure b = sys.createScalarUOM(UnitType.CUSTOM, "b", "b", "B");
+		UnitOfMeasure b = sys.createScalarUOM(UnitType.UNCLASSIFIED, "b", "b", "B");
 		b.setConversion(conversion);
 
 		BigDecimal four = Quantity.multiplyAmounts("2", "2");
@@ -801,7 +809,7 @@ public class TestQuantity extends BaseTest {
 		assertThat(q3.getUOM().getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertThat(q3.getUOM().getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
-		UnitOfMeasure a2 = sys.createPowerUOM(UnitType.CUSTOM, "a*2", "a*2", "A squared", a, 2);
+		UnitOfMeasure a2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "a*2", "a*2", "A squared", a, 2);
 		Quantity q4 = q3.convert(a2);
 		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("160"), DELTA6));
 		assertTrue(q4.getUOM().equals(a2));

@@ -52,8 +52,12 @@ public class Conversion {
 	 * 
 	 * @param abscissaUnit
 	 *            {@link UnitOfMeasure}
+	 * @throws Exception Exception
 	 */
-	public Conversion(UnitOfMeasure abscissaUnit) {
+	public Conversion(UnitOfMeasure abscissaUnit) throws Exception {
+		if (abscissaUnit == null) {
+			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
+		}
 		this.abscissaUnit = abscissaUnit;
 	}
 
@@ -65,10 +69,29 @@ public class Conversion {
 	 *            Factor
 	 * @param abscissaUnit
 	 *            {@link UnitOfMeasure}
+	 * @throws Exception Exception
 	 */
-	public Conversion(BigDecimal scalingFactor, UnitOfMeasure abscissaUnit) {
+	public Conversion(BigDecimal scalingFactor, UnitOfMeasure abscissaUnit) throws Exception {
 		this(abscissaUnit);
+
+		if (scalingFactor == null) {
+			throw new Exception(MeasurementSystem.getMessage("factor.cannot.be.null"));
+		}
 		this.scalingFactor = scalingFactor;
+	}
+
+	/**
+	 * Construct a conversion with an offset of 0 for the specified scaling
+	 * factor and abscissa unit of measure.
+	 * 
+	 * @param scalingFactor
+	 *            Factor
+	 * @param abscissaUnit
+	 *            {@link UnitOfMeasure}
+	 * @throws Exception Exception
+	 */
+	public Conversion(String scalingFactor, UnitOfMeasure abscissaUnit) throws Exception {
+		this(Quantity.createAmount(scalingFactor), abscissaUnit);
 	}
 
 	/**
@@ -81,9 +104,14 @@ public class Conversion {
 	 *            {@link UnitOfMeasure}
 	 * @param offset
 	 *            Offset
+	 * @throws Exception Exception
 	 */
-	public Conversion(BigDecimal scalingFactor, UnitOfMeasure abscissaUnit, BigDecimal offset) {
+	public Conversion(BigDecimal scalingFactor, UnitOfMeasure abscissaUnit, BigDecimal offset) throws Exception {
 		this(scalingFactor, abscissaUnit);
+
+		if (offset == null) {
+			throw new Exception(MeasurementSystem.getMessage("offset.cannot.be.null"));
+		}
 		this.offset = offset;
 	}
 

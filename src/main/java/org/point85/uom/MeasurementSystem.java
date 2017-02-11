@@ -25,6 +25,7 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.math.BigDecimal;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -92,6 +93,9 @@ public class MeasurementSystem {
 
 	// registry by unit symbol
 	private Map<String, UnitOfMeasure> symbolRegistry = new ConcurrentHashMap<String, UnitOfMeasure>();
+
+	// registry by base symbol
+	private Map<String, UnitOfMeasure> baseRegistry = new ConcurrentHashMap<String, UnitOfMeasure>();
 
 	// registry for units by enumeration
 	private Map<Unit, UnitOfMeasure> unitRegistry = new ConcurrentHashMap<Unit, UnitOfMeasure>();
@@ -182,19 +186,14 @@ public class MeasurementSystem {
 			break;
 
 		case PLANCK_CONSTANT:
-			UnitOfMeasure js = createProductUOM(UnitType.UNCLASSIFIED, symbols.getString("js.name"),
-					symbols.getString("js.symbol"), symbols.getString("js.desc"), getUOM(Unit.JOULE), getSecond());
-
+			UnitOfMeasure js = createProductUOM(getUOM(Unit.JOULE), getSecond());
 			named = new Quantity(Quantity.createAmount("6.62607004081E-34"), js);
 			named.setId(symbols.getString("planck.name"), symbols.getString("planck.symbol"),
 					symbols.getString("planck.desc"));
 			break;
 
 		case BOLTZMANN_CONSTANT:
-			UnitOfMeasure jk = createQuotientUOM(UnitType.UNCLASSIFIED, symbols.getString("jk.name"),
-					symbols.getString("jk.symbol"), symbols.getString("jk.desc"), getUOM(Unit.JOULE),
-					getUOM(Unit.KELVIN));
-
+			UnitOfMeasure jk = createQuotientUOM(getUOM(Unit.JOULE), getUOM(Unit.KELVIN));
 			named = new Quantity(Quantity.createAmount("1.3806485279E-23"), jk);
 			named.setId(symbols.getString("boltzmann.name"), symbols.getString("boltzmann.symbol"),
 					symbols.getString("boltzmann.desc"));
@@ -236,10 +235,7 @@ public class MeasurementSystem {
 
 		case MAGNETIC_PERMEABILITY:
 			// mu0
-			UnitOfMeasure hm = createQuotientUOM(UnitType.UNCLASSIFIED, symbols.getString("hm.name"),
-					symbols.getString("hm.symbol"), symbols.getString("hm.desc"), getUOM(Unit.HENRY),
-					getUOM(Unit.METRE));
-
+			UnitOfMeasure hm = createQuotientUOM(getUOM(Unit.HENRY), getUOM(Unit.METRE));
 			BigDecimal fourPi = new BigDecimal(4.0 * Math.PI).multiply(new BigDecimal("1.0E-07"),
 					UnitOfMeasure.MATH_CONTEXT);
 			named = new Quantity(fourPi, hm);
@@ -262,6 +258,15 @@ public class MeasurementSystem {
 			// pressure
 			named = new Quantity(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
 			named.setId(symbols.getString("atm.name"), symbols.getString("atm.symbol"), symbols.getString("atm.desc"));
+			break;
+
+		case STEFAN_BOLTZMANN:
+			UnitOfMeasure k4 = createPowerUOM(getUOM(Unit.KELVIN), 4);
+			UnitOfMeasure sb = createQuotientUOM(UnitType.UNCLASSIFIED, symbols.getString("sb.name"),
+					symbols.getString("sb.symbol"), symbols.getString("sb.desc"), getUOM(Unit.WATTS_PER_SQUARE_METRE),
+					k4);
+			named = new Quantity(Quantity.createAmount("5.67E-08"), sb);
+			named.setId(symbols.getString("sb.name"), symbols.getString("sb.symbol"), symbols.getString("sb.desc"));
 			break;
 
 		default:
@@ -304,7 +309,7 @@ public class MeasurementSystem {
 
 		case HOUR:
 			// hour
-			conversion = new Conversion(Quantity.createAmount("60"), getUOM(Unit.MINUTE));
+			conversion = new Conversion(Quantity.createAmount("3600"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.HOUR, symbols.getString("hr.name"),
 					symbols.getString("hr.symbol"), symbols.getString("hr.desc"));
 			uom.setConversion(conversion);
@@ -312,7 +317,7 @@ public class MeasurementSystem {
 
 		case DAY:
 			// day
-			conversion = new Conversion(Quantity.createAmount("24"), getUOM(Unit.HOUR));
+			conversion = new Conversion(Quantity.createAmount("86400"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.DAY, symbols.getString("day.name"),
 					symbols.getString("day.symbol"), symbols.getString("day.desc"));
 			uom.setConversion(conversion);
@@ -320,7 +325,7 @@ public class MeasurementSystem {
 
 		case WEEK:
 			// week
-			conversion = new Conversion(Quantity.createAmount("7"), getUOM(Unit.DAY));
+			conversion = new Conversion(Quantity.createAmount("604800"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.WEEK, symbols.getString("week.name"),
 					symbols.getString("week.symbol"), symbols.getString("week.desc"));
 			uom.setConversion(conversion);
@@ -328,7 +333,7 @@ public class MeasurementSystem {
 
 		case JULIAN_YEAR:
 			// Julian year
-			conversion = new Conversion(Quantity.createAmount("365.25"), getUOM(Unit.DAY));
+			conversion = new Conversion(Quantity.createAmount("3.1557600E+07"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.JULIAN_YEAR, symbols.getString("jyear.name"),
 					symbols.getString("jyear.symbol"), symbols.getString("jyear.desc"));
 			uom.setConversion(conversion);
@@ -343,10 +348,8 @@ public class MeasurementSystem {
 
 		case MOLE:
 			// substance amount
-			conversion = new Conversion(Quantity.createAmount("6.02214085774E+23"), getOne());
 			uom = createScalarUOM(UnitType.SUBSTANCE_AMOUNT, Unit.MOLE, symbols.getString("mole.name"),
 					symbols.getString("mole.symbol"), symbols.getString("mole.desc"));
-			uom.setConversion(conversion);
 			break;
 
 		case DECIBEL:
@@ -733,6 +736,13 @@ public class MeasurementSystem {
 			uom = createScalarUOM(UnitType.CS, Unit.BYTE, symbols.getString("byte.name"),
 					symbols.getString("byte.symbol"), symbols.getString("byte.desc"));
 			uom.setConversion(conversion);
+			break;
+
+		case WATTS_PER_SQUARE_METRE:
+			uom = createQuotientUOM(UnitType.IRRADIANCE, Unit.WATTS_PER_SQUARE_METRE, symbols.getString("wsm.name"),
+					symbols.getString("wsm.symbol"), symbols.getString("wsm.desc"), getUOM(Unit.WATT),
+					getUOM(Unit.SQUARE_METRE));
+			break;
 
 		default:
 			break;
@@ -1292,10 +1302,22 @@ public class MeasurementSystem {
 	}
 
 	/**
+	 * Get the unit of measure with this base symbol
+	 * 
+	 * @param symbol
+	 *            Base symbol
+	 * @return {@link UnitOfMeasure}
+	 */
+	public UnitOfMeasure getBaseUOM(String symbol) {
+		return baseRegistry.get(symbol);
+	}
+
+	/**
 	 * Remove all cached units of measure
 	 */
 	public void clearCache() {
 		symbolRegistry.clear();
+		baseRegistry.clear();
 		unitRegistry.clear();
 	}
 
@@ -1337,14 +1359,14 @@ public class MeasurementSystem {
 
 		// remove by symbol and base symbol
 		symbolRegistry.remove(uom.getSymbol());
-		symbolRegistry.remove(uom.getBaseSymbol());
+		baseRegistry.remove(uom.getBaseSymbol());
 	}
 
 	ResourceBundle getSymbols() {
 		return symbols;
 	}
 
-	private void cacheUnit(UnitOfMeasure uom) throws Exception {
+	void cacheUnit(UnitOfMeasure uom) throws Exception {
 		String key = uom.getSymbol();
 
 		// get first by symbol
@@ -1355,6 +1377,7 @@ public class MeasurementSystem {
 			return;
 		}
 
+		// cache it
 		symbolRegistry.put(key, uom);
 
 		// next by unit enumeration
@@ -1364,11 +1387,11 @@ public class MeasurementSystem {
 			unitRegistry.put(id, uom);
 		}
 
-		// finally by base symbol too
+		// finally by base symbol
 		key = uom.getBaseSymbol();
 
-		if (symbolRegistry.get(key) == null) {
-			symbolRegistry.put(key, uom);
+		if (baseRegistry.get(key) == null) {
+			baseRegistry.put(key, uom);
 		}
 	}
 
@@ -1497,6 +1520,32 @@ public class MeasurementSystem {
 	}
 
 	/**
+	 * Create a unit of measure that is a unit divided by another unit
+	 * 
+	 * @param dividend
+	 *            {@link UnitOfMeasure}
+	 * @param divisor
+	 *            {@link UnitOfMeasure}
+	 * @return {@link UnitOfMeasure}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public UnitOfMeasure createQuotientUOM(UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
+		if (dividend == null) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("dividend.cannot.be.null"), "");
+			throw new Exception(msg);
+		}
+
+		if (divisor == null) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("divisor.cannot.be.null"), "");
+			throw new Exception(msg);
+		}
+
+		String symbol = UnitOfMeasure.generateQuotientSymbol(dividend, divisor);
+		return createQuotientUOM(UnitType.UNCLASSIFIED, null, null, symbol, null, dividend, divisor);
+	}
+
+	/**
 	 * Create a unit of measure that is the product of two other units of
 	 * measure
 	 * 
@@ -1554,6 +1603,33 @@ public class MeasurementSystem {
 	}
 
 	/**
+	 * Create a unit of measure that is the product of two other units of
+	 * measure
+	 * 
+	 * @param multiplier
+	 *            {@link UnitOfMeasure} multiplier
+	 * @param multiplicand
+	 *            {@link UnitOfMeasure} multiplicand
+	 * @return {@link UnitOfMeasure}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public UnitOfMeasure createProductUOM(UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
+		if (multiplier == null) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("multiplier.cannot.be.null"), "");
+			throw new Exception(msg);
+		}
+
+		if (multiplicand == null) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("multiplicand.cannot.be.null"), "");
+			throw new Exception(msg);
+		}
+
+		String symbol = UnitOfMeasure.generateProductSymbol(multiplier, multiplicand);
+		return createProductUOM(UnitType.UNCLASSIFIED, null, null, symbol, null, multiplier, multiplicand);
+	}
+
+	/**
 	 * Create a unit of measure with a base raised to an integral power
 	 * 
 	 * @param type
@@ -1585,7 +1661,7 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * Create a unit of measure with a base raised to an integral power
+	 * Create a unit of measure with a base raised to an integral exponent
 	 * 
 	 * @param type
 	 *            {@link UnitType}
@@ -1597,15 +1673,36 @@ public class MeasurementSystem {
 	 *            Description of unit of measure
 	 * @param base
 	 *            {@link UnitOfMeasure}
-	 * @param power
+	 * @param exponent
 	 *            Exponent
 	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
 	public UnitOfMeasure createPowerUOM(UnitType type, String name, String symbol, String description,
-			UnitOfMeasure base, int power) throws Exception {
-		return createPowerUOM(type, null, name, symbol, description, base, power);
+			UnitOfMeasure base, int exponent) throws Exception {
+		return createPowerUOM(type, null, name, symbol, description, base, exponent);
+	}
+
+	/**
+	 * Create a unit of measure with a base raised to an integral exponent
+	 * 
+	 * @param base
+	 *            {@link UnitOfMeasure}
+	 * @param exponent
+	 *            Exponent
+	 * @return {@link UnitOfMeasure}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public UnitOfMeasure createPowerUOM(UnitOfMeasure base, int exponent) throws Exception {
+		if (base == null) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("base.cannot.be.null"), "");
+			throw new Exception(msg);
+		}
+
+		String symbol = UnitOfMeasure.generatePowerSymbol(base, exponent);
+		return createPowerUOM(UnitType.UNCLASSIFIED, null, null, symbol, null, base, exponent);
 	}
 
 	/**
@@ -1628,9 +1725,18 @@ public class MeasurementSystem {
 
 		// if not found, create it
 		if (scaled == null) {
+			// generate a name and description
 			String name = prefix.getPrefixName() + targetUOM.getName();
 			String description = prefix.getScalingFactor() + " " + targetUOM.getName();
-			Conversion conversion = new Conversion(prefix.getScalingFactor(), targetUOM);
+
+			// scaling factor
+			BigDecimal scalingFactor = UnitOfMeasure.decimalMultiply(targetUOM.getScalingFactor(),
+					prefix.getScalingFactor());
+
+			// conversion factor
+			Conversion conversion = new Conversion(scalingFactor, targetUOM.getAbscissaUnit());
+
+			// create the unit of measure and set conversion
 			scaled = createScalarUOM(targetUOM.getUnitType(), null, name, symbol, description);
 			scaled.setConversion(conversion);
 		}

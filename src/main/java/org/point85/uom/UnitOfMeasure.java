@@ -26,7 +26,9 @@ package org.point85.uom;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
@@ -62,12 +64,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * </p>
  * 
  * <p>
- * A unit of measure has a unique base symbol, for example 'm' for metre. In the
- * SI system, the derived units such as Newton all have base symbols expressed
- * in the fundamental units of length (metre), mass (kilogram), time (second),
- * temperature (Kelvin), plane angle (radian), electric charge (Coulomb) and
- * luminous intensity (candela). This base symbol is used in unit of measure
- * conversions to uniquely identify the target unit.
+ * A unit of measure has a base symbol, for example 'm' for metre. A base symbol
+ * is one that consists only of the symbols for the base units of measure. In
+ * the SI system, the base units are well-defined. The derived units such as
+ * Newton all have base symbols expressed in the fundamental units of length
+ * (metre), mass (kilogram), time (second), temperature (Kelvin), plane angle
+ * (radian), electric charge (Coulomb) and luminous intensity (candela). In the
+ * US and British systems, base units are not defined. Caliper uses foot for
+ * length, pound mass for mass and Rankine for temperature. This base symbol is
+ * used in unit of measure conversions to uniquely identify the target unit.
  * </p>
  * <p>
  * The SI system has defined prefixes (e.g. "centi") for 1/100th of another unit
@@ -97,6 +102,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private static final char POW = '^';
 	private static final char SQ = 0xB2;
 	private static final char CUBED = 0xB3;
+	private static final char LP = '(';
+	private static final char RP = ')';
+	private static final char ONE_CHARACTER = '1';
 
 	// registry of unit conversion factor
 	private Map<UnitOfMeasure, BigDecimal> conversionRegistry = new ConcurrentHashMap<UnitOfMeasure, BigDecimal>();
@@ -109,7 +117,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private Unit unit;
 
 	// unit type, e.g. MASS
-	private UnitType unitType;
+	private UnitType unitType = UnitType.UNCLASSIFIED;
 
 	// conversion to another Unit of Measure in a different measurement system
 	private Conversion bridge;
@@ -134,7 +142,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	private void initialize() {
 		// a unit can always be converted to itself
-		this.conversion = new Conversion(this);
+		try {
+			this.conversion = new Conversion(this);
+		} catch (Exception e) {
+			// should not happen
+		}
 		this.powerProduct = new PowerProduct();
 	}
 
@@ -158,7 +170,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 */
 	public UnitOfMeasure getBaseUOM() throws Exception {
 		String baseSymbol = getBaseSymbol();
-		return MeasurementSystem.getSystem().getUOM(baseSymbol);
+		return MeasurementSystem.getSystem().getBaseUOM(baseSymbol);
 	}
 
 	/**
@@ -380,7 +392,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		resultPowerMap.setTerms(resultMap);
 
 		String baseSymbol = resultPowerMap.buildBaseString();
-		UnitOfMeasure baseUOM = MeasurementSystem.getSystem().getUOM(baseSymbol);
+		UnitOfMeasure baseUOM = MeasurementSystem.getSystem().getBaseUOM(baseSymbol);
 
 		if (baseUOM != null) {
 			// there is a conversion to the base UOM
@@ -396,9 +408,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		}
 
 		if (!invert) {
-			result.setSymbol(result.generateProductSymbol());
+			result.setSymbol(generateProductSymbol(result.getMultiplier(), result.getMultiplicand()));
 		} else {
-			result.setSymbol(result.generateQuotientSymbol());
+			result.setSymbol(generateQuotientSymbol(result.getDividend(), result.getDivisor()));
 		}
 
 		return result;
@@ -439,11 +451,13 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 */
 	public UnitOfMeasure invert() throws Exception {
 		UnitOfMeasure inverted = null;
+
 		if (this.getCategory().equals(Category.QUOTIENT)) {
 			inverted = getDivisor().divide(getDividend());
 		} else {
 			inverted = MeasurementSystem.getSystem().getOne().divide(this);
 		}
+
 		return inverted;
 	}
 
@@ -464,9 +478,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	private final synchronized Reducer getBaseMap() throws Exception {
-		Reducer powerMap = new Reducer();
-		powerMap.explode(this);
-		return powerMap;
+		Reducer reducer = new Reducer();
+		reducer.explode(this);
+		return reducer;
 	}
 
 	/**
@@ -483,10 +497,17 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * 
 	 * @param conversion
 	 *            {@link Conversion}
+	 * @throws Exception
+	 *             Exception
 	 */
-	public void setConversion(Conversion conversion) {
+	public void setConversion(Conversion conversion) throws Exception {
+		// unit has been previously cached, so first remove it, then cache again
+		MeasurementSystem.getSystem().unregisterUnit(this);
+		baseSymbol = null;
 		this.conversion = conversion;
-		this.baseSymbol = conversion.getAbscissaUnit().getSymbol();
+
+		// re-cache
+		MeasurementSystem.getSystem().cacheUnit(this);
 	}
 
 	/**
@@ -544,23 +565,16 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	private BigDecimal convertScalarToScalar(UnitOfMeasure targetUOM) throws Exception {
-		UnitOfMeasure thisUOM = this;
-
-		UnitOfMeasure thisAbscissa = thisUOM.getAbscissaUnit();
-		BigDecimal thisFactor = thisUOM.getScalingFactor();
-
-		UnitOfMeasure targetAbscissa = targetUOM.getAbscissaUnit();
-		BigDecimal targetFactor = targetUOM.getScalingFactor();
+		UnitOfMeasure thisAbscissa = getAbscissaUnit();
+		BigDecimal thisFactor = getScalingFactor();
 
 		BigDecimal scalingFactor = null;
 
 		if (thisAbscissa.equals(targetUOM)) {
+			// direct conversion
 			scalingFactor = thisFactor;
-		} else if (thisUOM.equals(targetAbscissa)) {
-			scalingFactor = decimalDivide(BigDecimal.ONE, targetFactor);
-		} else if (thisAbscissa.equals(targetAbscissa)) {
-			scalingFactor = decimalDivide(getScalingFactor(), targetUOM.getScalingFactor());
 		} else {
+			// indirect conversion
 			scalingFactor = convertUnit(targetUOM);
 		}
 		return scalingFactor;
@@ -573,19 +587,15 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		PathParameters targetParameters = targetUOM.traversePath();
 
 		BigDecimal thisPathFactor = thisParameters.getPathFactor();
+		UnitOfMeasure thisBase = thisParameters.getPathUOM();
+
 		BigDecimal targetPathFactor = targetParameters.getPathFactor();
+		UnitOfMeasure targetBase = targetParameters.getPathUOM();
 
-		if (getBridge() != null || targetUOM.getBridge() != null) {
-			// check for a base conversion unit bridge
-			UnitOfMeasure thisBase = thisParameters.getPathUOM();
-			UnitOfMeasure targetBase = targetParameters.getPathUOM();
-			BigDecimal bridgeFactor = thisBase.getBridgeFactor(targetBase);
+		// check for a base conversion unit bridge
+		BigDecimal bridgeFactor = thisBase.getBridgeFactor(targetBase);
 
-			if (bridgeFactor == null) {
-				String msg = MessageFormat.format(MeasurementSystem.getMessage("no.factor"), this.toString(),
-						targetUOM.toString());
-				throw new Exception(msg);
-			}
+		if (bridgeFactor != null) {
 			thisPathFactor = decimalMultiply(thisPathFactor, bridgeFactor);
 		}
 
@@ -599,7 +609,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		UnitType thisType = uom1.getUnitType();
 		UnitType targetType = uom2.getUnitType();
 
-		if (thisType != null && targetType != null && !thisType.equals(UnitType.UNITY)
+		if (thisType != UnitType.UNCLASSIFIED && targetType != UnitType.UNCLASSIFIED && !thisType.equals(UnitType.UNITY)
 				&& !targetType.equals(UnitType.UNITY) && !thisType.equals(targetType)) {
 			String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.same.as"), uom1, uom1.getUnitType(),
 					uom2, uom2.getUnitType());
@@ -636,13 +646,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		Map<UnitOfMeasure, Integer> fromMap = fromPowerMap.getTerms();
 		Map<UnitOfMeasure, Integer> toMap = toPowerMap.getTerms();
 
-		// both maps must be same size
-		if (fromMap.size() != toMap.size()) {
-			String msg = MessageFormat.format(MeasurementSystem.getMessage("maps.not.equal"), fromMap.size(),
-					toMap.size());
-			throw new Exception(msg);
-		}
-
 		BigDecimal fromFactor = fromPowerMap.getScalingFactor();
 		BigDecimal toFactor = toPowerMap.getScalingFactor();
 
@@ -657,28 +660,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 				UnitType toType = toEntry.getKey().getUnitType();
 
 				if (fromType.equals(toType)) {
-
 					UnitOfMeasure toUOM = toEntry.getKey();
-					int toPower = toEntry.getValue();
-
-					// from and to powers must be equal
-					if (fromPower != toPower) {
-						String msg = MessageFormat.format(MeasurementSystem.getMessage("powers.not.equal"), fromPower,
-								toPower);
-						throw new Exception(msg);
-					}
-
-					// both from and to are scalars at this point
-					if (!(fromUOM.getCategory().equals(Category.SCALAR))) {
-						String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), fromUOM);
-						throw new Exception(msg);
-					}
-
-					if (!(toUOM.getCategory().equals(Category.SCALAR))) {
-						String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), toUOM);
-						throw new Exception(msg);
-					}
-
 					BigDecimal bd = fromUOM.convertScalarToScalar(toUOM);
 					bd = decimalPower(bd, fromPower);
 					factor = decimalMultiply(factor, bd);
@@ -702,15 +684,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		UnitOfMeasure pathUOM = this;
 		BigDecimal pathFactor = BigDecimal.ONE;
 
-		int count = 0;
-
 		while (true) {
-			count++;
-			if (count > 10) {
-				String msg = MessageFormat.format(MeasurementSystem.getMessage("conversion.depth.exceeded"),
-						pathUOM.toString());
-				throw new Exception(msg);
-			}
 			BigDecimal scalingFactor = pathUOM.getScalingFactor();
 			UnitOfMeasure abscissa = pathUOM.getAbscissaUnit();
 
@@ -724,15 +698,13 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 			// next UOM on path
 			pathUOM = abscissa;
-
-			// must be a scalar at this point
-			if (!(pathUOM.getCategory().equals(Category.SCALAR))) {
-				String msg = MessageFormat.format(MeasurementSystem.getMessage("must.be.scalar"), pathUOM);
-				throw new Exception(msg);
-			}
 		}
 
 		return new PathParameters(pathUOM, pathFactor);
+	}
+
+	private boolean isTerminal() {
+		return this.equals(getAbscissaUnit()) ? true : false;
 	}
 
 	/**
@@ -743,6 +715,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		ResourceBundle symbolBundle = MeasurementSystem.getSystem().getSymbols();
+
+		// type
+		UnitType type = getUnitType();
+		sb.append(symbolBundle.getString("unit.type.text")).append(' ').append(type.toString()).append(", ");
 
 		// unit enumeration
 		Unit enumeration = getEnumeration();
@@ -791,7 +767,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			throw new Exception(msg);
 		}
 
-		this.powerProduct = new PowerProduct(base, exponent, null, 0);
+		this.powerProduct = new PowerProduct(base, exponent);
+	}
+
+	private PowerProduct getPowerProduct() {
+		return this.powerProduct;
 	}
 
 	/**
@@ -812,13 +792,19 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return powerProduct.getUOM1();
 	}
 
-	private String generateProductSymbol() {
+	static String generatePowerSymbol(UnitOfMeasure base, int exponent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(base.getSymbol()).append(POW).append(exponent);
+		return sb.toString();
+	}
+
+	static String generateProductSymbol(UnitOfMeasure multiplier, UnitOfMeasure multiplicand) {
 		StringBuilder sb = new StringBuilder();
 
-		if (getMultiplier().equals(getMultiplicand())) {
-			sb.append(getMultiplier().getSymbol()).append(SQ);
+		if (multiplier.equals(multiplicand)) {
+			sb.append(multiplier.getSymbol()).append(SQ);
 		} else {
-			sb.append(getMultiplier().getSymbol()).append(MULT).append(getMultiplicand().getSymbol());
+			sb.append(multiplier.getSymbol()).append(MULT).append(multiplicand.getSymbol());
 		}
 		return sb.toString();
 	}
@@ -855,9 +841,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return this.powerProduct.getUOM2();
 	}
 
-	String generateQuotientSymbol() {
+	static String generateQuotientSymbol(UnitOfMeasure dividend, UnitOfMeasure divisor) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getDividend().getSymbol()).append('/').append(getDivisor().getSymbol());
+		sb.append(dividend.getSymbol()).append(DIV).append(divisor.getSymbol());
 		return sb.toString();
 	}
 
@@ -893,19 +879,68 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return this.powerProduct.getUOM2();
 	}
 
+	// this method is for optimization of BigDecimal addition
+	static BigDecimal decimalAdd(BigDecimal a, BigDecimal b) {
+		BigDecimal value = null;
+
+		if (b.compareTo(BigDecimal.ZERO) == 0) {
+			value = a;
+		} else {
+			value = a.add(b, MATH_CONTEXT);
+		}
+
+		return value;
+	}
+
+	// this method is for optimization of BigDecimal subtraction
+	static BigDecimal decimalSubtract(BigDecimal a, BigDecimal b) {
+		BigDecimal value = null;
+
+		if (b.compareTo(BigDecimal.ZERO) == 0) {
+			value = a;
+		} else {
+			value = a.subtract(b, MATH_CONTEXT);
+		}
+
+		return value;
+	}
+
 	// this method is for optimization of BigDecimal multiplication
-	private BigDecimal decimalMultiply(BigDecimal a, BigDecimal b) {
-		return a.multiply(b, MATH_CONTEXT);
+	static BigDecimal decimalMultiply(BigDecimal a, BigDecimal b) {
+		BigDecimal value = null;
+
+		if (b.compareTo(BigDecimal.ONE) == 0) {
+			value = a;
+		} else {
+			value = a.multiply(b, MATH_CONTEXT);
+		}
+		return value;
 	}
 
 	// this method is for optimization of BigDecimal division
-	private BigDecimal decimalDivide(BigDecimal a, BigDecimal b) {
-		return a.divide(b, MATH_CONTEXT);
+	static BigDecimal decimalDivide(BigDecimal a, BigDecimal b) {
+		BigDecimal value = null;
+
+		if (b.compareTo(BigDecimal.ONE) == 0) {
+			value = a;
+		} else {
+			value = a.divide(b, MATH_CONTEXT);
+		}
+		return value;
 	}
 
 	// this method is for optimization of BigDecimal exponentiation
-	private BigDecimal decimalPower(BigDecimal base, int exponent) {
-		return base.pow(exponent, MATH_CONTEXT);
+	static BigDecimal decimalPower(BigDecimal base, int exponent) {
+		BigDecimal value = null;
+
+		if (exponent == 1) {
+			value = base;
+		} else if (exponent == 0) {
+			value = BigDecimal.ONE;
+		} else {
+			value = base.pow(exponent, MATH_CONTEXT);
+		}
+		return value;
 	}
 
 	// this class holds the base UOMs and exponents for a product of two power
@@ -925,6 +960,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		private PowerProduct() {
 
+		}
+
+		private PowerProduct(UnitOfMeasure uom1, int exponent1) {
+			this.uom1 = uom1;
+			this.exponent1 = exponent1;
 		}
 
 		private PowerProduct(UnitOfMeasure uom1, int exponent1, UnitOfMeasure uom2, int exponent2) {
@@ -958,6 +998,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			return exponent1;
 		}
 
+		private int getExponent2() {
+			return exponent2;
+		}
+
 		private UnitOfMeasure getUOM1() {
 			return this.uom1;
 		}
@@ -988,15 +1032,17 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	// reduce a unit of measure to its most basic scalar units of measure.
 	private class Reducer {
-		private static final char ONE = '1';
+		// starting level
+		private static final int STARTING_LEVEL = -1;
 
-		private static final int MAX_RECURSIONS = 10;
-
+		// UOMs and their exponents
 		private Map<UnitOfMeasure, Integer> terms = new HashMap<UnitOfMeasure, Integer>();
 
-		private BigDecimal mapScalingFactor = BigDecimal.ONE;
+		// the overall scaling factor
+		private BigDecimal mapScalingFactor;
 
-		private int mapExponent = 1;
+		// list of exponents down a path to the leaf UOM
+		private List<Integer> pathExponents = new ArrayList<>();
 
 		private Reducer() {
 
@@ -1014,150 +1060,88 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			this.terms = terms;
 		}
 
-		private void explode(UnitOfMeasure unit) throws Exception {
-			int counter = 0;
-
-			boolean invert = false;
-
-			// invert negative exponent
-			if (unit.getPowerExponent() < 0) {
-				invert = true;
-			}
-
-			explodeRecursively(unit, invert, counter);
+		public void explode(UnitOfMeasure unit) throws Exception {
+			explodeRecursively(unit, STARTING_LEVEL);
 		}
 
-		private void explodeRecursively(UnitOfMeasure unit, boolean invert, int counter) throws Exception {
-			if (++counter > MAX_RECURSIONS) {
-				terms.clear();
-				return;
-			}
+		private void explodeRecursively(UnitOfMeasure unit, int level) throws Exception {
+			// down a level
+			level++;
 
-			BigDecimal scaling = unit.getScalingFactor();
+			// scaling factor to abscissa unit
+			BigDecimal scalingFactor = unit.getScalingFactor();
 
-			if (!invert) {
-				mapScalingFactor = decimalMultiply(mapScalingFactor, scaling);
-			} else {
-				mapScalingFactor = decimalDivide(mapScalingFactor, scaling);
+			if (mapScalingFactor == null) {
+				mapScalingFactor = scalingFactor;
 			}
 
 			// explode the abscissa unit
 			UnitOfMeasure abscissaUnit = unit.getAbscissaUnit();
 
-			// check for quotient UOM
-			if (abscissaUnit.getCategory().equals(Category.QUOTIENT)) {
-				// numerator
-				UnitOfMeasure dividend = abscissaUnit.getDividend();
+			UnitOfMeasure uom1 = abscissaUnit.getPowerProduct().getUOM1();
+			UnitOfMeasure uom2 = abscissaUnit.getPowerProduct().getUOM2();
 
-				// denominator
-				UnitOfMeasure divisor = abscissaUnit.getDivisor();
+			int exp1 = abscissaUnit.getPowerProduct().getExponent1();
+			int exp2 = abscissaUnit.getPowerProduct().getExponent2();
 
-				// do not invert the dividend
-				explodeRecursively(dividend, invert, counter);
+			// scaling
+			if (pathExponents.size() > 0) {
+				int lastExponent = pathExponents.get(pathExponents.size() - 1);
 
-				// invert divisor
-				explodeRecursively(divisor, !invert, counter);
-			} // end Quotient UOM
-
-			// check for product UOM
-			else if (abscissaUnit.getCategory().equals(Category.PRODUCT)) {
-				// explode this to scalar units
-				UnitOfMeasure multiplier = abscissaUnit.getMultiplier();
-				explodeRecursively(multiplier, invert, counter);
-
-				// explode other UOM
-				UnitOfMeasure multiplicand = abscissaUnit.getMultiplicand();
-				explodeRecursively(multiplicand, invert, counter);
-			} // end Product UOM
-
-			// check for power UOM
-			else if (abscissaUnit.getCategory().equals(Category.POWER)) {
-				UnitOfMeasure powerBase = abscissaUnit.getPowerBase();
-				UnitOfMeasure baseUOM = powerBase.getBaseUOM();
-
-				BigDecimal factor = powerBase.getScalingFactor();
-				int power = abscissaUnit.getPowerExponent();
-
-				BigDecimal powerScale = decimalPower(factor, power);
-
-				// calculate overall scaling factor
-				mapScalingFactor = decimalMultiply(mapScalingFactor, powerScale);
-
-				// if down to a scalar, add them
-				if (baseUOM.getCategory().equals(Category.SCALAR)) {
-					int exponent = mapExponent * power;
-					for (int i = 0; i < Math.abs(exponent); i++) {
-						addTerm(baseUOM, invert);
-					}
-				} else if (baseUOM.getCategory().equals(Category.PRODUCT)) {
-					// raise multiplier and multiplicand to nth power
-					UnitOfMeasure multiplier = baseUOM.getMultiplier();
-
-					// add multiplier terms
-					if (multiplier.getCategory().equals(Category.SCALAR)) {
-						for (int i = 0; i < Math.abs(power); i++) {
-							addTerm(multiplier, invert);
-						}
-					} else {
-						explodeRecursively(multiplier, invert, counter);
-					}
-
-					UnitOfMeasure multiplicand = baseUOM.getMultiplicand();
-
-					// add multiplicand terms
-					if (multiplicand.getCategory().equals(Category.SCALAR)) {
-						for (int i = 0; i < Math.abs(power); i++) {
-							addTerm(multiplicand, invert);
-						}
-					} else {
-						explodeRecursively(multiplicand, invert, counter);
-					}
-
-				} else if (baseUOM.getCategory().equals(Category.QUOTIENT)) {
-					UnitOfMeasure dividend = baseUOM.getDividend();
-
-					// add dividend terms
-					if (dividend.getCategory().equals(Category.SCALAR)) {
-						for (int i = 0; i < Math.abs(power); i++) {
-							addTerm(dividend, invert);
-						}
-					} else {
-						explodeRecursively(dividend, invert, counter);
-					}
-
-					// add divisor terms
-					UnitOfMeasure divisor = baseUOM.getDivisor();
-
-					if (divisor.getCategory().equals(Category.SCALAR)) {
-						for (int i = 0; i < Math.abs(power); i++) {
-							addTerm(divisor, !invert);
-						}
-					} else {
-						explodeRecursively(divisor, invert, counter);
-					}
-				} else if (baseUOM.getCategory().equals(Category.POWER)) {
-					UnitOfMeasure base = baseUOM.getPowerBase();
-					int basePower = baseUOM.getPowerExponent();
-					mapExponent *= basePower * power;
-					explodeRecursively(base, invert, counter);
+				// compute the overall scaling factor
+				BigDecimal factor = BigDecimal.ONE;
+				for (int i = 0; i < Math.abs(lastExponent); i++) {
+					factor = decimalMultiply(factor, scalingFactor);
 				}
-			} // end Power UOM
 
-			// scalar UOM
-			else if (abscissaUnit.getCategory().equals(Category.SCALAR)) {
-				UnitOfMeasure uom = abscissaUnit.getAbscissaUnit();
+				if (lastExponent < 0) {
+					mapScalingFactor = decimalDivide(mapScalingFactor, factor);
+				} else {
+					mapScalingFactor = decimalMultiply(mapScalingFactor, factor);
+				}
+			}
 
-				if (uom.equals(abscissaUnit)) {
-					for (int i = 0; i < Math.abs(mapExponent); i++) {
+			if (uom1 == null) {
+				if (!abscissaUnit.isTerminal()) {
+					// keep exploding down the conversion path
+					BigDecimal currentMapFactor = mapScalingFactor;
+					mapScalingFactor = null;
+					explodeRecursively(abscissaUnit, STARTING_LEVEL);
+					mapScalingFactor = decimalMultiply(mapScalingFactor, currentMapFactor);
+				} else {
+
+					// multiply out all of the exponents down the path
+					int pathExponent = 1;
+
+					for (Integer exp : pathExponents) {
+						pathExponent = pathExponent * exp;
+					}
+
+					boolean invert = pathExponent < 0 ? true : false;
+
+					for (int i = 0; i < Math.abs(pathExponent); i++) {
 						addTerm(abscissaUnit, invert);
 					}
-				} else {
-					// keep on going
-					explodeRecursively(abscissaUnit, invert, counter);
 				}
-			} // end Scalar UOM
+			} else {
+				// explode UOM #1
+				pathExponents.add(exp1);
+				explodeRecursively(uom1, level);
+				pathExponents.remove(level);
+			}
+
+			if (uom2 != null) {
+				// explode UOM #2
+				pathExponents.add(exp2);
+				explodeRecursively(uom2, level);
+				pathExponents.remove(level);
+			}
+
+			// up a level
+			level--;
 		}
 
+		// add a UOM and exponent pair to the map of reduced terms
 		private void addTerm(UnitOfMeasure uom, boolean invert) throws Exception {
 			int unitPower = 1;
 			int power = 0;
@@ -1189,13 +1173,13 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			if (power == 0) {
 				terms.remove(uom);
 			} else {
-
 				if (!uom.equals(MeasurementSystem.getSystem().getOne())) {
 					terms.put(uom, power);
 				}
 			}
 		}
 
+		// compose the base symbol
 		private String buildBaseString() throws Exception {
 			StringBuilder numerator = new StringBuilder();
 			StringBuilder denominator = new StringBuilder();
@@ -1215,7 +1199,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 						denominator.append(MULT);
 					}
 
-					denominator.append(unit.getSymbol());
+					if (!unit.equals(MeasurementSystem.getSystem().getOne())) {
+						denominator.append(unit.getSymbol());
+						denominatorCount++;
+					}
+
 					if (power < -1) {
 						if (power == -2) {
 							denominator.append(SQ);
@@ -1225,8 +1213,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 							denominator.append(POW).append(Math.abs(power));
 						}
 					}
-					denominatorCount++;
-
 				} else if (power >= 1 && !unit.equals(MeasurementSystem.getSystem().getOne())) {
 					// positive, put in numerator
 					if (numerator.length() > 0) {
@@ -1234,6 +1220,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 					}
 
 					numerator.append(unit.getSymbol());
+					numeratorCount++;
 
 					if (power > 1) {
 						if (power == 2) {
@@ -1244,15 +1231,13 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 							numerator.append(POW).append(power);
 						}
 					}
-					numeratorCount++;
-
 				} else {
 					// unary, don't add a '1'
 				}
 			}
 
 			if (numeratorCount == 0) {
-				numerator.append(ONE);
+				numerator.append(ONE_CHARACTER);
 			}
 
 			String result = null;
@@ -1260,7 +1245,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			if (denominatorCount == 0) {
 				result = numerator.toString();
 			} else {
-				result = numerator.append(DIV).append(denominator).toString();
+				if (denominatorCount == 1) {
+					result = numerator.append(DIV).append(denominator).toString();
+				} else {
+					result = numerator.append(DIV).append(LP).append(denominator).append(RP).toString();
+				}
 			}
 
 			return result;
@@ -1268,7 +1257,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		@Override
 		public String toString() {
-			return "Scaling: " + mapScalingFactor + ", Exponent: " + mapExponent + ", Terms: " + terms;
+			return "Scaling: " + mapScalingFactor + ", Terms: " + terms;
 		}
 	}
 }

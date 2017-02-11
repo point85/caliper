@@ -30,13 +30,28 @@ import org.point85.uom.Quantity;
 
 public class BaseTest {
 
-	protected static final BigDecimal DELTA6 = Quantity.createAmount("0.000001");
-	protected static final BigDecimal DELTA5 = Quantity.createAmount("0.00001");
-	protected static final BigDecimal DELTA4 = Quantity.createAmount("0.0001");
-	protected static final BigDecimal DELTA3 = Quantity.createAmount("0.001");
-	protected static final BigDecimal DELTA2 = Quantity.createAmount("0.01");
-	protected static final BigDecimal DELTA1 = Quantity.createAmount("0.1");
-	protected static final BigDecimal DELTA0 = Quantity.createAmount("1");
+	protected static BigDecimal DELTA6;
+	protected static BigDecimal DELTA5;
+	protected static BigDecimal DELTA4;
+	protected static BigDecimal DELTA3;
+	protected static BigDecimal DELTA2;
+	protected static BigDecimal DELTA1;
+	protected static BigDecimal DELTA0;
 
 	protected static MeasurementSystem sys = MeasurementSystem.getSystem();
+
+	protected BaseTest() {
+		try {
+			DELTA6 = Quantity.createAmount("0.000001");
+			DELTA5 = Quantity.createAmount("0.00001");
+			DELTA4 = Quantity.createAmount("0.0001");
+			DELTA3 = Quantity.createAmount("0.001");
+			DELTA2 = Quantity.createAmount("0.01");
+			DELTA1 = Quantity.createAmount("0.1");
+			DELTA0 = Quantity.createAmount("1");
+
+		} catch (Exception e) {
+
+		}
+	}
 }

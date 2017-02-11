@@ -232,7 +232,7 @@ Conversion conversion = new Conversion(Quantity.createAmount("1.667E-08"), sys.g
 catUnit.setConversion(conversion);
 
 // create the "A" unit of measure
-UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.CUSTOM, "activity", "ACT", "activity of material",
+UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "activity", "act", "activity of material",
 	catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
 
 // calculate concentration
@@ -241,6 +241,18 @@ Quantity grams = new Quantity(BigDecimal.ONE, Unit.GRAM).convert(Prefix.MILLI, U
 Quantity volume = new Quantity(BigDecimal.ONE, sys.getUOM(Prefix.MILLI, Unit.LITRE));
 Quantity concentration = activity.multiply(grams.divide(volume));
 Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE)).convert(Unit.KATAL);
+```
+Black body radiation:
+
+```java
+// The Stefan–Boltzmann law states that the power emitted per unit area
+// of the surface of a black body is directly proportional to the fourth
+// power of its absolute temperature: sigma * T^4
+
+// calculate at 1000 Kelvin
+Quantity temp = new Quantity("1000", Unit.KELVIN);
+Quantity t4 = temp.multiply(temp).multiply(temp).multiply(temp);
+Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(t4);
 ```
 
 ###Caching

@@ -54,6 +54,36 @@ public class TestUnits extends BaseTest {
 		assertFalse(uom1.equals(uom2));
 
 		try {
+			sys.createPowerUOM(null, 0);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createProductUOM(null, sys.getOne());
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createProductUOM(sys.getOne(), null);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createQuotientUOM(null, sys.getOne());
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			sys.createQuotientUOM(sys.getOne(), null);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
 			sys.createQuotientUOM(UnitType.UNCLASSIFIED, "uom4", "uom4", "", sys.getUOM(Unit.METRE), null);
 			fail();
 		} catch (Exception e) {
@@ -86,43 +116,35 @@ public class TestUnits extends BaseTest {
 
 		sys.unregisterUnit(null);
 
-		UnitOfMeasure u = sys.createScalarUOM(UnitType.CUSTOM, null, "123", "123", "123");
+		UnitOfMeasure u = sys.createScalarUOM(UnitType.UNCLASSIFIED, null, "123", "123", "123");
 		sys.unregisterUnit(u);
 
 		try {
-			u = sys.createScalarUOM(UnitType.TIME, null, "123", "123", "123");
-			u.setBridge(new Conversion(null, sys.getUOM(Unit.WEEK)));
-			new Quantity(BigDecimal.TEN, u).convert(Unit.WEEK);
-			fail("no conversion");
-		} catch (Exception e) {
-		}
-
-		try {
-			sys.createScalarUOM(UnitType.CUSTOM, "456", null, "description");
+			sys.createScalarUOM(UnitType.UNCLASSIFIED, "456", null, "description");
 			fail("no symbol");
 		} catch (Exception e) {
 		}
 
 		try {
-			sys.createScalarUOM(UnitType.CUSTOM, "456", "", "description");
+			sys.createScalarUOM(UnitType.UNCLASSIFIED, "456", "", "description");
 			fail("no symbol");
 		} catch (Exception e) {
 		}
 
 		try {
-			sys.createProductUOM(UnitType.CUSTOM, null, "abcd", "", null, null);
+			sys.createProductUOM(UnitType.UNCLASSIFIED, null, "abcd", "", null, null);
 			fail("null");
 		} catch (Exception e) {
 		}
 
 		try {
-			sys.createQuotientUOM(UnitType.CUSTOM, null, "abcd", "", null, null);
+			sys.createQuotientUOM(UnitType.UNCLASSIFIED, null, "abcd", "", null, null);
 			fail("null");
 		} catch (Exception e) {
 		}
 
 		try {
-			sys.createPowerUOM(UnitType.CUSTOM, null, "abcd", "", null, 2);
+			sys.createPowerUOM(UnitType.UNCLASSIFIED, null, "abcd", "", null, 2);
 			fail("null");
 		} catch (Exception e) {
 		}
@@ -134,68 +156,102 @@ public class TestUnits extends BaseTest {
 		}
 
 		try {
-			sys.createScalarUOM(UnitType.CUSTOM, "", null, "");
-			sys.createScalarUOM(UnitType.CUSTOM, "", "", "");
+			sys.createScalarUOM(UnitType.UNCLASSIFIED, "", null, "");
+			sys.createScalarUOM(UnitType.UNCLASSIFIED, "", "", "");
 			fail("already created");
 		} catch (Exception e) {
 		}
 
-		u = sys.createQuotientUOM(UnitType.CUSTOM, "1/1", "1/1", "", sys.getOne(), sys.getOne());
+		u = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "1/1", "1/1", "", sys.getOne(), sys.getOne());
 		Quantity q1 = new Quantity(BigDecimal.TEN, u);
 		Quantity q2 = q1.convert(sys.getOne());
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 		assertTrue(q2.getUOM().equals(sys.getOne()));
 
-		u = sys.createProductUOM(UnitType.CUSTOM, "1x1", "1x1", "", sys.getOne(), sys.getOne());
+		u = sys.createProductUOM(UnitType.UNCLASSIFIED, "1x1", "1x1", "", sys.getOne(), sys.getOne());
 		BigDecimal bd = u.getConversionFactor(sys.getOne());
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
-		u = sys.createProductUOM(UnitType.CUSTOM, "1x1", "1x1", "", sys.getOne(), sys.getOne());
+		u = sys.createProductUOM(UnitType.UNCLASSIFIED, "1x1", "1x1", "", sys.getOne(), sys.getOne());
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
-		u = sys.createPowerUOM(UnitType.CUSTOM, "1^2", "1^2", "", sys.getOne(), 2);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^2", "1^2", "", sys.getOne(), 2);
 		bd = u.getConversionFactor(sys.getOne());
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
-		u = sys.createPowerUOM(UnitType.CUSTOM, "1^2", "1^2", "", sys.getOne(), 2);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^2", "1^2", "", sys.getOne(), 2);
 		bd = u.getConversionFactor(sys.getOne());
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
-		u = sys.createPowerUOM(UnitType.CUSTOM, "1^0", "1^0", "", sys.getOne(), 0);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^0", "1^0", "", sys.getOne(), 0);
 		bd = u.getConversionFactor(sys.getOne());
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
-		u = sys.createPowerUOM(UnitType.CUSTOM, "1^0", "1^0", "", sys.getOne(), 0);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^0", "1^0", "", sys.getOne(), 0);
 		bd = u.getConversionFactor(sys.getOne());
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
 		UnitOfMeasure uno = sys.getOne();
-		u = sys.createPowerUOM(UnitType.CUSTOM, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);
 		bd = u.getConversionFactor(uno);
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		UnitOfMeasure m1 = sys.getUOM(Unit.METRE);
-		u = sys.createPowerUOM(UnitType.CUSTOM, "m^1", "m^1", "", sys.getUOM(Unit.METRE), 1);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m^1", "m^1", "", sys.getUOM(Unit.METRE), 1);
 		assertTrue(u.getBaseSymbol().equals(m1.getBaseSymbol()));
 
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
-		u = sys.createPowerUOM(UnitType.CUSTOM, "m^2", "m^2", "", sys.getUOM(Unit.METRE), 2);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m^2", "m^2", "", sys.getUOM(Unit.METRE), 2);
 		assertTrue(u.getBaseSymbol().equals(m2.getBaseSymbol()));
 
 		UnitOfMeasure perMetre = m1.invert();
 		UnitOfMeasure diopter = sys.getUOM(Unit.DIOPTER);
 		assertTrue(perMetre.getBaseSymbol().equals(diopter.getBaseSymbol()));
 
-		u = sys.createPowerUOM(UnitType.CUSTOM, "m*-1", "m*-1", "", sys.getUOM(Unit.METRE), -1);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m*-1", "m*-1", "", sys.getUOM(Unit.METRE), -1);
 		UnitOfMeasure mult = u.multiply(m1);
 		assertTrue(mult.equals(sys.getUOM(Unit.ONE)));
 
 		UnitOfMeasure perMetre2 = m2.invert();
-		u = sys.createPowerUOM(UnitType.CUSTOM, "m*-2", "m*-2", "", sys.getUOM(Unit.METRE), -2);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m*-2", "m*-2", "", sys.getUOM(Unit.METRE), -2);
 		assertTrue(u.getBaseSymbol().equals(perMetre2.getBaseSymbol()));
 
-		u = sys.createPowerUOM(UnitType.CUSTOM, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);
+		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);
+
+		try {
+			UnitOfMeasure abscissaUnit = null;
+			new Conversion(abscissaUnit);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			UnitOfMeasure abscissaUnit = sys.getOne();
+			;
+			BigDecimal decimal = null;
+			new Conversion(decimal, abscissaUnit);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			UnitOfMeasure abscissaUnit = sys.getOne();
+			String decimal = null;
+			new Conversion(decimal, abscissaUnit);
+			fail();
+		} catch (Exception e) {
+		}
+
+		try {
+			UnitOfMeasure abscissaUnit = sys.getOne();
+			;
+			BigDecimal decimal = BigDecimal.ONE;
+			BigDecimal offset = null;
+			new Conversion(decimal, abscissaUnit, offset);
+			fail();
+		} catch (Exception e) {
+		}
 	}
 
 	@Test
@@ -223,7 +279,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.equals(sys.getOne()));
 
 		Conversion conversion = new Conversion(BigDecimal.ONE, sys.getOne(), BigDecimal.ONE);
-		UnitOfMeasure uom = sys.createScalarUOM(UnitType.CUSTOM, "1/1", "1/1", "");
+		UnitOfMeasure uom = sys.createScalarUOM(UnitType.UNCLASSIFIED, "1/1", "1/1", "");
 		uom.setConversion(conversion);
 		Conversion c = uom.getConversion();
 		assertTrue(c.equals(conversion));
@@ -239,35 +295,35 @@ public class TestUnits extends BaseTest {
 		assertTrue(one.getBaseSymbol().equals("1"));
 		assertTrue(one.equals(one));
 
-		UnitOfMeasure uno = sys.createQuotientUOM(UnitType.CUSTOM, "", ".1", "", one, one);
+		UnitOfMeasure uno = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "", ".1", "", one, one);
 		assertTrue(uno.getBaseSymbol().equals(one.getBaseSymbol()));
 
-		UnitOfMeasure p = sys.createProductUOM(UnitType.CUSTOM, "", "..1", "", one, one);
+		UnitOfMeasure p = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "..1", "", one, one);
 		assertTrue(p.getBaseSymbol().equals(one.getBaseSymbol()));
 
-		UnitOfMeasure p3 = sys.createPowerUOM(UnitType.CUSTOM, "", "...1", "", one, 3);
+		UnitOfMeasure p3 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "", "...1", "", one, 3);
 		assertTrue(p3.getBaseSymbol().equals(one.getBaseSymbol()));
 
-		p3 = sys.createPowerUOM(UnitType.CUSTOM, "", "...1", "", one, -1);
+		p3 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "", "...1", "", one, -1);
 		assertTrue(p3.getBaseSymbol().equals(one.getBaseSymbol()));
 
-		UnitOfMeasure a1 = sys.createScalarUOM(UnitType.CUSTOM, "a1", "a1", "A1");
+		UnitOfMeasure a1 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a1", "a1", "A1");
 		assertTrue(a1.getBaseSymbol().equals("a1"));
 
-		uno = sys.createQuotientUOM(UnitType.CUSTOM, "one", "one", "", a1, a1);
+		uno = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "one", "one", "", a1, a1);
 		assertTrue(uno.getBaseSymbol().equals(one.getBaseSymbol()));
 	}
 
 	@Test
 	public void testGeneric() throws Exception {
 
-		UnitOfMeasure b = sys.createScalarUOM(UnitType.CUSTOM, "b", "beta", "Beta");
+		UnitOfMeasure b = sys.createScalarUOM(UnitType.UNCLASSIFIED, "b", "beta", "Beta");
 		assertFalse(b.equals(null));
 
 		// scalar
 		BigDecimal two = Quantity.createAmount("2");
 		Conversion conversion = new Conversion(two, b, BigDecimal.ONE);
-		UnitOfMeasure ab1 = sys.createScalarUOM(UnitType.CUSTOM, "a=2b+1", "a=2b+1", "custom");
+		UnitOfMeasure ab1 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a=2b+1", "a=2b+1", "custom");
 		ab1.setConversion(conversion);
 
 		assertThat(ab1.getScalingFactor(), closeTo(two, DELTA6));
@@ -275,10 +331,10 @@ public class TestUnits extends BaseTest {
 		assertThat(ab1.getOffset(), closeTo(BigDecimal.ONE, DELTA6));
 
 		// quotient
-		UnitOfMeasure a = sys.createScalarUOM(UnitType.CUSTOM, "a", "alpha", "Alpha");
+		UnitOfMeasure a = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a", "alpha", "Alpha");
 		assertTrue(a.getAbscissaUnit().equals(a));
 
-		UnitOfMeasure aOverb = sys.createQuotientUOM(UnitType.CUSTOM, "a/b", "a/b", "", a, b);
+		UnitOfMeasure aOverb = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "a/b", "a/b", "", a, b);
 		aOverb.setScalingFactor(two);
 
 		assertThat(aOverb.getScalingFactor(), closeTo(two, DELTA6));
@@ -287,7 +343,7 @@ public class TestUnits extends BaseTest {
 		assertThat(aOverb.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 		assertTrue(aOverb.getAbscissaUnit().equals(aOverb));
 
-		UnitOfMeasure bOvera = sys.createQuotientUOM(UnitType.CUSTOM, "b/a", "b/a", "", b, a);
+		UnitOfMeasure bOvera = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "b/a", "b/a", "", b, a);
 		UnitOfMeasure bOveraI = bOvera.invert();
 		assertTrue(bOveraI.getBaseSymbol().equals(aOverb.getBaseSymbol()));
 
@@ -307,10 +363,10 @@ public class TestUnits extends BaseTest {
 		// invert
 		UnitOfMeasure uom3 = uom2.invert();
 		UnitOfMeasure u = uom3.multiply(uom2);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		// product
-		UnitOfMeasure ab = sys.createProductUOM(UnitType.CUSTOM, "name", "symbol", "custom", a, b);
+		UnitOfMeasure ab = sys.createProductUOM(UnitType.UNCLASSIFIED, "name", "symbol", "custom", a, b);
 		ab.setOffset(BigDecimal.ONE);
 
 		assertThat(ab.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
@@ -338,7 +394,7 @@ public class TestUnits extends BaseTest {
 		assertThat(uom6.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
 		// power
-		UnitOfMeasure a2 = sys.createPowerUOM(UnitType.CUSTOM, "name", "a**2", "custom", a, 2);
+		UnitOfMeasure a2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "name", "a**2", "custom", a, 2);
 
 		assertThat(a2.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(a2.getPowerBase().equals(a));
@@ -361,68 +417,68 @@ public class TestUnits extends BaseTest {
 		assertFalse(uom == null);
 
 		// again
-		UnitOfMeasure c = sys.createScalarUOM(UnitType.CUSTOM, "c", "cUnit", "C");
-		UnitOfMeasure x = sys.createScalarUOM(UnitType.CUSTOM, "x", "xUnit", "X");
-		UnitOfMeasure e = sys.createScalarUOM(UnitType.CUSTOM, "e", "eUnit", "E");
+		UnitOfMeasure c = sys.createScalarUOM(UnitType.UNCLASSIFIED, "c", "cUnit", "C");
+		UnitOfMeasure x = sys.createScalarUOM(UnitType.UNCLASSIFIED, "x", "xUnit", "X");
+		UnitOfMeasure e = sys.createScalarUOM(UnitType.UNCLASSIFIED, "e", "eUnit", "E");
 
-		UnitOfMeasure aTimesa = sys.createProductUOM(UnitType.CUSTOM, "", "aUnit*2", "", a, a);
+		UnitOfMeasure aTimesa = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "aUnit*2", "", a, a);
 		u = aTimesa.divide(a);
 		assertTrue(u.getBaseSymbol().equals(a.getBaseSymbol()));
 
 		u = aOverb.multiply(b);
 		assertTrue(u.getBaseSymbol().equals(a.getBaseSymbol()));
 
-		UnitOfMeasure cOverx = sys.createQuotientUOM(UnitType.CUSTOM, "", "c/x", "", c, x);
+		UnitOfMeasure cOverx = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "", "c/x", "", c, x);
 		assertTrue(aOverb.divide(cOverx).multiply(cOverx).equals(aOverb));
 		assertTrue(aOverb.multiply(cOverx).divide(cOverx).equals(aOverb));
 
-		UnitOfMeasure axb = sys.createProductUOM(UnitType.CUSTOM, "", "a.b", "", a, b);
+		UnitOfMeasure axb = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "a.b", "", a, b);
 		u = sys.getUOM(axb.getSymbol());
 		assertTrue(u.equals(axb));
 		assertTrue(axb.divide(a).equals(b));
 
 		String symbol = axb.getSymbol() + "." + axb.getSymbol();
-		UnitOfMeasure axbsq = sys.createProductUOM(UnitType.CUSTOM, "", symbol, "", axb, axb);
+		UnitOfMeasure axbsq = sys.createProductUOM(UnitType.UNCLASSIFIED, "", symbol, "", axb, axb);
 		u = axbsq.divide(axb);
 		assertTrue(u.getBaseSymbol().equals(axb.getBaseSymbol()));
 
-		UnitOfMeasure b2 = sys.createPowerUOM(UnitType.CUSTOM, "b2", "b*2", "", b, 2);
+		UnitOfMeasure b2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "b2", "b*2", "", b, 2);
 
 		symbol = axb.getBaseSymbol();
-		u = sys.getUOM(symbol);
+		u = sys.getBaseUOM(symbol);
 		assertTrue(u != null);
 
-		UnitOfMeasure axb2 = sys.createPowerUOM(UnitType.CUSTOM, "axb2", "(a.b)*2", "", axb, 2);
+		UnitOfMeasure axb2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "axb2", "(a.b)*2", "", axb, 2);
 		u = axb2.divide(axb);
 		assertTrue(u.getBaseSymbol().equals(axb.getBaseSymbol()));
 
-		UnitOfMeasure aOverb2 = sys.createPowerUOM(UnitType.CUSTOM, "aOverb2", "(a/b)*2", "", aOverb, 2);
+		UnitOfMeasure aOverb2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "aOverb2", "(a/b)*2", "", aOverb, 2);
 		u = aOverb2.multiply(b2);
 		assertTrue(u.getBaseSymbol().equals(aTimesa.getBaseSymbol()));
 
 		symbol = axb.getSymbol() + "^-2";
-		UnitOfMeasure axbm2 = sys.createPowerUOM(UnitType.CUSTOM, "", symbol, "", axb, -2);
+		UnitOfMeasure axbm2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "", symbol, "", axb, -2);
 		uom = axbm2.multiply(axb2);
 		assertTrue(uom.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
-		UnitOfMeasure cxd = sys.createProductUOM(UnitType.CUSTOM, "", "c.D", "", c, x);
+		UnitOfMeasure cxd = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "c.D", "", c, x);
 		final char MULT = 0xB7;
 		StringBuffer sb = new StringBuffer();
 		sb.append("cUnit").append(MULT).append("xUnit");
 		String str = sb.toString();
 		assertTrue(cxd.getBaseSymbol().indexOf(str) != -1);
 
-		UnitOfMeasure abdivcd = sys.createQuotientUOM(UnitType.CUSTOM, "", "(a.b)/(c.D)", "", axb, cxd);
+		UnitOfMeasure abdivcd = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "", "(a.b)/(c.D)", "", axb, cxd);
 		assertTrue(abdivcd.getDividend().equals(axb));
 		assertTrue(abdivcd.getDivisor().equals(cxd));
 
-		UnitOfMeasure cde = sys.createQuotientUOM(UnitType.CUSTOM, "", "(c.D)/(e)", "", cxd, e);
+		UnitOfMeasure cde = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "", "(c.D)/(e)", "", cxd, e);
 		sb = new StringBuffer();
 		sb.append("cUnit").append(MULT).append("xUnit/eUnit");
 		str = sb.toString();
 		assertTrue(cde.getBaseSymbol().indexOf(str) != -1);
 
-		u = sys.createScalarUOM(UnitType.CUSTOM, null, "not null", null);
+		u = sys.createScalarUOM(UnitType.UNCLASSIFIED, null, "not null", null);
 		assertTrue(u.toString() != null);
 	}
 
@@ -431,12 +487,12 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure foot = sys.getUOM(Unit.FOOT);
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
-		UnitOfMeasure flush = sys.createScalarUOM(UnitType.CUSTOM, "flush", "f", "");
-		UnitOfMeasure gpf = sys.createQuotientUOM(UnitType.CUSTOM, "gal per flush", "gpf", "", gal, flush);
+		UnitOfMeasure flush = sys.createScalarUOM(UnitType.UNCLASSIFIED, "flush", "f", "");
+		UnitOfMeasure gpf = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "gal per flush", "gpf", "", gal, flush);
 		UnitOfMeasure velocity = sys.getUOM(Unit.FEET_PER_SECOND);
 
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
-		UnitOfMeasure lpf = sys.createQuotientUOM(UnitType.CUSTOM, "litre per flush", "lpf", "", litre, flush);
+		UnitOfMeasure lpf = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "litre per flush", "lpf", "", litre, flush);
 
 		BigDecimal bd = gpf.getConversionFactor(lpf);
 		assertThat(bd, closeTo(Quantity.createAmount("3.785411784"), DELTA6));
@@ -574,7 +630,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.equals(s2));
 
 		u = second.divide(second);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
 		Quantity q1 = new Quantity(BigDecimal.ONE, u);
 		Quantity q2 = q1.convert(sys.getOne());
@@ -625,6 +681,30 @@ public class TestUnits extends BaseTest {
 	}
 
 	@Test
+	public void testSymbolCache() throws Exception {
+		UnitOfMeasure uom = sys.getUOM(Unit.KILOGRAM);
+		UnitOfMeasure other = sys.getUOM(uom.getSymbol());
+		assertTrue(uom.equals(other));
+
+		other = sys.getUOM(uom.getBaseSymbol());
+		assertTrue(uom.equals(other));
+
+		uom = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
+		other = sys.getUOM(uom.getSymbol());
+		assertTrue(uom.equals(other));
+
+		other = sys.getUOM(uom.getBaseSymbol());
+		assertTrue(uom.getBaseSymbol().equals(other.getBaseSymbol()));
+
+		uom = sys.getUOM(Unit.NEWTON);
+		other = sys.getUOM(uom.getSymbol());
+		assertTrue(uom.equals(other));
+
+		other = sys.getBaseUOM(uom.getBaseSymbol());
+		assertTrue(uom.equals(other));
+	}
+
+	@Test
 	public void testBaseSymbols() throws Exception {
 		final char deg = 0xB0;
 		final char times = 0xB7;
@@ -644,7 +724,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(symbol.equals("m"));
 
 		UnitOfMeasure mm = sys.getUOM(Prefix.MILLI, metre);
-		assertTrue(Prefix.MILLI.toString() != null);
+		assertTrue(Prefix.MILLI.getScalingFactor() != null);
 
 		symbol = mm.getSymbol();
 		assertTrue(symbol.equals("mm"));
@@ -703,18 +783,20 @@ public class TestUnits extends BaseTest {
 
 		symbol = sys.getUOM(Unit.VOLT).getBaseSymbol();
 		sb = new StringBuffer();
-		sb.append("kg").append(times).append("m").append(sq).append("/A").append(times).append("s").append(cu);
+		sb.append("kg").append(times).append("m").append(sq).append("/(A").append(times).append("s").append(cu)
+				.append(')');
 		assertTrue(symbol.equals(sb.toString()));
 
 		symbol = sys.getUOM(Unit.OHM).getBaseSymbol();
 		sb = new StringBuffer();
-		sb.append("kg").append(times).append("m").append(sq).append("/A").append(sq).append(times).append("s")
-				.append(cu);
+		sb.append("kg").append(times).append("m").append(sq).append("/(A").append(sq).append(times).append("s")
+				.append(cu).append(')');
 		assertTrue(symbol.equals(sb.toString()));
 
 		symbol = sys.getUOM(Unit.WEBER).getBaseSymbol();
 		sb = new StringBuffer();
-		sb.append("kg").append(times).append("m").append(sq).append("/A").append(times).append("s").append(sq);
+		sb.append("kg").append(times).append("m").append(sq).append("/(A").append(times).append("s").append(sq)
+				.append(')');
 		assertTrue(symbol.equals(sb.toString()));
 
 		symbol = sys.getUOM(Unit.MOLE).getSymbol();
@@ -760,7 +842,7 @@ public class TestUnits extends BaseTest {
 		symbol = sys.getUOM(Unit.HERTZ).getBaseSymbol();
 		assertTrue(symbol.equals("1/s"));
 
-		assertTrue(sys.getUOM(Unit.KATAL).getBaseSymbol().equals(symbol));
+		assertTrue(sys.getUOM(Unit.KATAL).getBaseSymbol().equals("mol/s"));
 	}
 
 	@Test
@@ -795,7 +877,7 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure perSec = sys.createPowerUOM(UnitType.TIME, "per second", "perSec", null, sys.getSecond(), -1);
 		UnitOfMeasure mult = perSec.multiply(sys.getUOM(Unit.SECOND));
-		assertTrue(mult.equals(sys.getUOM(Unit.ONE)));
+		assertTrue(mult.getBaseSymbol().equals(sys.getUOM(Unit.ONE).getSymbol()));
 
 		UnitOfMeasure u = sys.getSecond().invert();
 		assertTrue(u.equals(oneDivSec));
@@ -803,7 +885,7 @@ public class TestUnits extends BaseTest {
 		inverted = u.invert();
 		assertTrue(inverted.equals(sys.getSecond()));
 
-		UnitOfMeasure oneOverSec = sys.getUOM("1/s");
+		UnitOfMeasure oneOverSec = sys.getBaseUOM("1/s");
 		assertTrue(oneOverSec.getBaseSymbol().equals(oneDivSec.getBaseSymbol()));
 
 		inverted = oneOverSec.invert();
@@ -947,6 +1029,16 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testConversions2() throws Exception {
+		BigDecimal bd = null;
+
+		sys.unregisterUnit(sys.getUOM(Unit.CUBIC_INCH));
+		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
+		UnitOfMeasure ft2 = sys.getUOM(Unit.SQUARE_FOOT);
+		UnitOfMeasure ft3 = sys.getUOM(Unit.CUBIC_FOOT);
+
+		UnitOfMeasure cubicFt = ft2.multiply(ft);
+		bd = cubicFt.getConversionFactor(ft3);
+		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure degree = sys.getUOM(Unit.DEGREE);
@@ -962,26 +1054,19 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure ms2 = sys.getUOM(Unit.METRE_PER_SECOND_SQUARED);
 
 		UnitOfMeasure lbm = sys.getUOM(Unit.POUND_MASS);
-		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
-		UnitOfMeasure ft2 = sys.getUOM(Unit.SQUARE_FOOT);
-		UnitOfMeasure ft3 = sys.getUOM(Unit.CUBIC_FOOT);
 		UnitOfMeasure acreFoot = sys.createProductUOM(UnitType.VOLUME, "acreFoot", "ac-ft", "", sys.getUOM(Unit.ACRE),
 				sys.getUOM(Unit.FOOT));
 		UnitOfMeasure lbmPerFt3 = sys.createQuotientUOM(UnitType.DENSITY, "lbmPerFt3", "lbm/ft^3", null, lbm, ft3);
 		UnitOfMeasure fps = sys.getUOM(Unit.FEET_PER_SECOND);
 		UnitOfMeasure knot = sys.getUOM(Unit.KNOT);
-		UnitOfMeasure usGal = sys.getUOM(Unit.US_GALLON);
 		UnitOfMeasure btu = sys.getUOM(Unit.BTU);
 
-		UnitOfMeasure gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", usGal,
-				sys.getHour());
-		UnitOfMeasure mi = sys.getUOM(Unit.MILE);
-		UnitOfMeasure hrsec = sys.createProductUOM(UnitType.TIME_SQUARED, "", "hr.sec", "", sys.getHour(),
-				sys.getSecond());
-		UnitOfMeasure mphs = sys.createQuotientUOM(UnitType.ACCELERATION, "mph/sec", "mi/hr-sec",
-				"mile per hour per second", mi, hrsec);
+		Conversion conversion = new Conversion("1.466666666666667", sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
+		UnitOfMeasure miphs = sys.createScalarUOM(UnitType.ACCELERATION, "mph/sec", "mi/hr-sec",
+				"mile per hour per second");
+		miphs.setConversion(conversion);
 
-		Conversion conversion = new Conversion(Quantity.createAmount("3386.389"), pascal);
+		conversion = new Conversion(Quantity.createAmount("3386.389"), pascal);
 		UnitOfMeasure inHg = sys.createScalarUOM(UnitType.PRESSURE, "inHg", "inHg", "inHg");
 		inHg.setConversion(conversion);
 
@@ -990,15 +1075,14 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure ft2ft = sys.createProductUOM(UnitType.VOLUME, "ft2ft", "ft2ft", null, ft2, ft);
 
-		BigDecimal bd = hrsec.getConversionFactor(s2);
+		conversion = new Conversion("3600", sys.getUOM(Unit.SQUARE_SECOND));
+		UnitOfMeasure hrsec = sys.createScalarUOM(UnitType.TIME_SQUARED, "", "hr.sec", "");
+		hrsec.setConversion(conversion);
+		bd = hrsec.getConversionFactor(s2);
 		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
 
 		bd = s2.getConversionFactor(hrsec);
 		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778E-04"), DELTA6));
-
-		UnitOfMeasure cubicFt = ft2.multiply(ft);
-		bd = cubicFt.getConversionFactor(ft3);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
 		bd = ft2ft.getConversionFactor(m3);
 		assertThat(bd, closeTo(Quantity.createAmount("0.028316846592"), DELTA6));
@@ -1042,16 +1126,20 @@ public class TestUnits extends BaseTest {
 		bd = mps.getConversionFactor(knot);
 		assertThat(bd, closeTo(Quantity.createAmount("1.942602569415665"), DELTA6));
 
+		UnitOfMeasure usGal = sys.getUOM(Unit.US_GALLON);
+		UnitOfMeasure gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", usGal,
+				sys.getHour());
+
 		bd = gph.getConversionFactor(m3s);
 		assertThat(bd, closeTo(Quantity.createAmount("1.051503273E-06"), DELTA6));
 
 		bd = m3s.getConversionFactor(gph);
 		assertThat(bd, closeTo(Quantity.createAmount("951019.3884893342"), DELTA6));
 
-		bd = mphs.getConversionFactor(ms2);
+		bd = miphs.getConversionFactor(ms2);
 		assertThat(bd, closeTo(Quantity.createAmount("0.44704"), DELTA6));
 
-		bd = ms2.getConversionFactor(mphs);
+		bd = ms2.getConversionFactor(miphs);
 		assertThat(bd, closeTo(Quantity.createAmount("2.236936292054402"), DELTA6));
 
 		bd = pascal.getConversionFactor(inHg);
@@ -1175,7 +1263,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure F = sys.getUOM(Unit.FAHRENHEIT);
 
 		BigDecimal fiveNinths = Quantity.createAmount("5").divide(Quantity.createAmount("9"),
-				Quantity.getMathContext());
+				UnitOfMeasure.MATH_CONTEXT);
 		BigDecimal nineFifths = Quantity.createAmount("1.8");
 
 		// K to C
@@ -1211,7 +1299,7 @@ public class TestUnits extends BaseTest {
 		Quantity inverted = from.invert();
 		assertThat(inverted.getAmount(), closeTo(Quantity.createAmount("0.1"), DELTA6));
 
-		UnitOfMeasure u = sys.createPowerUOM(UnitType.CUSTOM, "t*4", "t*4", "", K, 4);
+		UnitOfMeasure u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "t*4", "t*4", "", K, 4);
 		assertTrue(u != null);
 
 		try {
@@ -1222,7 +1310,7 @@ public class TestUnits extends BaseTest {
 		}
 
 		u = K.divide(K);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 	}
 
@@ -1281,7 +1369,7 @@ public class TestUnits extends BaseTest {
 		assertThat(qcL.getAmount(), closeTo(new BigDecimal("100"), DELTA6));
 
 		// a mega buck
-		UnitOfMeasure buck = sys.createScalarUOM(UnitType.CUSTOM, "buck", "$", "one US dollar");
+		UnitOfMeasure buck = sys.createScalarUOM(UnitType.UNCLASSIFIED, "buck", "$", "one US dollar");
 		UnitOfMeasure megabuck = sys.getUOM(Prefix.MEGA, buck);
 		Quantity qmb = new Quantity("10", megabuck);
 		Quantity qb = qmb.convert(buck);
@@ -1320,22 +1408,24 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure min1 = min.invert();
 		UnitOfMeasure min2 = sys.createPowerUOM(UnitType.TIME_SQUARED, "sqMin", "min'2", null, min, 2);
 		UnitOfMeasure sqs = sys.createPowerUOM(UnitType.TIME_SQUARED, "sqSec", "s'2", null, s, 2);
-		UnitOfMeasure sminus1 = sys.createPowerUOM(UnitType.CUSTOM, "sminus1", "s'-1", null, s, -1);
-		UnitOfMeasure minminus1Q = sys.createQuotientUOM(UnitType.CUSTOM, "minminus1Q", "minQ'-1", null, sys.getOne(),
-				min);
-		UnitOfMeasure minminus1 = sys.createPowerUOM(UnitType.CUSTOM, "minminus1", "min'-1", null, min, -1);
+		UnitOfMeasure sminus1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "sminus1", "s'-1", null, s, -1);
+		UnitOfMeasure minminus1Q = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "minminus1Q", "minQ'-1", null,
+				sys.getOne(), min);
+		UnitOfMeasure minminus1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "minminus1", "min'-1", null, min, -1);
 		UnitOfMeasure newton = sys.getUOM(Unit.NEWTON);
-		UnitOfMeasure newtonm1 = sys.createPowerUOM(UnitType.CUSTOM, "Nminus1", "N'-1", null, newton, -1);
+		UnitOfMeasure newtonm1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "Nminus1", "N'-1", null, newton, -1);
 		UnitOfMeasure in = sys.getUOM(Unit.INCH);
 		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
-		UnitOfMeasure ftm1 = sys.createPowerUOM(UnitType.CUSTOM, "ftm1", "ft'-1", null, ft, -1);
-		UnitOfMeasure inm1 = sys.createPowerUOM(UnitType.CUSTOM, "inm1", "in'-1", null, in, -1);
-		UnitOfMeasure ui = sys.createScalarUOM(UnitType.CUSTOM, "ui", "ui", "");
-		UnitOfMeasure uj = sys.createScalarUOM(UnitType.CUSTOM, "uj", "uj", "");
-		UnitOfMeasure ixj = sys.createProductUOM(UnitType.CUSTOM, "ixj", "ixj", "", ui, uj);
-		UnitOfMeasure oneOveri = sys.createQuotientUOM(UnitType.CUSTOM, "oneOveri", "oneOveri", "", sys.getOne(), ui);
-		UnitOfMeasure oneOverj = sys.createQuotientUOM(UnitType.CUSTOM, "oneOverj", "oneOverj", "", sys.getOne(), uj);
-		UnitOfMeasure ixjm1 = sys.createPowerUOM(UnitType.CUSTOM, "ixjm1", "ixjm1", "", ixj, -1);
+		UnitOfMeasure ftm1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "ftm1", "ft'-1", null, ft, -1);
+		UnitOfMeasure inm1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "inm1", "in'-1", null, in, -1);
+		UnitOfMeasure ui = sys.createScalarUOM(UnitType.UNCLASSIFIED, "ui", "ui", "");
+		UnitOfMeasure uj = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uj", "uj", "");
+		UnitOfMeasure ixj = sys.createProductUOM(UnitType.UNCLASSIFIED, "ixj", "ixj", "", ui, uj);
+		UnitOfMeasure oneOveri = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "oneOveri", "oneOveri", "", sys.getOne(),
+				ui);
+		UnitOfMeasure oneOverj = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "oneOverj", "oneOverj", "", sys.getOne(),
+				uj);
+		UnitOfMeasure ixjm1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "ixjm1", "ixjm1", "", ixj, -1);
 		UnitOfMeasure hz = sys.getUOM(Unit.HERTZ);
 
 		UnitOfMeasure ij = oneOveri.multiply(oneOverj);
@@ -1347,7 +1437,7 @@ public class TestUnits extends BaseTest {
 		bd = s2.getConversionFactor(min2);
 		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778e-4"), DELTA6));
 
-		u = sys.getUOM(sm1.getSymbol());
+		u = sys.getBaseUOM(sm1.getSymbol());
 		assertTrue(u != null);
 		u = sys.getUOM(sm1.getBaseSymbol());
 
@@ -1358,7 +1448,7 @@ public class TestUnits extends BaseTest {
 		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
 
 		u = ftm1.multiply(ft);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
 		u = ft.multiply(inm1);
 		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("12"), DELTA6));
@@ -1400,7 +1490,7 @@ public class TestUnits extends BaseTest {
 		assertThat(bd, closeTo(Quantity.createAmount("1"), DELTA6));
 
 		u = sminus1.multiply(s);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
 		u = sys.getOne().divide(min);
 		bd = u.getScalingFactor();
@@ -1468,5 +1558,53 @@ public class TestUnits extends BaseTest {
 
 		q2 = q2.convert(min2);
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("10"), DELTA6));
+	}
+
+	@Test
+	public void testInversions() throws Exception {
+		UnitOfMeasure uom = null;
+		UnitOfMeasure inverted = null;
+		UnitOfMeasure u = null;
+		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
+
+		uom = sys.createPowerUOM(metre, -3);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, 2);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, -2);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, 2);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, 1);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, -1);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, -2);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+
+		uom = sys.createPowerUOM(metre, -4);
+		inverted = uom.invert();
+		u = uom.multiply(inverted);
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 	}
 }

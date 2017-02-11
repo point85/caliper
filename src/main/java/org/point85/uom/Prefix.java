@@ -85,20 +85,18 @@ public enum Prefix {
 	// symbol
 	private String symbol;
 
-	// description
-	private String scalingFactor;
-
 	// BigDecimal factor
 	private BigDecimal decimalFactor;
 
 	private Prefix(String prefixName, String symbol, String factor) {
 		this.prefixName = prefixName;
 		this.symbol = symbol;
-		this.scalingFactor = factor;
+		this.decimalFactor = new BigDecimal(factor);
 	}
 
 	/**
 	 * Get the name of the prefix
+	 * 
 	 * @return prefix name
 	 */
 	public String getPrefixName() {
@@ -107,6 +105,7 @@ public enum Prefix {
 
 	/**
 	 * Get the symbol for the prefix
+	 * 
 	 * @return symbol
 	 */
 	public String getSymbol() {
@@ -119,11 +118,7 @@ public enum Prefix {
 	 * @return Scaling factor
 	 */
 	public BigDecimal getScalingFactor() {
-		if (decimalFactor != null) {
-			return decimalFactor;
-		}
-
-		return new BigDecimal(scalingFactor);
+		return decimalFactor;
 	}
 
 	/**
@@ -131,6 +126,6 @@ public enum Prefix {
 	 */
 	@Override
 	public String toString() {
-		return prefixName + ", " + symbol + ", " + scalingFactor;
+		return prefixName + ", " + symbol + ", " + decimalFactor;
 	}
 }

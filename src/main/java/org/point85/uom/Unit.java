@@ -43,7 +43,7 @@ public enum Unit {
 	DEGREE,
 	// ratio
 	DECIBEL,
-	
+
 	// SI units follow
 	// length
 	METRE, ANGSTROM, DIOPTER,
@@ -70,11 +70,11 @@ public enum Unit {
 	// force
 	NEWTON,
 	// power
-	WATT,
+	WATT, WATTS_PER_SQUARE_METRE,
 	// frequency
 	HERTZ, RAD_PER_SEC,
 	// pressure
-	PASCAL, BAR, 
+	PASCAL, BAR,
 	// electrical
 	AMPERE, AMPERE_PER_METRE, COULOMB, VOLT, OHM, FARAD, FARAD_PER_METRE, WEBER, TESLA, HENRY, SIEMENS,
 	// concentration
@@ -92,7 +92,7 @@ public enum Unit {
 
 	// IT
 	BIT, BYTE,
-	
+
 	// Customary Units follow
 	// length
 	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL, POINT,
@@ -120,7 +120,7 @@ public enum Unit {
 	BTU,
 	// pressure
 	PSI, IN_HG,
-	
+
 	// US Units follow
 	// volume
 	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, US_BUSHEL,
@@ -131,5 +131,4 @@ public enum Unit {
 	BR_TEASPOON, BR_TABLESPOON, BR_FLUID_OUNCE, BR_CUP, BR_PINT, BR_QUART, BR_GALLON, BR_BUSHEL,
 	// mass
 	BR_TON;
-
 }

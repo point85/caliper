@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
-import org.point85.uom.Conversion;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -57,21 +56,21 @@ public class TestUnifiedCode extends BaseTest {
 		Quantity from = null;
 		Quantity to = null;
 		BigDecimal convertedAmount = null;
-		
+
 		// in Hg to PSI
 		from = new Quantity(amount, sys.getUOM(Unit.IN_HG));
 		to = from.convert(sys.getUOM(Unit.PSI));
 
 		convertedAmount = wsConvert(amount, "[in_i'Hg]", "[psi]");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
-		
+
 		// days to weeks
 		from = new Quantity(amount, sys.getUOM(Unit.DAY));
 		to = from.convert(sys.getUOM(Unit.WEEK));
 
 		convertedAmount = wsConvert(amount, "d", "wk");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-		
+
 		// kilowatt-hours to Joules
 		UnitOfMeasure kwh = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT_HOUR));
 		UnitOfMeasure kJ = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.JOULE));
@@ -80,14 +79,14 @@ public class TestUnifiedCode extends BaseTest {
 
 		convertedAmount = wsConvert(amount, "kW.h", "kJ");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));
-		
+
 		// hour to second
 		from = new Quantity(amount, sys.getHour());
 		to = from.convert(sys.getSecond());
 
 		convertedAmount = wsConvert(amount, "h", "s");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-		
+
 		/// US gal to litres
 		// hour to second
 		from = new Quantity(amount, Unit.US_GALLON);
@@ -170,8 +169,8 @@ public class TestUnifiedCode extends BaseTest {
 		// US gal to cm3
 		from = new Quantity(amount, sys.getUOM(Unit.US_GALLON));
 
-		UnitOfMeasure cm3 = sys.createScalarUOM(UnitType.VOLUME, "cubic cm", "cm3", null);
-		cm3.setConversion(new Conversion(Prefix.MICRO.getScalingFactor(), sys.getUOM(Unit.CUBIC_METRE)));
+		UnitOfMeasure cm3 = sys.getUOM(Prefix.MICRO, sys.getUOM(Unit.CUBIC_METRE));
+		sys.createScalarUOM(UnitType.VOLUME, "cubic cm", "cm3", null);
 
 		to = from.convert(cm3);
 
@@ -201,8 +200,7 @@ public class TestUnifiedCode extends BaseTest {
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// kilocalorie to BTU
-		UnitOfMeasure kcal = sys.createScalarUOM(UnitType.ENERGY, "kcal", "kcal", "kilocalorie");
-		kcal.setConversion(new Conversion(Prefix.KILO.getScalingFactor(), sys.getUOM(Unit.CALORIE)));
+		UnitOfMeasure kcal = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.CALORIE));
 
 		from = new Quantity(amount, kcal);
 		to = from.convert(sys.getUOM(Unit.BTU));
@@ -220,7 +218,7 @@ public class TestUnifiedCode extends BaseTest {
 
 		// HP to kilowatt
 		from = new Quantity(amount, sys.getUOM(Unit.HP));
-		UnitOfMeasure kW = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT)); 
+		UnitOfMeasure kW = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.WATT));
 		to = from.convert(kW);
 
 		convertedAmount = wsConvert(amount, "[HP]", "kW");
@@ -352,14 +350,14 @@ public class TestUnifiedCode extends BaseTest {
 		from = new Quantity(amount, sys.getUOM(Unit.JULIAN_YEAR));
 		to = from.convert(sys.getUOM(Unit.WEEK));
 
-		convertedAmount = wsConvert(amount,"a_j", "wk");
+		convertedAmount = wsConvert(amount, "a_j", "wk");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
 
 		// fathom to metre
 		from = new Quantity(amount, sys.getUOM(Unit.FATHOM));
 		to = from.convert(sys.getUOM(Unit.METRE));
 
-		convertedAmount = wsConvert(amount,"[fth_i]", "m");
+		convertedAmount = wsConvert(amount, "[fth_i]", "m");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// square metres to square yards
@@ -423,14 +421,14 @@ public class TestUnifiedCode extends BaseTest {
 		from = new Quantity(amount, sys.getUOM(Unit.BYTE));
 		to = from.convert(sys.getUOM(Unit.BIT));
 
-		convertedAmount = wsConvert(amount, "By","bit");
+		convertedAmount = wsConvert(amount, "By", "bit");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// rpm to Hz
 		from = new Quantity(amount, sys.getUOM(Unit.REV_PER_MIN));
 		to = from.convert(sys.getUOM(Unit.HERTZ));
 
-		convertedAmount = wsConvert(amount,"min-1", "Hz");
+		convertedAmount = wsConvert(amount, "min-1", "Hz");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// tonne to lbm

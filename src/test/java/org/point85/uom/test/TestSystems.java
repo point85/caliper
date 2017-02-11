@@ -89,7 +89,7 @@ public class TestSystems extends BaseTest {
 				}
 			}
 
-			if (found == null && !unitType.equals(UnitType.CUSTOM) && !unitType.equals(UnitType.UNCLASSIFIED)) {
+			if (found == null && !unitType.equals(UnitType.UNCLASSIFIED)) {
 				fail("No unit found for type " + unitType);
 			}
 		}
@@ -109,7 +109,7 @@ public class TestSystems extends BaseTest {
 		int before = sys.getRegisteredUnits().size();
 
 		for (int i = 0; i < 10; i++) {
-			sys.createScalarUOM(UnitType.CUSTOM, null, UUID.randomUUID().toString(), null);
+			sys.createScalarUOM(UnitType.UNCLASSIFIED, null, UUID.randomUUID().toString(), null);
 		}
 
 		int after = sys.getRegisteredUnits().size();

@@ -19,6 +19,5 @@ public class TestNamedQuantity extends BaseTest {
 			assertTrue(q.getUOM() != null);
 			assertTrue(q.toString() != null);
 		}
-
 	}
 }
