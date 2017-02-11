@@ -245,7 +245,7 @@ Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE
 Black body radiation:
 
 ```java
-// The Stefan–Boltzmann law states that the power emitted per unit area
+// The Stefan-Boltzmann law states that the power emitted per unit area
 // of the surface of a black body is directly proportional to the fourth
 // power of its absolute temperature: sigma * T^4
 
