@@ -24,9 +24,14 @@ SOFTWARE.
 package org.point85.uom.test;
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Quantity;
+import org.point85.uom.Unit;
+import org.point85.uom.UnitOfMeasure;
 
 public class BaseTest {
 
@@ -52,6 +57,40 @@ public class BaseTest {
 
 		} catch (Exception e) {
 
+		}
+	}
+	
+	protected void snapshotSymbolCache() {
+
+		Map<String, UnitOfMeasure> treeMap = new TreeMap<>(sys.getSymbolCache());
+
+		System.out.println("Symbol cache ...");
+		int count = 0;
+		for (Entry<String, UnitOfMeasure> entry : treeMap.entrySet()) {
+			count++;
+			System.out.println("(" + count + ") " + entry.getKey() + (", ") + entry.getValue());
+		}
+	}
+
+	protected void snapshotBaseSymbolCache() {
+		Map<String, UnitOfMeasure> treeMap = new TreeMap<>(sys.getBaseSymbolCache());
+
+		System.out.println("Base symbol cache ...");
+		int count = 0;
+		for (Entry<String, UnitOfMeasure> entry : treeMap.entrySet()) {
+			count++;
+			System.out.println("(" + count + ") " + entry.getKey() + (", ") + entry.getValue());
+		}
+	}
+
+	protected void snapshotUnitEnumerationCache() {
+		Map<Unit, UnitOfMeasure> treeMap = new TreeMap<>(sys.getEnumerationCache());
+
+		System.out.println("Enumeration cache ...");
+		int count = 0;
+		for (Entry<Unit, UnitOfMeasure> entry : treeMap.entrySet()) {
+			count++;
+			System.out.println("(" + count + ") " + entry.getKey() + (", ") + entry.getValue());
 		}
 	}
 }

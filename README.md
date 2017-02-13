@@ -255,6 +255,15 @@ Quantity t4 = temp.multiply(temp).multiply(temp).multiply(temp);
 Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(t4);
 ```
 
+Expansion of the universe:
+
+```java
+// Hubble's law, v = H0 x D. Let D = 10 Mpc
+Quantity d = new Quantity(BigDecimal.TEN, sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC)));
+Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
+Quantity velocity = h0.multiply(d);
+```
+
 ###Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
 

@@ -41,6 +41,16 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestUnits extends BaseTest {
+	
+	@Test
+	public void testPrefixes() {
+		for (Prefix prefix : Prefix.values()) {
+			assertTrue(prefix.getPrefixName().length() > 0);
+			assertTrue(prefix.getSymbol().length() > 0);
+			assertTrue(!prefix.getScalingFactor().equals(BigDecimal.ONE));
+			assertTrue(prefix.toString().length() > 0);
+		}
+	}
 
 	@Test
 	public void testExceptions() throws Exception {
@@ -603,6 +613,23 @@ public class TestUnits extends BaseTest {
 		// invert
 		UnitOfMeasure vinvert = velocity.invert();
 		vinvert.getScalingFactor().equals(Quantity.createAmount("3600"));
+		
+		// max symbol length
+		Quantity v = null;
+		Quantity h = null;
+		UnitOfMeasure mpc = sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC));
+		Quantity d =  new Quantity(BigDecimal.TEN, mpc);
+		Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
+		
+		for (int i = 0; i < 3; i++) {
+			v= h0.multiply(d);			
+			d = v.divide(h0);
+			h = v.divide(d);
+		}
+		assertTrue(h.getUOM().getSymbol().length() < 16);
+		
+		// conflict with 1/s
+		sys.unregisterUnit(h0.getUOM());
 	}
 
 	@Test
@@ -880,7 +907,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(mult.getBaseSymbol().equals(sys.getUOM(Unit.ONE).getSymbol()));
 
 		UnitOfMeasure u = sys.getSecond().invert();
-		assertTrue(u.equals(oneDivSec));
+		assertTrue(u.getScalingFactor().equals(oneDivSec.getScalingFactor()));
 
 		inverted = u.invert();
 		assertTrue(inverted.equals(sys.getSecond()));
@@ -1405,7 +1432,6 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure s = sys.getSecond();
 		UnitOfMeasure sm1 = s.invert();
 		UnitOfMeasure s2 = sys.getUOM(Unit.SQUARE_SECOND);
-		UnitOfMeasure min1 = min.invert();
 		UnitOfMeasure min2 = sys.createPowerUOM(UnitType.TIME_SQUARED, "sqMin", "min'2", null, min, 2);
 		UnitOfMeasure sqs = sys.createPowerUOM(UnitType.TIME_SQUARED, "sqSec", "s'2", null, s, 2);
 		UnitOfMeasure sminus1 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "sminus1", "s'-1", null, s, -1);
@@ -1483,8 +1509,10 @@ public class TestUnits extends BaseTest {
 		u = minminus1.multiply(s);
 		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
 
+		sys.unregisterUnit(sys.getUOM(Unit.HERTZ));
+		UnitOfMeasure min1 = min.invert();
 		bd = min1.getScalingFactor();
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
 		bd = sqs.getScalingFactor();
 		assertThat(bd, closeTo(Quantity.createAmount("1"), DELTA6));
@@ -1494,7 +1522,7 @@ public class TestUnits extends BaseTest {
 
 		u = sys.getOne().divide(min);
 		bd = u.getScalingFactor();
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertThat(bd, closeTo(Quantity.createAmount("1"), DELTA6));
 		bd = u.getConversionFactor(sm1);
 		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
 
@@ -1519,7 +1547,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(t.equals(UnitType.TIME_SQUARED));
 
 		u2 = sys.getOne().divide(min);
-		assertThat(u2.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertThat(u2.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 
 		q1 = new Quantity(BigDecimal.ONE, u2);
 		q2 = q1.convert(hz);

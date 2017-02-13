@@ -95,6 +95,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	// the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
 	// HALF_EVEN, the IEEE 754R default.
 	public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
+	
+	// maximum length of the symbol
+	private static final int MAX_SYMBOL_LENGTH = 16;
 
 	// multiply, divide and power symbols
 	private static final char MULT = 0xB7;
@@ -411,6 +414,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			result.setSymbol(generateProductSymbol(result.getMultiplier(), result.getMultiplicand()));
 		} else {
 			result.setSymbol(generateQuotientSymbol(result.getDividend(), result.getDivisor()));
+		}
+		
+		// constrain to a maximum length
+		if (result.getSymbol().length() > MAX_SYMBOL_LENGTH) {
+			result.setSymbol(generateIntermediateSymbol());
 		}
 
 		return result;
@@ -792,6 +800,13 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return powerProduct.getUOM1();
 	}
 
+	// generate a symbol for units of measure created as the result of
+	// intermediate multiplication and division operations. These symbols are
+	// not cached.
+	static String generateIntermediateSymbol() {
+		return Long.toHexString(System.currentTimeMillis());
+	}
+
 	static String generatePowerSymbol(UnitOfMeasure base, int exponent) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(base.getSymbol()).append(POW).append(exponent);
@@ -806,6 +821,12 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		} else {
 			sb.append(multiplier.getSymbol()).append(MULT).append(multiplicand.getSymbol());
 		}
+		return sb.toString();
+	}
+
+	static String generateQuotientSymbol(UnitOfMeasure dividend, UnitOfMeasure divisor) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(dividend.getSymbol()).append(DIV).append(divisor.getSymbol());
 		return sb.toString();
 	}
 
@@ -839,12 +860,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 */
 	public UnitOfMeasure getMultiplicand() {
 		return this.powerProduct.getUOM2();
-	}
-
-	static String generateQuotientSymbol(UnitOfMeasure dividend, UnitOfMeasure divisor) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(dividend.getSymbol()).append(DIV).append(divisor.getSymbol());
-		return sb.toString();
 	}
 
 	void setQuotientUnits(UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {

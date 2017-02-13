@@ -690,6 +690,11 @@ public class TestQuantity extends BaseTest {
 		Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(t4);
 		assertThat(intensity.getAmount(), closeTo(Quantity.createAmount("56700"), DELTA6));
 
+		// Hubble's law, v = H0 x D. Let D = 10 Mpc
+		Quantity d = new Quantity(BigDecimal.TEN, sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC)));
+		Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
+		Quantity velocity = h0.multiply(d);
+		assertThat(velocity.getAmount(), closeTo(Quantity.createAmount("719"), DELTA3));
 	}
 
 	@Test

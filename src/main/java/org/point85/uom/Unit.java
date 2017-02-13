@@ -46,7 +46,7 @@ public enum Unit {
 
 	// SI units follow
 	// length
-	METRE, ANGSTROM, DIOPTER,
+	METRE, ANGSTROM, DIOPTER, PARSEC,
 	// area
 	SQUARE_METRE,
 	// temperature

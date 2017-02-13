@@ -34,6 +34,10 @@ public class TestSnippet extends BaseTest {
 	@AfterClass
 	public static void cleanUp() throws Exception {
 
+		assertTrue(sys.getSymbolCache().size() > 0);
+		assertTrue(sys.getBaseSymbolCache().size() > 0);
+		assertTrue(sys.getEnumerationCache().size() > 0);
+
 		for (Unit unit : Unit.values()) {
 			sys.getUOM(unit).clearCache();
 		}

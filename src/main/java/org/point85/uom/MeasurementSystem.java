@@ -262,11 +262,18 @@ public class MeasurementSystem {
 
 		case STEFAN_BOLTZMANN:
 			UnitOfMeasure k4 = createPowerUOM(getUOM(Unit.KELVIN), 4);
-			UnitOfMeasure sb = createQuotientUOM(UnitType.UNCLASSIFIED, symbols.getString("sb.name"),
-					symbols.getString("sb.symbol"), symbols.getString("sb.desc"), getUOM(Unit.WATTS_PER_SQUARE_METRE),
-					k4);
+			UnitOfMeasure sb = createQuotientUOM(getUOM(Unit.WATTS_PER_SQUARE_METRE), k4);
 			named = new Quantity(Quantity.createAmount("5.67E-08"), sb);
 			named.setId(symbols.getString("sb.name"), symbols.getString("sb.symbol"), symbols.getString("sb.desc"));
+			break;
+
+		case HUBBLE_CONSTANT:
+			UnitOfMeasure kps = getUOM(Prefix.KILO, getUOM(Unit.METRE_PER_SECOND));
+			UnitOfMeasure mpc = getUOM(Prefix.MEGA, getUOM(Unit.PARSEC));
+			UnitOfMeasure hubble = createQuotientUOM(kps, mpc);
+			named = new Quantity(Quantity.createAmount("71.9"), hubble);
+			named.setId(symbols.getString("hubble.name"), symbols.getString("hubble.symbol"),
+					symbols.getString("hubble.desc"));
 			break;
 
 		default:
@@ -742,6 +749,13 @@ public class MeasurementSystem {
 			uom = createQuotientUOM(UnitType.IRRADIANCE, Unit.WATTS_PER_SQUARE_METRE, symbols.getString("wsm.name"),
 					symbols.getString("wsm.symbol"), symbols.getString("wsm.desc"), getUOM(Unit.WATT),
 					getUOM(Unit.SQUARE_METRE));
+			break;
+
+		case PARSEC:
+			conversion = new Conversion("3.08567758149137E+16", getUOM(Unit.METRE));
+			uom = createScalarUOM(UnitType.LENGTH, Unit.PARSEC, symbols.getString("parsec.name"),
+					symbols.getString("parsec.symbol"), symbols.getString("parsec.desc"));
+			uom.setConversion(conversion);
 			break;
 
 		default:
@@ -1338,6 +1352,33 @@ public class MeasurementSystem {
 		});
 
 		return list;
+	}
+
+	/**
+	 * Get the units of measure cached by their symbol
+	 * 
+	 * @return Symbol cache
+	 */
+	public Map<String, UnitOfMeasure> getSymbolCache() {
+		return this.symbolRegistry;
+	}
+
+	/**
+	 * Get the units of measure cached by their base symbol
+	 * 
+	 * @return Base symbol cache
+	 */
+	public Map<String, UnitOfMeasure> getBaseSymbolCache() {
+		return this.baseRegistry;
+	}
+
+	/**
+	 * Get the units of measure cached by their {@link Unit} enumeration
+	 * 
+	 * @return Enumeration cache
+	 */
+	public Map<Unit, UnitOfMeasure> getEnumerationCache() {
+		return this.unitRegistry;
 	}
 
 	/**

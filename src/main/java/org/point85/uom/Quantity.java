@@ -67,7 +67,7 @@ public class Quantity extends Symbolic {
 	 *            Amount
 	 * @param uom
 	 *            {@link UnitOfMeasure}
-	 * @throws Exception 
+	 * @throws Exception Exception
 	 */
 	public Quantity(String amount, UnitOfMeasure uom) throws Exception {
 		this.amount = createAmount(amount);
@@ -141,7 +141,7 @@ public class Quantity extends Symbolic {
 	 * @param value
 	 *            Text value of amount
 	 * @return Amount
-	 * @throws Exception 
+	 * @throws Exception Exception
 	 */
 	public static BigDecimal createAmount(String value) throws Exception {
 		// use String constructor for exact precision with rounding mode in math
@@ -190,7 +190,7 @@ public class Quantity extends Symbolic {
 	 * @param divisorAmount
 	 *            Divisor
 	 * @return Ratio of two amounts
-	 * @throws Exception 
+	 * @throws Exception Exception
 	 */
 	static public BigDecimal divideAmounts(String dividendAmount, String divisorAmount) throws Exception {
 		BigDecimal dividend = Quantity.createAmount(dividendAmount);
@@ -206,7 +206,7 @@ public class Quantity extends Symbolic {
 	 * @param multiplicandAmount
 	 *            Multiplicand
 	 * @return Product of two amounts
-	 * @throws Exception 
+	 * @throws Exception Exception
 	 */
 	static public BigDecimal multiplyAmounts(String multiplierAmount, String multiplicandAmount) throws Exception {
 		BigDecimal multiplier = Quantity.createAmount(multiplierAmount);
