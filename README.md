@@ -1,5 +1,5 @@
 # Caliper
-The Caliper project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
+The Caliper project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
 
 A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
  
@@ -262,6 +262,25 @@ Expansion of the universe:
 Quantity d = new Quantity(BigDecimal.TEN, sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC)));
 Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
 Quantity velocity = h0.multiply(d);
+```
+
+## Financial Examples
+
+Value of a stock portfolio:
+
+```java
+// John has 100 shares of Alphabet Class A stock. How much is his
+// portfolio worth in euros when the last trade was $838.96 and a US
+// dollar is worth 0.94 euros?
+UnitOfMeasure euro = sys.getUOM(Unit.EURO);
+UnitOfMeasure usd = sys.getUOM(Unit.US_DOLLAR);
+usd.setConversion(new Conversion("0.94", euro));
+
+UnitOfMeasure googl = sys.createScalarUOM(UnitType.FINANCIAL, "Alphabet A", "GOOGL",
+		"Alphabet (formerly Google) Class A shares");
+googl.setConversion(new Conversion("838.96", usd));
+Quantity portfolio = new Quantity("100", googl);
+Quantity value = portfolio.convert(euro);
 ```
 
 ###Caching

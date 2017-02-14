@@ -43,7 +43,6 @@ public enum Unit {
 	DEGREE,
 	// ratio
 	DECIBEL,
-
 	// SI units follow
 	// length
 	METRE, ANGSTROM, DIOPTER, PARSEC,
@@ -89,10 +88,8 @@ public enum Unit {
 	KILOGRAM_PER_CUBIC_METRE,
 	// torque (moment of force and energy)
 	NEWTON_METRE,
-
 	// IT
 	BIT, BYTE,
-
 	// Customary Units follow
 	// length
 	INCH, FOOT, YARD, MILE, NAUTICAL_MILE, FATHOM, MIL, POINT,
@@ -120,7 +117,6 @@ public enum Unit {
 	BTU,
 	// pressure
 	PSI, IN_HG,
-
 	// US Units follow
 	// volume
 	US_TEASPOON, US_TABLESPOON, US_FLUID_OUNCE, US_CUP, US_PINT, US_QUART, US_GALLON, US_BARREL, US_BUSHEL,
@@ -130,5 +126,7 @@ public enum Unit {
 	// volume
 	BR_TEASPOON, BR_TABLESPOON, BR_FLUID_OUNCE, BR_CUP, BR_PINT, BR_QUART, BR_GALLON, BR_BUSHEL,
 	// mass
-	BR_TON;
+	BR_TON,
+	// currency
+	US_DOLLAR, EURO, YUAN;
 }

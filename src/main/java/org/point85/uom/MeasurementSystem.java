@@ -160,6 +160,13 @@ public class MeasurementSystem {
 		// British
 		uom = createBRUnit(enumeration);
 
+		if (uom != null) {
+			return uom;
+		}
+
+		// currency
+		uom = createCurrencyUnit(enumeration);
+
 		return uom;
 	}
 
@@ -1222,6 +1229,33 @@ public class MeasurementSystem {
 			uom = createScalarUOM(UnitType.MASS, Unit.BR_TON, symbols.getString("br_ton.name"),
 					symbols.getString("br_ton.symbol"), symbols.getString("br_ton.desc"));
 			uom.setConversion(conversion);
+			break;
+
+		default:
+			break;
+		}
+
+		return uom;
+	}
+
+	private UnitOfMeasure createCurrencyUnit(Unit unit) throws Exception {
+		UnitOfMeasure uom = null;
+
+		switch (unit) {
+
+		case US_DOLLAR:
+			uom = createScalarUOM(UnitType.FINANCIAL, Unit.US_DOLLAR, symbols.getString("us_dollar.name"),
+					symbols.getString("us_dollar.symbol"), symbols.getString("us_dollar.desc"));
+			break;
+
+		case EURO:
+			uom = createScalarUOM(UnitType.FINANCIAL, Unit.EURO, symbols.getString("euro.name"),
+					symbols.getString("euro.symbol"), symbols.getString("euro.desc"));
+			break;
+
+		case YUAN:
+			uom = createScalarUOM(UnitType.FINANCIAL, Unit.YUAN, symbols.getString("yuan.name"),
+					symbols.getString("yuan.symbol"), symbols.getString("yuan.desc"));
 			break;
 
 		default:
