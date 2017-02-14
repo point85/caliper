@@ -85,17 +85,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure> {
-
-	// category of the UOM
-	private enum Category {
-		SCALAR, PRODUCT, QUOTIENT, POWER;
-	}
-
 	// BigDecimal math. A MathContext object with a precision setting matching
 	// the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
 	// HALF_EVEN, the IEEE 754R default.
 	public static final MathContext MATH_CONTEXT = MathContext.DECIMAL64;
-	
+
 	// maximum length of the symbol
 	private static final int MAX_SYMBOL_LENGTH = 16;
 
@@ -107,7 +101,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private static final char CUBED = 0xB3;
 	private static final char LP = '(';
 	private static final char RP = ')';
-	private static final char ONE_CHARACTER = '1';
+	private static final char ONE_CHAR = '1';
 
 	// registry of unit conversion factor
 	private Map<UnitOfMeasure, BigDecimal> conversionRegistry = new ConcurrentHashMap<UnitOfMeasure, BigDecimal>();
@@ -158,10 +152,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 */
 	public void clearCache() {
 		conversionRegistry.clear();
-	}
-
-	private Category getCategory() throws Exception {
-		return powerProduct.getCategory();
 	}
 
 	/**
@@ -415,7 +405,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		} else {
 			result.setSymbol(generateQuotientSymbol(result.getDividend(), result.getDivisor()));
 		}
-		
+
 		// constrain to a maximum length
 		if (result.getSymbol().length() > MAX_SYMBOL_LENGTH) {
 			result.setSymbol(generateIntermediateSymbol());
@@ -460,7 +450,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	public UnitOfMeasure invert() throws Exception {
 		UnitOfMeasure inverted = null;
 
-		if (this.getCategory().equals(Category.QUOTIENT)) {
+		if (getPowerProduct().getExponent2() < 0) {
 			inverted = getDivisor().divide(getDividend());
 		} else {
 			inverted = MeasurementSystem.getSystem().getOne().divide(this);
@@ -699,9 +689,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			pathFactor = decimalMultiply(pathFactor, scalingFactor);
 
 			if (pathUOM.equals(abscissa)) {
-				if (pathUOM.getCategory().equals(Category.SCALAR)) {
-					break;
-				}
+				break;
 			}
 
 			// next UOM on path
@@ -989,26 +977,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			this.exponent2 = exponent2;
 		}
 
-		private Category getCategory() throws Exception {
-
-			Category cat = null;
-
-			if (uom2 == null) {
-				if (uom1 == null) {
-					cat = Category.SCALAR;
-				} else {
-					cat = Category.POWER;
-				}
-			} else {
-				if (exponent2 < 0) {
-					cat = Category.QUOTIENT;
-				} else {
-					cat = Category.PRODUCT;
-				}
-			}
-			return cat;
-		}
-
 		private int getExponent1() {
 			return exponent1;
 		}
@@ -1252,7 +1220,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			}
 
 			if (numeratorCount == 0) {
-				numerator.append(ONE_CHARACTER);
+				numerator.append(ONE_CHAR);
 			}
 
 			String result = null;

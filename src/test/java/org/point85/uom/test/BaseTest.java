@@ -43,9 +43,11 @@ public class BaseTest {
 	protected static BigDecimal DELTA1;
 	protected static BigDecimal DELTA0;
 
-	protected static MeasurementSystem sys = MeasurementSystem.getSystem();
+	protected final static MeasurementSystem sys = initializeSystem();
 
-	protected BaseTest() {
+	private static MeasurementSystem initializeSystem() {
+		MeasurementSystem system = MeasurementSystem.getSystem();
+
 		try {
 			DELTA6 = Quantity.createAmount("0.000001");
 			DELTA5 = Quantity.createAmount("0.00001");
@@ -58,8 +60,14 @@ public class BaseTest {
 		} catch (Exception e) {
 
 		}
+
+		return system;
 	}
-	
+
+	protected BaseTest() {
+
+	}
+
 	protected void snapshotSymbolCache() {
 
 		Map<String, UnitOfMeasure> treeMap = new TreeMap<>(sys.getSymbolCache());
