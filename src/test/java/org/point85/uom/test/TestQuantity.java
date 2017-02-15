@@ -457,6 +457,13 @@ public class TestQuantity extends BaseTest {
 		Quantity gas = sys.getQuantity(Constant.GAS_CONSTANT);
 		Quantity qR = boltzmann.multiply(avogadro);
 		assertThat(qR.getUOM().getScalingFactor(), closeTo(gas.getUOM().getScalingFactor(), DELTA6));
+		
+		// Sieverts
+		q1 = new Quantity("20", sys.getUOM(Prefix.MILLI, Unit.SIEVERTS_PER_HOUR));
+		q2 = new Quantity("24", sys.getHour());
+		q3 = q1.multiply(q2);
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("480"), DELTA6));	
+		
 	}
 
 	@Test
@@ -479,31 +486,31 @@ public class TestQuantity extends BaseTest {
 		Quantity q2 = q1.convert(p2);
 		assertThat(q2.getAmount(), closeTo(amount, DELTA6));
 		assertTrue(q2.getUOM().getBaseUOM().equals(m2));
-		
+
 		// power method
 		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
 		UnitOfMeasure ft2 = sys.getUOM(Unit.SQUARE_FOOT);
 		q1 = new Quantity(BigDecimal.TEN, ft);
-		
+
 		q3 = q1.power(2);
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("100"), DELTA6));
 		assertTrue(q3.getUOM().getBaseSymbol().equals(ft2.getBaseSymbol()));
-		
+
 		q4 = q3.convert(sys.getUOM(Unit.SQUARE_METRE));
 		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("9.290304"), DELTA6));
-		
+
 		q3 = q1.power(1);
 		assertTrue(q3.getAmount().equals(q1.getAmount()));
 		assertTrue(q3.getUOM().getBaseSymbol().equals(q1.getUOM().getBaseSymbol()));
-		
+
 		q3 = q1.power(0);
 		assertTrue(q3.getAmount().equals(BigDecimal.ONE));
 		assertTrue(q3.getUOM().getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
-		
+
 		q3 = q1.power(-1);
 		assertTrue(q3.getAmount().equals(Quantity.createAmount("0.1")));
 		assertTrue(q3.getUOM().equals(ft.invert()));
-		
+
 		q3 = q1.power(-2);
 		assertTrue(q3.getAmount().equals(Quantity.createAmount("0.01")));
 		assertTrue(q3.getUOM().equals(ft2.invert()));
@@ -666,7 +673,7 @@ public class TestQuantity extends BaseTest {
 		// Ideal Gas Law, PV = nRT
 		// A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.
 		// How many moles of argon are in the cylinder?
-		Quantity p = sys.getQuantity(Constant.ATMOSPHERE).multiply(Quantity.createAmount("18.4"));
+		Quantity p = new Quantity("18.4", sys.getUOM(Unit.ATMOSPHERE)).convert(Unit.PASCAL);
 		Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
 		Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
 		Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
@@ -985,5 +992,13 @@ public class TestQuantity extends BaseTest {
 		Quantity q2 = q1.convert(cm);
 		assertThat(q2.getAmount(), closeTo(bd, DELTA6));
 
+	}
+
+	@Test
+	public void testFinancial() throws Exception {
+		Quantity q1 = new Quantity("10", Unit.US_DOLLAR);
+		Quantity q2 = new Quantity("12", Unit.US_DOLLAR);
+		Quantity q3 = q2.subtract(q1).divide(q1).convert(Unit.PERCENT);
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("20"), DELTA6));
 	}
 }

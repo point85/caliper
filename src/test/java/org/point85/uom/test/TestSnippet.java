@@ -23,10 +23,14 @@ SOFTWARE.
 */
 package org.point85.uom.test;
 
+import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.AfterClass;
 import org.junit.Test;
+import org.point85.uom.Constant;
+import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
 
 public class TestSnippet extends BaseTest {
@@ -48,6 +52,12 @@ public class TestSnippet extends BaseTest {
 	@Test
 	public void testCase() throws Exception {
 		assertTrue(sys != null);
+		
+		Quantity p = new Quantity("18.4", sys.getUOM(Unit.ATMOSPHERE)).convert(Unit.PASCAL);
+		Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
+		Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
+		Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
+		assertThat(n.getAmount(), closeTo(Quantity.createAmount("28.018673"), DELTA6));
 
 	}
 }

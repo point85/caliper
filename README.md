@@ -202,7 +202,7 @@ Quantity e = m.multiply(c).multiply(c);
 
 Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.  How many moles of argon are in the cylinder?
 ```java
-Quantity p = sys.getQuantity(Constant.ATMOSPHERE).multiply(Quantity.createAmount("18.4"));
+Quantity p = new Quantity("18.4", sys.getUOM(Unit.ATMOSPHERE)).convert(Unit.PASCAL);
 Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
 Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
 Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));

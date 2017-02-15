@@ -40,12 +40,12 @@ public enum Unit {
 	// angle
 	RADIAN, STERADIAN,
 	// degree of arc
-	DEGREE,
+	DEGREE, ARC_SECOND,
 	// ratio
 	DECIBEL,
 	// SI units follow
 	// length
-	METRE, ANGSTROM, DIOPTER, PARSEC,
+	METRE, ANGSTROM, DIOPTER, PARSEC, ASTRONOMICAL_UNIT,
 	// area
 	SQUARE_METRE,
 	// temperature
@@ -73,7 +73,7 @@ public enum Unit {
 	// frequency
 	HERTZ, RAD_PER_SEC,
 	// pressure
-	PASCAL, BAR,
+	PASCAL, BAR, ATMOSPHERE,
 	// electrical
 	AMPERE, AMPERE_PER_METRE, COULOMB, VOLT, OHM, FARAD, FARAD_PER_METRE, WEBER, TESLA, HENRY, SIEMENS,
 	// concentration
@@ -81,7 +81,7 @@ public enum Unit {
 	// luminosity
 	CANDELA, LUMEN, LUX,
 	// radioactivity
-	BECQUEREL, GRAY, SIEVERT,
+	BECQUEREL, GRAY, SIEVERT, SIEVERTS_PER_HOUR,
 	// catalytic activity
 	KATAL,
 	// density
@@ -128,5 +128,7 @@ public enum Unit {
 	// mass
 	BR_TON,
 	// currency
-	US_DOLLAR, EURO, YUAN;
+	US_DOLLAR, EURO, YUAN,
+	// other
+	PERCENT;
 }

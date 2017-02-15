@@ -42,6 +42,7 @@ public class BaseTest {
 	protected static BigDecimal DELTA2;
 	protected static BigDecimal DELTA1;
 	protected static BigDecimal DELTA0;
+	protected static BigDecimal DELTA_10;
 
 	protected final static MeasurementSystem sys = initializeSystem();
 
@@ -56,6 +57,7 @@ public class BaseTest {
 			DELTA2 = Quantity.createAmount("0.01");
 			DELTA1 = Quantity.createAmount("0.1");
 			DELTA0 = Quantity.createAmount("1");
+			DELTA_10 = Quantity.createAmount("10");
 
 		} catch (Exception e) {
 

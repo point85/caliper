@@ -56,6 +56,20 @@ public class TestUnifiedCode extends BaseTest {
 		Quantity from = null;
 		Quantity to = null;
 		BigDecimal convertedAmount = null;
+		
+		// astronomical unit to miles
+		from = new Quantity(amount, sys.getUOM(Unit.ASTRONOMICAL_UNIT));
+		to = from.convert(sys.getUOM(Unit.MILE));
+
+		convertedAmount = wsConvert(amount, "AU", "[mi_i]");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA_10));
+		
+		// atmosphere to psi
+		from = new Quantity(amount, sys.getUOM(Unit.ATMOSPHERE));
+		to = from.convert(sys.getUOM(Unit.PSI));
+
+		convertedAmount = wsConvert(amount, "atm", "[psi]");
+		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA5));
 
 		// in Hg to PSI
 		from = new Quantity(amount, sys.getUOM(Unit.IN_HG));
@@ -136,13 +150,6 @@ public class TestUnifiedCode extends BaseTest {
 		to = from.convert(cm);
 
 		convertedAmount = wsConvert(amount, "[in_i]", "cm");
-		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
-
-		// atmosphere to pascal
-		from = sys.getQuantity(Constant.ATMOSPHERE).multiply(Quantity.createAmount(amount));
-		to = from.convert(sys.getUOM(Unit.PASCAL));
-
-		convertedAmount = wsConvert(amount, "atm", "Pa");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA6));
 
 		// ft-lbf to Newton

@@ -165,7 +165,7 @@ public class MeasurementSystem {
 		}
 
 		// currency
-		uom = createCurrencyUnit(enumeration);
+		uom = createFinancialUnit(enumeration);
 
 		return uom;
 	}
@@ -259,12 +259,6 @@ public class MeasurementSystem {
 			// mp
 			named = new Quantity(Quantity.createAmount("1.67262189821E-24"), getUOM(Unit.GRAM));
 			named.setId(symbols.getString("mp.name"), symbols.getString("mp.symbol"), symbols.getString("mp.desc"));
-			break;
-
-		case ATMOSPHERE:
-			// pressure
-			named = new Quantity(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
-			named.setId(symbols.getString("atm.name"), symbols.getString("atm.symbol"), symbols.getString("atm.desc"));
 			break;
 
 		case STEFAN_BOLTZMANN:
@@ -394,6 +388,15 @@ public class MeasurementSystem {
 			conversion = new Conversion(factor, getUOM(Unit.RADIAN));
 			uom = createScalarUOM(UnitType.PLANE_ANGLE, Unit.DEGREE, symbols.getString("degree.name"),
 					symbols.getString("degree.symbol"), symbols.getString("degree.desc"));
+			uom.setConversion(conversion);
+			break;
+
+		case ARC_SECOND:
+			// degree of arc
+			factor = Quantity.divideAmounts(String.valueOf(Math.PI), "648000");
+			conversion = new Conversion(factor, getUOM(Unit.RADIAN));
+			uom = createScalarUOM(UnitType.PLANE_ANGLE, Unit.ARC_SECOND, symbols.getString("arcsec.name"),
+					symbols.getString("arcsec.symbol"), symbols.getString("arcsec.desc"));
 			uom.setConversion(conversion);
 			break;
 
@@ -598,14 +601,22 @@ public class MeasurementSystem {
 			break;
 
 		case PASCAL:
-			// pressure (pascal)
+			// pressure
 			uom = createQuotientUOM(UnitType.PRESSURE, Unit.PASCAL, symbols.getString("pascal.name"),
 					symbols.getString("pascal.symbol"), symbols.getString("pascal.desc"), getUOM(Unit.NEWTON),
 					getUOM(Unit.SQUARE_METRE));
 			break;
 
+		case ATMOSPHERE:
+			// pressure
+			conversion = new Conversion(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
+			uom = createScalarUOM(UnitType.PRESSURE, Unit.ATMOSPHERE, symbols.getString("atm.name"),
+					symbols.getString("atm.symbol"), symbols.getString("atm.desc"));
+			uom.setConversion(conversion);
+			break;
+
 		case BAR:
-			// pressure (bar)
+			// pressure
 			conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.PASCAL), Quantity.createAmount("1.0E+05"));
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.BAR, symbols.getString("bar.name"),
 					symbols.getString("bar.symbol"), symbols.getString("bar.desc"));
@@ -723,6 +734,11 @@ public class MeasurementSystem {
 					getUOM(Unit.KILOGRAM));
 			break;
 
+		case SIEVERTS_PER_HOUR:
+			uom = createQuotientUOM(UnitType.UNCLASSIFIED, Unit.SIEVERTS_PER_HOUR, symbols.getString("sph.name"),
+					symbols.getString("sph.symbol"), symbols.getString("sph.desc"), getUOM(Unit.SIEVERT), getHour());
+			break;
+
 		case KATAL:
 			// katal (kat)
 			uom = createQuotientUOM(UnitType.CATALYTIC_ACTIVITY, Unit.KATAL, symbols.getString("katal.name"),
@@ -762,6 +778,13 @@ public class MeasurementSystem {
 			conversion = new Conversion("3.08567758149137E+16", getUOM(Unit.METRE));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.PARSEC, symbols.getString("parsec.name"),
 					symbols.getString("parsec.symbol"), symbols.getString("parsec.desc"));
+			uom.setConversion(conversion);
+			break;
+
+		case ASTRONOMICAL_UNIT:
+			conversion = new Conversion("1.49597870700E+11", getUOM(Unit.METRE));
+			uom = createScalarUOM(UnitType.LENGTH, Unit.ASTRONOMICAL_UNIT, symbols.getString("au.name"),
+					symbols.getString("au.symbol"), symbols.getString("au.desc"));
 			uom.setConversion(conversion);
 			break;
 
@@ -1238,8 +1261,9 @@ public class MeasurementSystem {
 		return uom;
 	}
 
-	private UnitOfMeasure createCurrencyUnit(Unit unit) throws Exception {
+	private UnitOfMeasure createFinancialUnit(Unit unit) throws Exception {
 		UnitOfMeasure uom = null;
+		Conversion conversion = null;
 
 		switch (unit) {
 
@@ -1256,6 +1280,13 @@ public class MeasurementSystem {
 		case YUAN:
 			uom = createScalarUOM(UnitType.FINANCIAL, Unit.YUAN, symbols.getString("yuan.name"),
 					symbols.getString("yuan.symbol"), symbols.getString("yuan.desc"));
+			break;
+
+		case PERCENT:
+			conversion = new Conversion(Quantity.createAmount("0.01"), getOne());
+			uom = createScalarUOM(UnitType.FINANCIAL, Unit.PERCENT, symbols.getString("percent.name"),
+					symbols.getString("percent.symbol"), symbols.getString("percent.desc"));
+			uom.setConversion(conversion);
 			break;
 
 		default:

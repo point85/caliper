@@ -1069,6 +1069,7 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure degree = sys.getUOM(Unit.DEGREE);
+		UnitOfMeasure arcsec = sys.getUOM(Unit.ARC_SECOND);
 		UnitOfMeasure radian = sys.getUOM(Unit.RADIAN);
 		UnitOfMeasure kgPerM3 = sys.getUOM(Unit.KILOGRAM_PER_CUBIC_METRE);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
@@ -1097,7 +1098,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure inHg = sys.createScalarUOM(UnitType.PRESSURE, "inHg", "inHg", "inHg");
 		inHg.setConversion(conversion);
 
-		Quantity atm = sys.getQuantity(Constant.ATMOSPHERE);
+		Quantity atm = new Quantity(BigDecimal.ONE, Unit.ATMOSPHERE).convert(Unit.PASCAL);
 		assertThat(atm.getAmount(), closeTo(Quantity.createAmount("101325"), DELTA6));
 
 		UnitOfMeasure ft2ft = sys.createProductUOM(UnitType.VOLUME, "ft2ft", "ft2ft", null, ft2, ft);
@@ -1128,6 +1129,12 @@ public class TestUnits extends BaseTest {
 
 		bd = radian.getConversionFactor(degree);
 		assertThat(bd, closeTo(Quantity.createAmount("57.29577951308264"), DELTA6));
+		
+		bd = arcsec.getConversionFactor(degree);
+		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778E-4"), DELTA6));
+
+		bd = degree.getConversionFactor(arcsec);
+		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
 
 		bd = lbmPerFt3.getConversionFactor(kgPerM3);
 		assertThat(bd, closeTo(Quantity.createAmount("16.01846337"), DELTA6));
