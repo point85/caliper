@@ -46,7 +46,7 @@ A unit of measure is represented internally as a product of two other power unit
 
 For a simple scalar UOM (e.g. kilogram), both of the UOMs are null with the exponents defaulted to 0.  For a product UOM (e.g. Newton), the first UOM is the multiplier and the second is the multiplicand with both exponents set to 1.  For a quotient UOM (e.g. kilograms/hour), the first UOM is the dividend and the second is the divisor.  The dividend has an exponent of 1 and the divisor an exponent of -1.  For a power UOM (e.g. square metres), the first UOM is the base and the exponent is the power.  In this case, the second UOM is null with the exponent defaulted to 0.
 
-In order to obtain the base symbol, these two units of measure are recursively evaluated until a scalar is reached.  When a power UOM is encountered, that UOM is evaluated n times.
+From the two power products, a unit of measure can then be recursively reduced to a map of base units of measure and corresponding exponents along with a scaling factor.  For example, a Newton reduces to (kg, 1), (m, 1), (s, -2) in the SI system.  Multiplying, dividing and converting a unit of measure is accomplished by merging the two maps (i.e. "cancelling out" units) and then computing the overall scaling factor.  The base symbol is obtained directly from the final map.
  
 ## Code Examples
 The singleton unified MeasurementSystem is obtained by calling:
@@ -184,7 +184,7 @@ and, a megabyte (MB = 2^20 bytes) is created by:
 UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, Unit.BYTE);
 ```
 
-## Equation Examples
+## Physical Unit Equation Examples
 
 One's Body Mass Index (BMI) can be calculated as:
 ```java
@@ -248,11 +248,9 @@ Black body radiation:
 // The Stefan-Boltzmann law states that the power emitted per unit area
 // of the surface of a black body is directly proportional to the fourth
 // power of its absolute temperature: sigma * T^4
-
 // calculate at 1000 Kelvin
 Quantity temp = new Quantity("1000", Unit.KELVIN);
-Quantity t4 = temp.multiply(temp).multiply(temp).multiply(temp);
-Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(t4);
+Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(temp.power(4));
 ```
 
 Expansion of the universe:

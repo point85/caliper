@@ -479,6 +479,34 @@ public class TestQuantity extends BaseTest {
 		Quantity q2 = q1.convert(p2);
 		assertThat(q2.getAmount(), closeTo(amount, DELTA6));
 		assertTrue(q2.getUOM().getBaseUOM().equals(m2));
+		
+		// power method
+		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
+		UnitOfMeasure ft2 = sys.getUOM(Unit.SQUARE_FOOT);
+		q1 = new Quantity(BigDecimal.TEN, ft);
+		
+		q3 = q1.power(2);
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("100"), DELTA6));
+		assertTrue(q3.getUOM().getBaseSymbol().equals(ft2.getBaseSymbol()));
+		
+		q4 = q3.convert(sys.getUOM(Unit.SQUARE_METRE));
+		assertThat(q4.getAmount(), closeTo(Quantity.createAmount("9.290304"), DELTA6));
+		
+		q3 = q1.power(1);
+		assertTrue(q3.getAmount().equals(q1.getAmount()));
+		assertTrue(q3.getUOM().getBaseSymbol().equals(q1.getUOM().getBaseSymbol()));
+		
+		q3 = q1.power(0);
+		assertTrue(q3.getAmount().equals(BigDecimal.ONE));
+		assertTrue(q3.getUOM().getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
+		
+		q3 = q1.power(-1);
+		assertTrue(q3.getAmount().equals(Quantity.createAmount("0.1")));
+		assertTrue(q3.getUOM().equals(ft.invert()));
+		
+		q3 = q1.power(-2);
+		assertTrue(q3.getAmount().equals(Quantity.createAmount("0.01")));
+		assertTrue(q3.getUOM().equals(ft2.invert()));
 	}
 
 	@Test
@@ -686,8 +714,7 @@ public class TestQuantity extends BaseTest {
 
 		// calculate at 1000 Kelvin
 		Quantity temp = new Quantity("1000", Unit.KELVIN);
-		Quantity t4 = temp.multiply(temp).multiply(temp).multiply(temp);
-		Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(t4);
+		Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(temp.power(4));
 		assertThat(intensity.getAmount(), closeTo(Quantity.createAmount("56700"), DELTA6));
 
 		// Hubble's law, v = H0 x D. Let D = 10 Mpc
