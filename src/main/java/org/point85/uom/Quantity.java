@@ -379,9 +379,6 @@ public class Quantity extends Symbolic {
 	 *             Exception
 	 */
 	public Quantity convert(UnitOfMeasure toUOM) throws Exception {
-		if (getUOM().equals(toUOM)) {
-			return this;
-		}
 
 		BigDecimal multiplier = getUOM().getConversionFactor(toUOM);
 		BigDecimal thisOffset = getUOM().getOffset();
