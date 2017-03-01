@@ -840,6 +840,14 @@ public class MeasurementSystem {
 					symbols.getString("ounce.symbol"), symbols.getString("ounce.desc"));
 			uom.setConversion(conversion);
 			break;
+			
+		case TROY_OUNCE:
+			// troy ounce
+			conversion = new Conversion(Quantity.createAmount("31.1034768"), getUOM(Unit.GRAM));
+			uom = createScalarUOM(UnitType.MASS, Unit.TROY_OUNCE, symbols.getString("troy_oz.name"),
+					symbols.getString("troy_oz.symbol"), symbols.getString("troy_oz.desc"));
+			uom.setConversion(conversion);
+			break;
 
 		case SLUG:
 			// slug

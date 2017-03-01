@@ -305,6 +305,10 @@ public class TestQuantity extends BaseTest {
 		q1 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.US_TON));
 		q2 = q1.convert(sys.getUOM(Unit.BR_TON));
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("8.928571428"), DELTA6));
+
+		// troy ounce to ounce
+		q1 = new Quantity(BigDecimal.TEN, Unit.TROY_OUNCE);
+		assertThat(q1.convert(Unit.OUNCE).getAmount(), closeTo(Quantity.createAmount("10.971"), DELTA3));
 	}
 
 	@Test
@@ -457,13 +461,13 @@ public class TestQuantity extends BaseTest {
 		Quantity gas = sys.getQuantity(Constant.GAS_CONSTANT);
 		Quantity qR = boltzmann.multiply(avogadro);
 		assertThat(qR.getUOM().getScalingFactor(), closeTo(gas.getUOM().getScalingFactor(), DELTA6));
-		
+
 		// Sieverts
 		q1 = new Quantity("20", sys.getUOM(Prefix.MILLI, Unit.SIEVERTS_PER_HOUR));
 		q2 = new Quantity("24", sys.getHour());
 		q3 = q1.multiply(q2);
-		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("480"), DELTA6));	
-		
+		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("480"), DELTA6));
+
 	}
 
 	@Test

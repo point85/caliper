@@ -96,7 +96,7 @@ public enum Unit {
 	// temperature
 	FAHRENHEIT, RANKINE,
 	// mass
-	POUND_MASS, OUNCE, SLUG, GRAIN,
+	POUND_MASS, OUNCE, SLUG, GRAIN, TROY_OUNCE,
 	// force
 	POUND_FORCE,
 	// torque (moment of force)
