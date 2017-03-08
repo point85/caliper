@@ -36,7 +36,7 @@ public enum Unit {
 	// time
 	SECOND, MINUTE, HOUR, DAY, WEEK, JULIAN_YEAR, SQUARE_SECOND,
 	// substance amount
-	MOLE,
+	MOLE, EQUIVALENT, INTERNATIONAL_UNIT,
 	// angle
 	RADIAN, STERADIAN,
 	// degree of arc
@@ -83,7 +83,7 @@ public enum Unit {
 	// radioactivity
 	BECQUEREL, GRAY, SIEVERT, SIEVERTS_PER_HOUR,
 	// catalytic activity
-	KATAL,
+	KATAL, UNIT,
 	// density
 	KILOGRAM_PER_CUBIC_METRE,
 	// torque (moment of force and energy)

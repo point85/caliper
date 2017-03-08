@@ -360,6 +360,12 @@ public class MeasurementSystem {
 					symbols.getString("mole.symbol"), symbols.getString("mole.desc"));
 			break;
 
+		case EQUIVALENT:
+			// substance amount
+			uom = createScalarUOM(UnitType.SUBSTANCE_AMOUNT, Unit.EQUIVALENT, symbols.getString("equivalent.name"),
+					symbols.getString("equivalent.symbol"), symbols.getString("equivalent.desc"));
+			break;
+
 		case DECIBEL:
 			// decibel
 			uom = createScalarUOM(UnitType.INTENSITY, Unit.DECIBEL, symbols.getString("db.name"),
@@ -745,6 +751,19 @@ public class MeasurementSystem {
 					symbols.getString("katal.symbol"), symbols.getString("katal.desc"), getUOM(Unit.MOLE), getSecond());
 			break;
 
+		case UNIT:
+			// Unit (U)
+			conversion = new Conversion(Quantity.divideAmounts("1.0E-06", "60"), getUOM(Unit.KATAL));
+			uom = createScalarUOM(UnitType.CATALYTIC_ACTIVITY, Unit.UNIT, symbols.getString("unit.name"),
+					symbols.getString("unit.symbol"), symbols.getString("unit.desc"));
+			uom.setConversion(conversion);
+			break;
+			
+		case INTERNATIONAL_UNIT:
+			uom = createScalarUOM(UnitType.SUBSTANCE_AMOUNT, Unit.INTERNATIONAL_UNIT, symbols.getString("iu.name"),
+					symbols.getString("iu.symbol"), symbols.getString("iu.desc"));
+			break;
+
 		case ANGSTROM:
 			// length
 			UnitOfMeasure nm = this.getUOM(Prefix.NANO, getUOM(Unit.METRE));
@@ -840,7 +859,7 @@ public class MeasurementSystem {
 					symbols.getString("ounce.symbol"), symbols.getString("ounce.desc"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case TROY_OUNCE:
 			// troy ounce
 			conversion = new Conversion(Quantity.createAmount("31.1034768"), getUOM(Unit.GRAM));

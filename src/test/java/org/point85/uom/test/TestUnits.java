@@ -41,7 +41,7 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestUnits extends BaseTest {
-	
+
 	@Test
 	public void testPrefixes() {
 		for (Prefix prefix : Prefix.values()) {
@@ -613,21 +613,21 @@ public class TestUnits extends BaseTest {
 		// invert
 		UnitOfMeasure vinvert = velocity.invert();
 		vinvert.getScalingFactor().equals(Quantity.createAmount("3600"));
-		
+
 		// max symbol length
 		Quantity v = null;
 		Quantity h = null;
 		UnitOfMeasure mpc = sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC));
-		Quantity d =  new Quantity(BigDecimal.TEN, mpc);
+		Quantity d = new Quantity(BigDecimal.TEN, mpc);
 		Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
-		
+
 		for (int i = 0; i < 3; i++) {
-			v= h0.multiply(d);			
+			v = h0.multiply(d);
 			d = v.divide(h0);
 			h = v.divide(d);
 		}
 		assertTrue(h.getUOM().getSymbol().length() < 16);
-		
+
 		// conflict with 1/s
 		sys.unregisterUnit(h0.getUOM());
 	}
@@ -1129,7 +1129,7 @@ public class TestUnits extends BaseTest {
 
 		bd = radian.getConversionFactor(degree);
 		assertThat(bd, closeTo(Quantity.createAmount("57.29577951308264"), DELTA6));
-		
+
 		bd = arcsec.getConversionFactor(degree);
 		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778E-4"), DELTA6));
 
@@ -1641,5 +1641,48 @@ public class TestUnits extends BaseTest {
 		inverted = uom.invert();
 		u = uom.multiply(inverted);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
+	}
+
+	@Test
+	public void testMedicalUnits() throws Exception {
+		// Equivalent
+		UnitOfMeasure eq = sys.getUOM(Unit.EQUIVALENT);
+		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
+		UnitOfMeasure mEqPerL = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "milliNormal", "mEq/L",
+				"solute per litre of solvent ", sys.getUOM(Prefix.MILLI, eq), litre);
+		Quantity testResult = new Quantity("4.9", mEqPerL);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("3.5")) == 1);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("5.3")) == -1);
+
+		// Unit
+		UnitOfMeasure u = sys.getUOM(Unit.UNIT);
+		UnitOfMeasure katal = sys.getUOM(Unit.KATAL);
+		Quantity q1 = new Quantity(BigDecimal.ONE, u);
+		Quantity q2 = q1.convert(sys.getUOM(Prefix.NANO, katal));
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("16.666667"), DELTA6));
+
+		// blood cell counts
+		UnitOfMeasure k = sys.getUOM(Prefix.KILO, sys.getOne());
+		UnitOfMeasure uL = sys.getUOM(Prefix.MICRO, Unit.LITRE);
+		UnitOfMeasure kul = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "K/uL", "K/uL",
+				"thousands per microlitre", k, uL);
+		testResult = new Quantity("6.6", kul);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("3.5")) == 1);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("12.5")) == -1);
+
+		UnitOfMeasure fL = sys.getUOM(Prefix.FEMTO, Unit.LITRE);
+		testResult = new Quantity("90", fL);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("80")) == 1);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("100")) == -1);
+
+		// TSH
+		UnitOfMeasure uIU = sys.getUOM(Prefix.MICRO, Unit.INTERNATIONAL_UNIT);
+		UnitOfMeasure mL = sys.getUOM(Prefix.MILLI, Unit.LITRE);
+		UnitOfMeasure uiuPerml = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "uIU/mL", "uIU/mL",
+				"micro IU per millilitre", uIU, mL);
+		testResult = new Quantity("2.11", uiuPerml);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("0.40")) == 1);
+		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("5.50")) == -1);
+
 	}
 }

@@ -699,15 +699,9 @@ public class TestQuantity extends BaseTest {
 		assertThat(f.getAmount(), closeTo(Quantity.createAmount("2.20462"), DELTA5));
 
 		// units per volume of solution, C = A x (m/V)
-		// create the "U" unit of measure
-		UnitOfMeasure catUnit = sys.createScalarUOM(UnitType.CATALYTIC_ACTIVITY, "Units of Activity", "U",
-				"The amount of enzyme that catalyzes the conversion of 1 micromole of substrate per minute.");
-		Conversion conversion = new Conversion(Quantity.createAmount("1.667E-08"), sys.getUOM(Unit.KATAL));
-		catUnit.setConversion(conversion);
-
 		// create the "A" unit of measure
 		UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "activity", "act",
-				"activity of material", catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
+				"activity of material", sys.getUOM(Unit.UNIT), sys.getUOM(Prefix.MILLI, Unit.GRAM));
 
 		// calculate concentration
 		Quantity activity = new Quantity(BigDecimal.ONE, activityUnit);
@@ -717,7 +711,7 @@ public class TestQuantity extends BaseTest {
 		assertThat(concentration.getAmount(), closeTo(Quantity.createAmount("1000"), DELTA6));
 
 		Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE)).convert(Unit.KATAL);
-		assertThat(katals.getAmount(), closeTo(Quantity.createAmount("0.01667"), DELTA6));
+		assertThat(katals.getAmount(), closeTo(Quantity.createAmount("0.01666667"), DELTA6));
 
 		// The Stefan–Boltzmann law states that the power emitted per unit area
 		// of the surface of a black body is directly proportional to the fourth
@@ -751,6 +745,7 @@ public class TestQuantity extends BaseTest {
 		Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
 		assertThat(q50.getAmount(), closeTo(Quantity.createAmount("50"), DELTA6));
 
+		// 1 12 oz can = 12 fl.oz.
 		UnitOfMeasure one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
 		one12ozCan.setConversion(new Conversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE)));
 
@@ -758,6 +753,7 @@ public class TestQuantity extends BaseTest {
 		Quantity q36 = q48.convert(one16ozCan);
 		assertThat(q36.getAmount(), closeTo(Quantity.createAmount("36"), DELTA6));
 
+		// 6 12 oz cans = 1 6-pack of 12 oz cans
 		Conversion conversion = new Conversion(six, one12ozCan);
 		UnitOfMeasure sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
 		sixPackCan.setConversion(conversion);
@@ -792,6 +788,24 @@ public class TestQuantity extends BaseTest {
 		Quantity oneCan = new Quantity(one, one12ozCan);
 		q2 = oneCan.convert(sixPackCan);
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("0.1666666666666667"), DELTA6));
+
+		// A beer bottling line is rated at 2000 12 ounce cans/hour (US) at the
+		// filler. The case packer packs four 6-packs of cans into a case.
+		// Assuming no losses, what should be the rating of the case packer in
+		// cases per hour? And, what is the draw-down rate on the holding tank
+		// in gallons/minute?
+		UnitOfMeasure canph = sys.createQuotientUOM(one12ozCan, sys.getHour());
+		UnitOfMeasure caseph = sys.createQuotientUOM(fourPackCase, sys.getHour());
+		UnitOfMeasure gpm = sys.createQuotientUOM(sys.getUOM(Unit.US_GALLON), sys.getMinute());
+		Quantity filler = new Quantity("2000", canph);
+
+		// draw-down
+		Quantity draw = filler.convert(gpm);
+		assertThat(draw.getAmount(), closeTo(Quantity.createAmount("3.125"), DELTA6));
+
+		// case production
+		Quantity packer = filler.convert(caseph);
+		assertThat(packer.getAmount(), closeTo(Quantity.createAmount("83.333333"), DELTA6));
 	}
 
 	@Test

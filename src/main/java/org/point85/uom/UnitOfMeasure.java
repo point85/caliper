@@ -1022,7 +1022,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		private Map<UnitOfMeasure, Integer> terms = new HashMap<UnitOfMeasure, Integer>();
 
 		// the overall scaling factor
-		private BigDecimal mapScalingFactor;
+		private BigDecimal mapScalingFactor = BigDecimal.ONE;
 
 		// list of exponents down a path to the leaf UOM
 		private List<Integer> pathExponents = new ArrayList<>();
@@ -1054,10 +1054,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			// scaling factor to abscissa unit
 			BigDecimal scalingFactor = unit.getScalingFactor();
 
-			if (mapScalingFactor == null) {
-				mapScalingFactor = scalingFactor;
-			}
-
 			// explode the abscissa unit
 			UnitOfMeasure abscissaUnit = unit.getAbscissaUnit();
 
@@ -1082,13 +1078,15 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 				} else {
 					mapScalingFactor = decimalMultiply(mapScalingFactor, factor);
 				}
+			} else {
+				mapScalingFactor = scalingFactor;
 			}
 
 			if (uom1 == null) {
 				if (!abscissaUnit.isTerminal()) {
 					// keep exploding down the conversion path
 					BigDecimal currentMapFactor = mapScalingFactor;
-					mapScalingFactor = null;
+					mapScalingFactor = BigDecimal.ONE;
 					explodeRecursively(abscissaUnit, STARTING_LEVEL);
 					mapScalingFactor = decimalMultiply(mapScalingFactor, currentMapFactor);
 				} else {

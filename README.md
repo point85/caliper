@@ -109,11 +109,11 @@ uom.setBridge(conversion);
 Custom units and conversions can also be created:
 ```java
 // gallons per hour
-QuotientUOM gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", 
+UnitOfMeasure gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", 
 	sys.getUOM(Unit.US_GALLON), sys.getHour());
 
 // 1 16 oz can = 16 fl. oz.
-ScalarUOM one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
+UnitOfMeasure one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
 one16ozCan.setConversion(new Conversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE)));
 
 // 400 cans = 50 US gallons
@@ -121,7 +121,7 @@ Quantity q400 = new Quantity("400", one16ozCan);
 Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
 
 // 1 12 oz can = 12 fl.oz.
-ScalarUOM one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
+UnitOfMeasure one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
 one12ozCan.setConversion(new Conversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE)));
 
 // 48 12 oz cans = 36 16 oz cans
@@ -129,9 +129,30 @@ Quantity q48 = new Quantity("48", one12ozCan);
 Quantity q36 = q48.convert(one16ozCan);
 
 // 6 12 oz cans = 1 6-pack of 12 oz cans
-Conversion conversion = new Conversion(six, one12ozCan);
-ScalarUOM sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
-sixPackCan.setConversion(conversion);	
+UnitOfMeasure sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
+sixPackCan.setConversion(new Conversion(Quantity.createAmount("6"), one12ozCan));	
+
+// 1 case = 4 6-packs
+UnitOfMeasure fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "6-pack case", "4PCase", "four 6-packs");
+fourPackCase.setConversion(new Conversion(Quantity.createAmount("4"), sixPackCan));
+		
+// A beer bottling line is rated at 2000 12 ounce cans/hour (US) at the
+// filler. The case packer packs four 6-packs of cans into a case.
+// Assuming no losses, what should be the rating of the case packer in
+// cases per hour? And, what is the draw-down rate on the holding tank
+// in gallons/minute?
+UnitOfMeasure canph = sys.createQuotientUOM(one12ozCan, sys.getHour());
+UnitOfMeasure caseph = sys.createQuotientUOM(fourPackCase, sys.getHour());
+UnitOfMeasure gpm = sys.createQuotientUOM(sys.getUOM(Unit.US_GALLON), sys.getMinute());
+		
+// filler production rate
+Quantity filler = new Quantity("2000", canph);
+
+// tank draw-down
+Quantity draw = filler.convert(gpm);
+
+// case packer production
+Quantity packer = filler.convert(caseph);
 ```
 
 Quantities can be added, subtracted and converted:
@@ -225,15 +246,9 @@ Quantity f = mkg.multiply(sys.getQuantity(Constant.GRAVITY)).convert(Unit.POUND_
 ```
 Units per volume of solution, C = A x (m/V)
 ```java
-// create the "U" unit of measure
-UnitOfMeasure catUnit = sys.createScalarUOM(UnitType.CATALYTIC_ACTIVITY, "Units of Activity", "U",
-	"The amount of enzyme that catalyzes the conversion of 1 micromole of substrate per minute.");
-Conversion conversion = new Conversion(Quantity.createAmount("1.667E-08"), sys.getUOM(Unit.KATAL));
-catUnit.setConversion(conversion);
-
 // create the "A" unit of measure
-UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "activity", "act", "activity of material",
-	catUnit, sys.getUOM(Prefix.MILLI, Unit.GRAM));
+UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "activity", "act",
+	"activity of material", sys.getUOM(Unit.UNIT), sys.getUOM(Prefix.MILLI, Unit.GRAM));
 
 // calculate concentration
 Quantity activity = new Quantity(BigDecimal.ONE, activityUnit);
