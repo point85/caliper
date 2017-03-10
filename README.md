@@ -1,5 +1,5 @@
 # Caliper
-The Caliper project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
+The Caliper library project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
 
 A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
  
@@ -294,6 +294,40 @@ UnitOfMeasure googl = sys.createScalarUOM(UnitType.FINANCIAL, "Alphabet A", "GOO
 googl.setConversion(new Conversion("838.96", usd));
 Quantity portfolio = new Quantity("100", googl);
 Quantity value = portfolio.convert(euro);
+```
+
+## Medical Examples
+
+```java
+// convert Unit to nanokatal
+UnitOfMeasure u = sys.getUOM(Unit.UNIT);
+UnitOfMeasure katal = sys.getUOM(Unit.KATAL);
+Quantity q1 = new Quantity(BigDecimal.ONE, u);
+Quantity q2 = q1.convert(sys.getUOM(Prefix.NANO, katal));
+
+// test result Equivalent
+UnitOfMeasure eq = sys.getUOM(Unit.EQUIVALENT);
+UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
+UnitOfMeasure mEqPerL = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "milliNormal", "mEq/L",
+	"solute per litre of solvent ", sys.getUOM(Prefix.MILLI, eq), litre);
+Quantity testResult = new Quantity("5.0", mEqPerL);
+
+// blood cell count test results
+UnitOfMeasure k = sys.getUOM(Prefix.KILO, sys.getOne());
+UnitOfMeasure uL = sys.getUOM(Prefix.MICRO, Unit.LITRE);
+UnitOfMeasure kul = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "K/uL", "K/uL",
+	"thousands per microlitre", k, uL);
+testResult = new Quantity("7.0", kul);
+
+UnitOfMeasure fL = sys.getUOM(Prefix.FEMTO, Unit.LITRE);
+testResult = new Quantity("90", fL);
+
+// TSH test result
+UnitOfMeasure uIU = sys.getUOM(Prefix.MICRO, Unit.INTERNATIONAL_UNIT);
+UnitOfMeasure mL = sys.getUOM(Prefix.MILLI, Unit.LITRE);
+UnitOfMeasure uiuPerml = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "uIU/mL", "uIU/mL",
+	"micro IU per millilitre", uIU, mL);
+testResult = new Quantity("2.0", uiuPerml);
 ```
 
 ###Caching
