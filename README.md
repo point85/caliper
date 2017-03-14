@@ -209,21 +209,21 @@ UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, Unit.BYTE);
 
 One's Body Mass Index (BMI) can be calculated as:
 ```java
-Quantity height = new Quantity("2", sys.getUOM(Unit.METRE));
-Quantity mass = new Quantity("100", sys.getUOM(Unit.KILOGRAM));
+Quantity height = new Quantity("2", Unit.METRE);
+Quantity mass = new Quantity("100", Unit.KILOGRAM);
 Quantity bmi = mass.divide(height.multiply(height));
 ```
 
 Einstein's famous E = mc^2:
 ```java
 NamedQuantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
-Quantity m = new Quantity(BigDecimal.ONE, sys.getUOM(Unit.KILOGRAM));
+Quantity m = new Quantity(BigDecimal.ONE, Unit.KILOGRAM);
 Quantity e = m.multiply(c).multiply(c);
 ```
 
 Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.  How many moles of argon are in the cylinder?
 ```java
-Quantity p = new Quantity("18.4", sys.getUOM(Unit.ATMOSPHERE)).convert(Unit.PASCAL);
+Quantity p = new Quantity("18.4", Unit.ATMOSPHERE).convert(Unit.PASCAL);
 Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
 Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
 Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));

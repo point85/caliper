@@ -758,7 +758,7 @@ public class MeasurementSystem {
 					symbols.getString("unit.symbol"), symbols.getString("unit.desc"));
 			uom.setConversion(conversion);
 			break;
-			
+
 		case INTERNATIONAL_UNIT:
 			uom = createScalarUOM(UnitType.SUBSTANCE_AMOUNT, Unit.INTERNATIONAL_UNIT, symbols.getString("iu.name"),
 					symbols.getString("iu.symbol"), symbols.getString("iu.desc"));
@@ -1550,24 +1550,7 @@ public class MeasurementSystem {
 		return uom;
 	}
 
-	/**
-	 * Create a unit of measure that is not a power, product or quotient
-	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param id
-	 *            {@link Unit}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
-	 */
-	public UnitOfMeasure createScalarUOM(UnitType type, Unit id, String name, String symbol, String description)
+	private UnitOfMeasure createScalarUOM(UnitType type, Unit id, String name, String symbol, String description)
 			throws Exception {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);

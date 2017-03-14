@@ -126,8 +126,7 @@ public class TestUnits extends BaseTest {
 
 		sys.unregisterUnit(null);
 
-		UnitOfMeasure u = sys.createScalarUOM(UnitType.UNCLASSIFIED, null, "123", "123", "123");
-		sys.unregisterUnit(u);
+		UnitOfMeasure u = null;
 
 		try {
 			sys.createScalarUOM(UnitType.UNCLASSIFIED, "456", null, "description");
