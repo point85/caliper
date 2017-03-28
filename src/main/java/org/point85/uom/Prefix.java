@@ -72,12 +72,13 @@ public enum Prefix {
 	// SI prefix 10^-24
 	YOCTO("yocto", "y", "1.0E-24"),
 
-	// CS prefix 2^10
-	CSKILO("kilo", "K", "1024"),
-	// CS prefix 2^20
-	CSMEGA("mega", "M", "1048576"),
-	// CS prefix 2^30
-	CSGIGA("giga", "G", "1073741824");
+	// Digital information prefixes for bytes established by the International
+	// Electrotechnical Commission (IEC) in 1998
+	KIBI("kibi", "Ki", "1024"),
+	//
+	MEBI("mebi", "Mi", "1.048576E+06"),
+	//
+	GIBI("gibi", "Gi", "1.073741824E+09");
 
 	// name
 	private String prefixName;

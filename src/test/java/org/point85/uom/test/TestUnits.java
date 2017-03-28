@@ -1414,10 +1414,10 @@ public class TestUnits extends BaseTest {
 		assertTrue(kgm.equals(kg));
 
 		// kilo and megabytes
-		UnitOfMeasure kB = sys.getUOM(Prefix.CSKILO, sys.getUOM(Unit.BYTE));
-		UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, sys.getUOM(Unit.BYTE));
-		Quantity qmB = new Quantity("1", mB);
-		Quantity qkB = qmB.convert(kB);
+		UnitOfMeasure kiB = sys.getUOM(Prefix.KIBI, sys.getUOM(Unit.BYTE));
+		UnitOfMeasure miB = sys.getUOM(Prefix.MEBI, sys.getUOM(Unit.BYTE));
+		Quantity qmB = new Quantity("1", miB);
+		Quantity qkB = qmB.convert(kiB);
 		assertThat(qkB.getAmount(), closeTo(new BigDecimal("1024"), DELTA6));
 	}
 
