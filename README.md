@@ -202,7 +202,7 @@ UnitOfMeasure cL = sys.getUOM(Prefix.CENTI, litre);
 ```
 and, a megabyte (MB = 2^20 bytes) is created by:
 ```java
-UnitOfMeasure mB = sys.getUOM(Prefix.CSMEGA, Unit.BYTE);
+UnitOfMeasure mB = sys.getUOM(Prefix.MEBI, Unit.BYTE);
 ```
 
 ## Physical Unit Equation Examples
