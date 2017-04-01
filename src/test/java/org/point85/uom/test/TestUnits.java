@@ -1344,7 +1344,12 @@ public class TestUnits extends BaseTest {
 
 		u = K.divide(K);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
-
+		
+		// hectare to acre
+		UnitOfMeasure ha = sys.getUOM(Unit.HECTARE);
+		from = new Quantity(BigDecimal.ONE, ha);
+		Quantity to = from.convert(Unit.ACRE);
+		assertThat(to.getAmount(), closeTo(Quantity.createAmount("2.47105"), DELTA5));
 	}
 
 	@Test

@@ -47,7 +47,7 @@ public enum Unit {
 	// length
 	METRE, ANGSTROM, DIOPTER, PARSEC, ASTRONOMICAL_UNIT,
 	// area
-	SQUARE_METRE,
+	SQUARE_METRE, HECTARE,
 	// temperature
 	KELVIN, CELSIUS,
 	// mass

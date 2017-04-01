@@ -478,6 +478,14 @@ public class MeasurementSystem {
 			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.getString("m2.name"),
 					symbols.getString("m2.symbol"), symbols.getString("m2.desc"), getUOM(Unit.METRE), 2);
 			break;
+			
+		case HECTARE:
+			// hectare
+			conversion = new Conversion(Quantity.createAmount("10000"), getUOM(Unit.SQUARE_METRE));
+			uom = createScalarUOM(UnitType.AREA, Unit.HECTARE, symbols.getString("hectare.name"),
+					symbols.getString("hectare.symbol"), symbols.getString("hectare.desc"));
+			uom.setConversion(conversion);
+			break;
 
 		case METRE_PER_SECOND:
 			// velocity
