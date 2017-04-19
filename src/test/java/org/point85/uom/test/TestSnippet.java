@@ -30,7 +30,6 @@ import org.junit.Test;
 import org.point85.uom.Unit;
 
 public class TestSnippet extends BaseTest {
-
 	@AfterClass
 	public static void cleanUp() throws Exception {
 
@@ -43,12 +42,10 @@ public class TestSnippet extends BaseTest {
 		}
 
 		sys.clearCache();
-
 	}
 
 	@Test
 	public void testCase() throws Exception {
-		assertTrue(sys != null);
 
 	}
 }

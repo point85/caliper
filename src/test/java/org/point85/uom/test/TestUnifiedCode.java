@@ -132,7 +132,7 @@ public class TestUnifiedCode extends BaseTest {
 
 		// acceleration of gravity
 		from = sys.getQuantity(Constant.GRAVITY);
-		to = from.convert(sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
+		to = from.convert(sys.getUOM(Unit.FEET_PER_SEC_SQUARED));
 
 		convertedAmount = wsConvert("9.80665", "m/s2", "[ft_i]/s2");
 		assertThat(to.getAmount(), closeTo(convertedAmount, DELTA4));

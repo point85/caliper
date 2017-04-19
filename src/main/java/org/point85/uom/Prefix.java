@@ -123,6 +123,26 @@ public enum Prefix {
 	}
 
 	/**
+	 * Find the prefix with the specified name
+	 * 
+	 * @param name
+	 *            Name of prefix
+	 * @return {@link Prefix}
+	 */
+	public static Prefix fromName(String name) {
+		Prefix prefix = null;
+
+		for (Prefix p : values()) {
+			if (p.getPrefixName().equals(name)) {
+				prefix = p;
+				break;
+			}
+		}
+
+		return prefix;
+	}
+
+	/**
 	 * Create a String representation of this Prefix
 	 */
 	@Override

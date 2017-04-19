@@ -117,4 +117,14 @@ public class TestSystems extends BaseTest {
 		assertTrue(after == (before + 10));
 
 	}
+
+	@Test
+	public void testGetUnits() throws Exception {
+		for (UnitType type : UnitType.values()) {
+			List<UnitOfMeasure> uoms = sys.getUnitsOfMeasure(type);
+			if (!type.equals(UnitType.UNCLASSIFIED)) {
+				assertTrue(uoms.size() > 0);
+			}
+		}
+	}
 }

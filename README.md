@@ -90,10 +90,9 @@ UnitOfMeasure msec = sys.getUOM(Prefix.MILLI, second);
 
 For a second example, a US gallon = 231 cubic inches:
 ```java			
-Conversion	conversion = new Conversion(Quantity.createAmount("231"), getUOM(Unit.CUBIC_INCH));
 UnitOfMeasure uom = createScalarUOM(UnitType.VOLUME, Unit.US_GALLON, symbols.getString("us_gallon.name"),
 	symbols.getString("us_gallon.symbol"), symbols.getString("us_gallon.desc"));
-uom.setConversion(conversion);
+uom.setConversion("231", getUOM(Unit.CUBIC_INCH));
 ```
 
 When creating the foot unit of measure in the unified measurement system, a bridge conversion to metre is defined (1 foot = 0.3048m):
@@ -102,8 +101,7 @@ UnitOfMeasure uom = createScalarUOM(UnitType.LENGTH, Unit.FOOT, symbols.getStrin
 	symbols.getString("foot.symbol"), symbols.getString("foot.desc"));
 
 // bridge to SI
-Conversion conversion = new Conversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
-uom.setBridge(conversion);
+uom.setBridgeConversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
 ```
 
 Custom units and conversions can also be created:
@@ -114,7 +112,7 @@ UnitOfMeasure gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/
 
 // 1 16 oz can = 16 fl. oz.
 UnitOfMeasure one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
-one16ozCan.setConversion(new Conversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE)));
+one16ozCan.setConversion("16", sys.getUOM(Unit.US_FLUID_OUNCE));
 
 // 400 cans = 50 US gallons
 Quantity q400 = new Quantity("400", one16ozCan);
@@ -122,7 +120,7 @@ Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
 
 // 1 12 oz can = 12 fl.oz.
 UnitOfMeasure one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
-one12ozCan.setConversion(new Conversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE)));
+one12ozCan.setConversion("12", sys.getUOM(Unit.US_FLUID_OUNCE));
 
 // 48 12 oz cans = 36 16 oz cans
 Quantity q48 = new Quantity("48", one12ozCan);
@@ -130,11 +128,11 @@ Quantity q36 = q48.convert(one16ozCan);
 
 // 6 12 oz cans = 1 6-pack of 12 oz cans
 UnitOfMeasure sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
-sixPackCan.setConversion(new Conversion(Quantity.createAmount("6"), one12ozCan));	
+sixPackCan.setConversion("6", one12ozCan);	
 
 // 1 case = 4 6-packs
 UnitOfMeasure fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "6-pack case", "4PCase", "four 6-packs");
-fourPackCase.setConversion(new Conversion(Quantity.createAmount("4"), sixPackCan));
+fourPackCase.setConversion("4", sixPackCan);
 		
 // A beer bottling line is rated at 2000 12 ounce cans/hour (US) at the
 // filler. The case packer packs four 6-packs of cans into a case.
@@ -287,11 +285,11 @@ Value of a stock portfolio:
 // dollar is worth 0.94 euros?
 UnitOfMeasure euro = sys.getUOM(Unit.EURO);
 UnitOfMeasure usd = sys.getUOM(Unit.US_DOLLAR);
-usd.setConversion(new Conversion("0.94", euro));
+usd.setConversion("0.94", euro);
 
 UnitOfMeasure googl = sys.createScalarUOM(UnitType.FINANCIAL, "Alphabet A", "GOOGL",
 		"Alphabet (formerly Google) Class A shares");
-googl.setConversion(new Conversion("838.96", usd));
+googl.setConversion("838.96", usd);
 Quantity portfolio = new Quantity("100", googl);
 Quantity value = portfolio.convert(euro);
 ```

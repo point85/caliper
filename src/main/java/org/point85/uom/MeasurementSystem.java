@@ -77,7 +77,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MeasurementSystem {
 	// name of resource bundle with translatable strings for exception messages
-	static final String MESSAGES_BUNDLE_NAME = "Message";
+	private static final String MESSAGES_BUNDLE_NAME = "Message";
 
 	// resource bundle for exception messages
 	private static ResourceBundle messages;
@@ -86,7 +86,7 @@ public class MeasurementSystem {
 	private static MeasurementSystem unifiedSystem;
 
 	// name of resource bundle with translatable strings for UOMs (e.g. time)
-	static final String UNIT_BUNDLE_NAME = "Unit";
+	private static final String UNIT_BUNDLE_NAME = "Unit";
 
 	// unit resource bundle (e.g. time units)
 	private ResourceBundle symbols;
@@ -104,7 +104,7 @@ public class MeasurementSystem {
 		initialize();
 	}
 
-	void initialize() {
+	private void initialize() {
 		// common unit strings
 		symbols = ResourceBundle.getBundle(UNIT_BUNDLE_NAME, Locale.getDefault());
 		messages = ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, Locale.getDefault());
@@ -170,74 +170,97 @@ public class MeasurementSystem {
 		return uom;
 	}
 
+	/**
+	 * Get the quantity defined as a contant value
+	 * 
+	 * @param constant
+	 *            {@link Constant}
+	 * @return {@link Quantity}
+	 * @throws Exception
+	 *             Exception
+	 */
 	public final Quantity getQuantity(Constant constant) throws Exception {
 		Quantity named = null;
 
 		switch (constant) {
 		case LIGHT_VELOCITY:
-			named = new Quantity(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SECOND));
-			named.setId(symbols.getString("light.name"), symbols.getString("light.symbol"),
-					symbols.getString("light.desc"));
+			named = new Quantity(Quantity.createAmount("299792458"), getUOM(Unit.METRE_PER_SEC));
+			named.setName(symbols.getString("light.name"));
+			named.setSymbol(symbols.getString("light.symbol"));
+			named.setDescription(symbols.getString("light.desc"));
 			break;
 
 		case LIGHT_YEAR:
 			Quantity year = new Quantity(BigDecimal.ONE, getUOM(Unit.JULIAN_YEAR));
 			named = getQuantity(Constant.LIGHT_VELOCITY).multiply(year);
-			named.setId(symbols.getString("ly.name"), symbols.getString("ly.symbol"), symbols.getString("ly.desc"));
+			named.setName(symbols.getString("ly.name"));
+			named.setSymbol(symbols.getString("ly.symbol"));
+			named.setDescription(symbols.getString("ly.desc"));
 			break;
 
 		case GRAVITY:
-			named = new Quantity(Quantity.createAmount("9.80665"), getUOM(Unit.METRE_PER_SECOND_SQUARED));
-			named.setId(symbols.getString("gravity.name"), symbols.getString("gravity.symbol"),
-					symbols.getString("gravity.desc"));
+			named = new Quantity(Quantity.createAmount("9.80665"), getUOM(Unit.METRE_PER_SEC_SQUARED));
+			named.setName(symbols.getString("gravity.name"));
+			named.setSymbol(symbols.getString("gravity.symbol"));
+			named.setDescription(symbols.getString("gravity.desc"));
 			break;
 
 		case PLANCK_CONSTANT:
 			UnitOfMeasure js = createProductUOM(getUOM(Unit.JOULE), getSecond());
 			named = new Quantity(Quantity.createAmount("6.62607004081E-34"), js);
-			named.setId(symbols.getString("planck.name"), symbols.getString("planck.symbol"),
-					symbols.getString("planck.desc"));
+			named.setName(symbols.getString("planck.name"));
+			named.setSymbol(symbols.getString("planck.symbol"));
+			named.setDescription(symbols.getString("planck.desc"));
 			break;
 
 		case BOLTZMANN_CONSTANT:
 			UnitOfMeasure jk = createQuotientUOM(getUOM(Unit.JOULE), getUOM(Unit.KELVIN));
 			named = new Quantity(Quantity.createAmount("1.3806485279E-23"), jk);
-			named.setId(symbols.getString("boltzmann.name"), symbols.getString("boltzmann.symbol"),
-					symbols.getString("boltzmann.desc"));
+			named.setName(symbols.getString("boltzmann.name"));
+			named.setSymbol(symbols.getString("boltzmann.symbol"));
+			named.setDescription(symbols.getString("boltzmann.desc"));
 			break;
 
 		case AVAGADRO_CONSTANT:
 			// NA
 			named = new Quantity(Quantity.createAmount("6.02214085774E+23"), getOne());
-			named.setId(symbols.getString("avo.name"), symbols.getString("avo.symbol"), symbols.getString("avo.desc"));
+			named.setName(symbols.getString("avo.name"));
+			named.setSymbol(symbols.getString("avo.symbol"));
+			named.setDescription(symbols.getString("avo.desc"));
 			break;
 
 		case GAS_CONSTANT:
 			// R
 			named = getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVAGADRO_CONSTANT));
-			named.setId(symbols.getString("gas.name"), symbols.getString("gas.symbol"), symbols.getString("gas.desc"));
+			named.setName(symbols.getString("gas.name"));
+			named.setSymbol(symbols.getString("gas.symbol"));
+			named.setDescription(symbols.getString("gas.desc"));
 			break;
 
 		case ELEMENTARY_CHARGE:
 			// e
 			named = new Quantity(Quantity.createAmount("1.602176620898E-19"), getUOM(Unit.COULOMB));
-			named.setId(symbols.getString("e.name"), symbols.getString("e.symbol"), symbols.getString("e.desc"));
+			named.setName(symbols.getString("e.name"));
+			named.setSymbol(symbols.getString("e.symbol"));
+			named.setDescription(symbols.getString("e.desc"));
 			break;
 
 		case FARADAY_CONSTANT:
 			// F = e.NA
 			Quantity qe = getQuantity(Constant.ELEMENTARY_CHARGE);
 			named = qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT));
-			named.setId(symbols.getString("faraday.name"), symbols.getString("faraday.symbol"),
-					symbols.getString("faraday.desc"));
+			named.setName(symbols.getString("faraday.name"));
+			named.setSymbol(symbols.getString("faraday.symbol"));
+			named.setDescription(symbols.getString("faraday.desc"));
 			break;
 
 		case ELECTRIC_PERMITTIVITY:
 			// epsilon0 = 1/(mu0*c^2)
 			Quantity vc = getQuantity(Constant.LIGHT_VELOCITY);
 			named = getQuantity(Constant.MAGNETIC_PERMEABILITY).multiply(vc).multiply(vc).invert();
-			named.setId(symbols.getString("eps0.name"), symbols.getString("eps0.symbol"),
-					symbols.getString("eps0.desc"));
+			named.setName(symbols.getString("eps0.name"));
+			named.setSymbol(symbols.getString("eps0.symbol"));
+			named.setDescription(symbols.getString("eps0.desc"));
 			break;
 
 		case MAGNETIC_PERMEABILITY:
@@ -246,35 +269,44 @@ public class MeasurementSystem {
 			BigDecimal fourPi = new BigDecimal(4.0 * Math.PI).multiply(new BigDecimal("1.0E-07"),
 					UnitOfMeasure.MATH_CONTEXT);
 			named = new Quantity(fourPi, hm);
-			named.setId(symbols.getString("mu0.name"), symbols.getString("mu0.symbol"), symbols.getString("mu0.desc"));
+			named.setName(symbols.getString("mu0.name"));
+			named.setSymbol(symbols.getString("mu0.symbol"));
+			named.setDescription(symbols.getString("mu0.desc"));
 			break;
 
 		case ELECTRON_MASS:
 			// me
 			named = new Quantity(Quantity.createAmount("9.1093835611E-28"), getUOM(Unit.GRAM));
-			named.setId(symbols.getString("me.name"), symbols.getString("me.symbol"), symbols.getString("me.desc"));
+			named.setName(symbols.getString("me.name"));
+			named.setSymbol(symbols.getString("me.symbol"));
+			named.setDescription(symbols.getString("me.desc"));
 			break;
 
 		case PROTON_MASS:
 			// mp
 			named = new Quantity(Quantity.createAmount("1.67262189821E-24"), getUOM(Unit.GRAM));
-			named.setId(symbols.getString("mp.name"), symbols.getString("mp.symbol"), symbols.getString("mp.desc"));
+			named.setName(symbols.getString("mp.name"));
+			named.setSymbol(symbols.getString("mp.symbol"));
+			named.setDescription(symbols.getString("mp.desc"));
 			break;
 
 		case STEFAN_BOLTZMANN:
 			UnitOfMeasure k4 = createPowerUOM(getUOM(Unit.KELVIN), 4);
-			UnitOfMeasure sb = createQuotientUOM(getUOM(Unit.WATTS_PER_SQUARE_METRE), k4);
+			UnitOfMeasure sb = createQuotientUOM(getUOM(Unit.WATTS_PER_SQ_METRE), k4);
 			named = new Quantity(Quantity.createAmount("5.67E-08"), sb);
-			named.setId(symbols.getString("sb.name"), symbols.getString("sb.symbol"), symbols.getString("sb.desc"));
+			named.setName(symbols.getString("sb.name"));
+			named.setSymbol(symbols.getString("sb.symbol"));
+			named.setDescription(symbols.getString("sb.desc"));
 			break;
 
 		case HUBBLE_CONSTANT:
-			UnitOfMeasure kps = getUOM(Prefix.KILO, getUOM(Unit.METRE_PER_SECOND));
+			UnitOfMeasure kps = getUOM(Prefix.KILO, getUOM(Unit.METRE_PER_SEC));
 			UnitOfMeasure mpc = getUOM(Prefix.MEGA, getUOM(Unit.PARSEC));
 			UnitOfMeasure hubble = createQuotientUOM(kps, mpc);
 			named = new Quantity(Quantity.createAmount("71.9"), hubble);
-			named.setId(symbols.getString("hubble.name"), symbols.getString("hubble.symbol"),
-					symbols.getString("hubble.desc"));
+			named.setName(symbols.getString("hubble.name"));
+			named.setSymbol(symbols.getString("hubble.symbol"));
+			named.setDescription(symbols.getString("hubble.desc"));
 			break;
 
 		default:
@@ -291,10 +323,9 @@ public class MeasurementSystem {
 		// ampere, candela and mole.
 
 		UnitOfMeasure uom = null;
-		Conversion conversion = null;
-		BigDecimal factor = null;
 
 		switch (unit) {
+
 		case ONE:
 			// unity
 			uom = createScalarUOM(UnitType.UNITY, Unit.ONE, symbols.getString("one.name"),
@@ -309,42 +340,37 @@ public class MeasurementSystem {
 
 		case MINUTE:
 			// minute
-			conversion = new Conversion(Quantity.createAmount("60"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.MINUTE, symbols.getString("min.name"),
 					symbols.getString("min.symbol"), symbols.getString("min.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("60"), getUOM(Unit.SECOND));
 			break;
 
 		case HOUR:
 			// hour
-			conversion = new Conversion(Quantity.createAmount("3600"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.HOUR, symbols.getString("hr.name"),
 					symbols.getString("hr.symbol"), symbols.getString("hr.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("3600"), getUOM(Unit.SECOND));
 			break;
 
 		case DAY:
 			// day
-			conversion = new Conversion(Quantity.createAmount("86400"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.DAY, symbols.getString("day.name"),
 					symbols.getString("day.symbol"), symbols.getString("day.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("86400"), getUOM(Unit.SECOND));
 			break;
 
 		case WEEK:
 			// week
-			conversion = new Conversion(Quantity.createAmount("604800"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.WEEK, symbols.getString("week.name"),
 					symbols.getString("week.symbol"), symbols.getString("week.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("604800"), getUOM(Unit.SECOND));
 			break;
 
 		case JULIAN_YEAR:
 			// Julian year
-			conversion = new Conversion(Quantity.createAmount("3.1557600E+07"), getUOM(Unit.SECOND));
 			uom = createScalarUOM(UnitType.TIME, Unit.JULIAN_YEAR, symbols.getString("jyear.name"),
 					symbols.getString("jyear.symbol"), symbols.getString("jyear.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("3.1557600E+07"), getUOM(Unit.SECOND));
 
 			break;
 
@@ -374,36 +400,30 @@ public class MeasurementSystem {
 
 		case RADIAN:
 			// plane angle radian (rad)
-			conversion = new Conversion(getOne());
 			uom = createScalarUOM(UnitType.PLANE_ANGLE, Unit.RADIAN, symbols.getString("radian.name"),
 					symbols.getString("radian.symbol"), symbols.getString("radian.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(getOne());
 			break;
 
 		case STERADIAN:
 			// solid angle steradian (sr)
-			conversion = new Conversion(getOne());
 			uom = createScalarUOM(UnitType.SOLID_ANGLE, Unit.STERADIAN, symbols.getString("steradian.name"),
 					symbols.getString("steradian.symbol"), symbols.getString("steradian.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(getOne());
 			break;
 
 		case DEGREE:
 			// degree of arc
-			factor = Quantity.divideAmounts(String.valueOf(Math.PI), "180");
-			conversion = new Conversion(factor, getUOM(Unit.RADIAN));
 			uom = createScalarUOM(UnitType.PLANE_ANGLE, Unit.DEGREE, symbols.getString("degree.name"),
 					symbols.getString("degree.symbol"), symbols.getString("degree.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts(String.valueOf(Math.PI), "180"), getUOM(Unit.RADIAN));
 			break;
 
 		case ARC_SECOND:
 			// degree of arc
-			factor = Quantity.divideAmounts(String.valueOf(Math.PI), "648000");
-			conversion = new Conversion(factor, getUOM(Unit.RADIAN));
 			uom = createScalarUOM(UnitType.PLANE_ANGLE, Unit.ARC_SECOND, symbols.getString("arcsec.name"),
 					symbols.getString("arcsec.symbol"), symbols.getString("arcsec.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts(String.valueOf(Math.PI), "648000"), getUOM(Unit.RADIAN));
 			break;
 
 		case METRE:
@@ -427,10 +447,9 @@ public class MeasurementSystem {
 
 		case TONNE:
 			// mass
-			conversion = new Conversion(Prefix.KILO.getScalingFactor(), getUOM(Unit.KILOGRAM));
 			uom = createScalarUOM(UnitType.MASS, Unit.TONNE, symbols.getString("tonne.name"),
 					symbols.getString("tonne.symbol"), symbols.getString("tonne.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Prefix.KILO.getScalingFactor(), getUOM(Unit.KILOGRAM));
 			break;
 
 		case KELVIN:
@@ -457,20 +476,17 @@ public class MeasurementSystem {
 					symbols.getString("ph.symbol"), symbols.getString("ph.desc"));
 			break;
 
-		case GRAM:
-			// gram
-			conversion = new Conversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.KILOGRAM));
+		case GRAM: // gram
 			uom = createScalarUOM(UnitType.MASS, Unit.GRAM, symbols.getString("gram.name"),
 					symbols.getString("gram.symbol"), symbols.getString("gram.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.KILOGRAM));
 			break;
 
 		case CARAT:
 			// carat
-			conversion = new Conversion(Quantity.createAmount("0.2"), getUOM(Unit.GRAM));
 			uom = createScalarUOM(UnitType.MASS, Unit.CARAT, symbols.getString("carat.name"),
 					symbols.getString("carat.symbol"), symbols.getString("carat.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.2"), getUOM(Unit.GRAM));
 			break;
 
 		case SQUARE_METRE:
@@ -478,26 +494,25 @@ public class MeasurementSystem {
 			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.getString("m2.name"),
 					symbols.getString("m2.symbol"), symbols.getString("m2.desc"), getUOM(Unit.METRE), 2);
 			break;
-			
+
 		case HECTARE:
 			// hectare
-			conversion = new Conversion(Quantity.createAmount("10000"), getUOM(Unit.SQUARE_METRE));
 			uom = createScalarUOM(UnitType.AREA, Unit.HECTARE, symbols.getString("hectare.name"),
 					symbols.getString("hectare.symbol"), symbols.getString("hectare.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("10000"), getUOM(Unit.SQUARE_METRE));
 			break;
 
-		case METRE_PER_SECOND:
+		case METRE_PER_SEC:
 			// velocity
-			uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, symbols.getString("mps.name"),
+			uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SEC, symbols.getString("mps.name"),
 					symbols.getString("mps.symbol"), symbols.getString("mps.desc"), getUOM(Unit.METRE), getSecond());
 			break;
 
-		case METRE_PER_SECOND_SQUARED:
+		case METRE_PER_SEC_SQUARED:
 			// acceleration
-			uom = createQuotientUOM(UnitType.ACCELERATION, Unit.METRE_PER_SECOND_SQUARED,
-					symbols.getString("mps2.name"), symbols.getString("mps2.symbol"), symbols.getString("mps2.desc"),
-					getUOM(Unit.METRE), getUOM(Unit.SQUARE_SECOND));
+			uom = createQuotientUOM(UnitType.ACCELERATION, Unit.METRE_PER_SEC_SQUARED, symbols.getString("mps2.name"),
+					symbols.getString("mps2.symbol"), symbols.getString("mps2.desc"), getUOM(Unit.METRE),
+					getUOM(Unit.SQUARE_SECOND));
 			break;
 
 		case CUBIC_METRE:
@@ -508,29 +523,28 @@ public class MeasurementSystem {
 
 		case LITRE:
 			// litre
-			conversion = new Conversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.CUBIC_METRE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.LITRE, symbols.getString("litre.name"),
 					symbols.getString("litre.symbol"), symbols.getString("litre.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.CUBIC_METRE));
 			break;
 
-		case CUBIC_METRE_PER_SECOND:
+		case CUBIC_METRE_PER_SEC:
 			// flow (volume)
-			uom = createQuotientUOM(UnitType.VOLUMETRIC_FLOW, Unit.CUBIC_METRE_PER_SECOND,
+			uom = createQuotientUOM(UnitType.VOLUMETRIC_FLOW, Unit.CUBIC_METRE_PER_SEC,
 					symbols.getString("m3PerSec.name"), symbols.getString("m3PerSec.symbol"),
 					symbols.getString("m3PerSec.desc"), getUOM(Unit.CUBIC_METRE), getSecond());
 			break;
 
-		case KILOGRAM_PER_SECOND:
+		case KILOGRAM_PER_SEC:
 			// flow (mass)
-			uom = createQuotientUOM(UnitType.MASS_FLOW, Unit.KILOGRAM_PER_SECOND, symbols.getString("kgPerSec.name"),
+			uom = createQuotientUOM(UnitType.MASS_FLOW, Unit.KILOGRAM_PER_SEC, symbols.getString("kgPerSec.name"),
 					symbols.getString("kgPerSec.symbol"), symbols.getString("kgPerSec.desc"), getUOM(Unit.KILOGRAM),
 					getSecond());
 			break;
 
-		case KILOGRAM_PER_CUBIC_METRE:
+		case KILOGRAM_PER_CU_METRE:
 			// kg/m^3
-			uom = createQuotientUOM(UnitType.DENSITY, Unit.KILOGRAM_PER_CUBIC_METRE, symbols.getString("kg_m3.name"),
+			uom = createQuotientUOM(UnitType.DENSITY, Unit.KILOGRAM_PER_CU_METRE, symbols.getString("kg_m3.name"),
 					symbols.getString("kg_m3.symbol"), symbols.getString("kg_m3.desc"), getUOM(Unit.KILOGRAM),
 					getUOM(Unit.CUBIC_METRE));
 			break;
@@ -542,26 +556,25 @@ public class MeasurementSystem {
 					getSecond());
 			break;
 
-		case SQUARE_METRE_PER_SECOND:
+		case SQUARE_METRE_PER_SEC:
 			// kinematic viscosity
-			uom = createQuotientUOM(UnitType.KINEMATIC_VISCOSITY, Unit.SQUARE_METRE_PER_SECOND,
+			uom = createQuotientUOM(UnitType.KINEMATIC_VISCOSITY, Unit.SQUARE_METRE_PER_SEC,
 					symbols.getString("m2PerSec.name"), symbols.getString("m2PerSec.symbol"),
 					symbols.getString("m2PerSec.desc"), getUOM(Unit.SQUARE_METRE), getSecond());
 			break;
 
 		case CALORIE:
 			// thermodynamic calorie
-			conversion = new Conversion(Quantity.createAmount("4.184"), getUOM(Unit.JOULE));
 			uom = createScalarUOM(UnitType.ENERGY, Unit.CALORIE, symbols.getString("calorie.name"),
 					symbols.getString("calorie.symbol"), symbols.getString("calorie.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("4.184"), getUOM(Unit.JOULE));
 			break;
 
 		case NEWTON:
 			// force F = m·A (newton)
 			uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, symbols.getString("newton.name"),
 					symbols.getString("newton.symbol"), symbols.getString("newton.desc"), getUOM(Unit.KILOGRAM),
-					getUOM(Unit.METRE_PER_SECOND_SQUARED));
+					getUOM(Unit.METRE_PER_SEC_SQUARED));
 			break;
 
 		case NEWTON_METRE:
@@ -606,12 +619,11 @@ public class MeasurementSystem {
 
 		case RAD_PER_SEC:
 			// angular frequency
-			BigDecimal twoPi = new BigDecimal("2").multiply(new BigDecimal(Math.PI), UnitOfMeasure.MATH_CONTEXT);
-			conversion = new Conversion(BigDecimal.ONE.divide(twoPi, UnitOfMeasure.MATH_CONTEXT), getUOM(Unit.HERTZ));
 			uom = createQuotientUOM(UnitType.FREQUENCY, Unit.RAD_PER_SEC, symbols.getString("radpers.name"),
 					symbols.getString("radpers.symbol"), symbols.getString("radpers.desc"), getUOM(Unit.RADIAN),
 					getSecond());
-			uom.setConversion(conversion);
+			BigDecimal twoPi = new BigDecimal("2").multiply(new BigDecimal(Math.PI), UnitOfMeasure.MATH_CONTEXT);
+			uom.setConversion(BigDecimal.ONE.divide(twoPi, UnitOfMeasure.MATH_CONTEXT), getUOM(Unit.HERTZ));
 			break;
 
 		case PASCAL:
@@ -623,18 +635,16 @@ public class MeasurementSystem {
 
 		case ATMOSPHERE:
 			// pressure
-			conversion = new Conversion(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.ATMOSPHERE, symbols.getString("atm.name"),
 					symbols.getString("atm.symbol"), symbols.getString("atm.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("101325"), getUOM(Unit.PASCAL));
 			break;
 
 		case BAR:
 			// pressure
-			conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.PASCAL), Quantity.createAmount("1.0E+05"));
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.BAR, symbols.getString("bar.name"),
 					symbols.getString("bar.symbol"), symbols.getString("bar.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(BigDecimal.ONE, getUOM(Unit.PASCAL), Quantity.createAmount("1.0E+05"));
 			break;
 
 		case COULOMB:
@@ -708,10 +718,9 @@ public class MeasurementSystem {
 
 		case CELSIUS:
 			// °C = °K - 273.15
-			conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.KELVIN), Quantity.createAmount("273.15"));
 			uom = createScalarUOM(UnitType.TEMPERATURE, Unit.CELSIUS, symbols.getString("celsius.name"),
 					symbols.getString("celsius.symbol"), symbols.getString("celsius.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(BigDecimal.ONE, getUOM(Unit.KELVIN), Quantity.createAmount("273.15"));
 			break;
 
 		case LUMEN:
@@ -749,7 +758,7 @@ public class MeasurementSystem {
 			break;
 
 		case SIEVERTS_PER_HOUR:
-			uom = createQuotientUOM(UnitType.UNCLASSIFIED, Unit.SIEVERTS_PER_HOUR, symbols.getString("sph.name"),
+			uom = createQuotientUOM(UnitType.RADIATION_DOSE_RATE, Unit.SIEVERTS_PER_HOUR, symbols.getString("sph.name"),
 					symbols.getString("sph.symbol"), symbols.getString("sph.desc"), getUOM(Unit.SIEVERT), getHour());
 			break;
 
@@ -761,10 +770,9 @@ public class MeasurementSystem {
 
 		case UNIT:
 			// Unit (U)
-			conversion = new Conversion(Quantity.divideAmounts("1.0E-06", "60"), getUOM(Unit.KATAL));
 			uom = createScalarUOM(UnitType.CATALYTIC_ACTIVITY, Unit.UNIT, symbols.getString("unit.name"),
 					symbols.getString("unit.symbol"), symbols.getString("unit.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1.0E-06", "60"), getUOM(Unit.KATAL));
 			break;
 
 		case INTERNATIONAL_UNIT:
@@ -774,45 +782,40 @@ public class MeasurementSystem {
 
 		case ANGSTROM:
 			// length
-			UnitOfMeasure nm = this.getUOM(Prefix.NANO, getUOM(Unit.METRE));
-			conversion = new Conversion(Quantity.createAmount("0.1"), nm);
 			uom = createScalarUOM(UnitType.LENGTH, Unit.ANGSTROM, symbols.getString("angstrom.name"),
 					symbols.getString("angstrom.symbol"), symbols.getString("angstrom.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.1"), getUOM(Prefix.NANO, getUOM(Unit.METRE)));
 			break;
 
 		case BIT:
 			// computer bit
-			uom = createScalarUOM(UnitType.CS, Unit.BIT, symbols.getString("bit.name"), symbols.getString("bit.symbol"),
-					symbols.getString("bit.desc"));
+			uom = createScalarUOM(UnitType.COMPUTER_SCIENCE, Unit.BIT, symbols.getString("bit.name"),
+					symbols.getString("bit.symbol"), symbols.getString("bit.desc"));
 			break;
 
 		case BYTE:
 			// computer byte
-			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BIT));
-			uom = createScalarUOM(UnitType.CS, Unit.BYTE, symbols.getString("byte.name"),
+			uom = createScalarUOM(UnitType.COMPUTER_SCIENCE, Unit.BYTE, symbols.getString("byte.name"),
 					symbols.getString("byte.symbol"), symbols.getString("byte.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("8"), getUOM(Unit.BIT));
 			break;
 
-		case WATTS_PER_SQUARE_METRE:
-			uom = createQuotientUOM(UnitType.IRRADIANCE, Unit.WATTS_PER_SQUARE_METRE, symbols.getString("wsm.name"),
+		case WATTS_PER_SQ_METRE:
+			uom = createQuotientUOM(UnitType.IRRADIANCE, Unit.WATTS_PER_SQ_METRE, symbols.getString("wsm.name"),
 					symbols.getString("wsm.symbol"), symbols.getString("wsm.desc"), getUOM(Unit.WATT),
 					getUOM(Unit.SQUARE_METRE));
 			break;
 
 		case PARSEC:
-			conversion = new Conversion("3.08567758149137E+16", getUOM(Unit.METRE));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.PARSEC, symbols.getString("parsec.name"),
 					symbols.getString("parsec.symbol"), symbols.getString("parsec.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("3.08567758149137E+16"), getUOM(Unit.METRE));
 			break;
 
 		case ASTRONOMICAL_UNIT:
-			conversion = new Conversion("1.49597870700E+11", getUOM(Unit.METRE));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.ASTRONOMICAL_UNIT, symbols.getString("au.name"),
 					symbols.getString("au.symbol"), symbols.getString("au.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("1.49597870700E+11"), getUOM(Unit.METRE));
 			break;
 
 		default:
@@ -824,9 +827,6 @@ public class MeasurementSystem {
 
 	private UnitOfMeasure createCustomaryUnit(Unit unit) throws Exception {
 		UnitOfMeasure uom = null;
-		Conversion conversion = null;
-		BigDecimal factor = null;
-		BigDecimal amount = null;
 
 		switch (unit) {
 
@@ -836,18 +836,14 @@ public class MeasurementSystem {
 					symbols.getString("rankine.symbol"), symbols.getString("rankine.desc"));
 
 			// create bridge to SI
-			factor = Quantity.divideAmounts("5", "9");
-			conversion = new Conversion(factor, getUOM(Unit.KELVIN));
-			uom.setBridge(conversion);
-
+			uom.setBridgeConversion(Quantity.divideAmounts("5", "9"), getUOM(Unit.KELVIN));
 			break;
 
 		case FAHRENHEIT:
 			// Fahrenheit
-			conversion = new Conversion(BigDecimal.ONE, getUOM(Unit.RANKINE), Quantity.createAmount("459.67"));
 			uom = createScalarUOM(UnitType.TEMPERATURE, Unit.FAHRENHEIT, symbols.getString("fahrenheit.name"),
 					symbols.getString("fahrenheit.symbol"), symbols.getString("fahrenheit.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(BigDecimal.ONE, getUOM(Unit.RANKINE), Quantity.createAmount("459.67"));
 			break;
 
 		case POUND_MASS:
@@ -856,33 +852,29 @@ public class MeasurementSystem {
 					symbols.getString("lbm.symbol"), symbols.getString("lbm.desc"));
 
 			// create bridge to SI
-			conversion = new Conversion(Quantity.createAmount("0.45359237"), getUOM(Unit.KILOGRAM));
-			uom.setBridge(conversion);
+			uom.setBridgeConversion(Quantity.createAmount("0.45359237"), getUOM(Unit.KILOGRAM));
 			break;
 
 		case OUNCE:
 			// ounce
-			conversion = new Conversion(Quantity.createAmount("0.0625"), getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.OUNCE, symbols.getString("ounce.name"),
 					symbols.getString("ounce.symbol"), symbols.getString("ounce.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.0625"), getUOM(Unit.POUND_MASS));
 			break;
 
 		case TROY_OUNCE:
 			// troy ounce
-			conversion = new Conversion(Quantity.createAmount("31.1034768"), getUOM(Unit.GRAM));
 			uom = createScalarUOM(UnitType.MASS, Unit.TROY_OUNCE, symbols.getString("troy_oz.name"),
 					symbols.getString("troy_oz.symbol"), symbols.getString("troy_oz.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("31.1034768"), getUOM(Unit.GRAM));
 			break;
 
 		case SLUG:
 			// slug
-			Quantity g = getQuantity(Constant.GRAVITY).convert(getUOM(Unit.FEET_PER_SECOND_SQUARED));
-			conversion = new Conversion(g.getAmount(), getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.SLUG, symbols.getString("slug.name"),
 					symbols.getString("slug.symbol"), symbols.getString("slug.desc"));
-			uom.setConversion(conversion);
+			Quantity g = getQuantity(Constant.GRAVITY).convert(getUOM(Unit.FEET_PER_SEC_SQUARED));
+			uom.setConversion(g.getAmount(), getUOM(Unit.POUND_MASS));
 			break;
 
 		case FOOT:
@@ -891,65 +883,56 @@ public class MeasurementSystem {
 					symbols.getString("foot.symbol"), symbols.getString("foot.desc"));
 
 			// bridge to SI
-			conversion = new Conversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
-			uom.setBridge(conversion);
+			uom.setBridgeConversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
 			break;
 
 		case INCH:
 			// inch
-			factor = Quantity.divideAmounts("1", "12");
-			conversion = new Conversion(factor, getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.INCH, symbols.getString("inch.name"),
 					symbols.getString("inch.symbol"), symbols.getString("inch.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1", "12"), getUOM(Unit.FOOT));
 			break;
 
 		case MIL:
 			// inch
-			conversion = new Conversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.INCH));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.MIL, symbols.getString("mil.name"),
 					symbols.getString("mil.symbol"), symbols.getString("mil.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Prefix.MILLI.getScalingFactor(), getUOM(Unit.INCH));
 			break;
 
 		case POINT:
 			// point
-			conversion = new Conversion(Quantity.divideAmounts("1", "72"), getUOM(Unit.INCH));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.POINT, symbols.getString("point.name"),
 					symbols.getString("point.symbol"), symbols.getString("point.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1", "72"), getUOM(Unit.INCH));
 			break;
 
 		case YARD:
 			// yard
-			conversion = new Conversion(Quantity.createAmount("3"), getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.YARD, symbols.getString("yard.name"),
 					symbols.getString("yard.symbol"), symbols.getString("yard.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("3"), getUOM(Unit.FOOT));
 			break;
 
 		case MILE:
 			// mile
-			conversion = new Conversion(Quantity.createAmount("5280"), getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.MILE, symbols.getString("mile.name"),
 					symbols.getString("mile.symbol"), symbols.getString("mile.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("5280"), getUOM(Unit.FOOT));
 			break;
 
 		case NAUTICAL_MILE:
 			// nautical mile
-			conversion = new Conversion(Quantity.createAmount("6080"), getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.NAUTICAL_MILE, symbols.getString("NM.name"),
 					symbols.getString("NM.symbol"), symbols.getString("NM.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("6080"), getUOM(Unit.FOOT));
 			break;
 
 		case FATHOM:
 			// fathom
-			conversion = new Conversion(Quantity.createAmount("6"), getUOM(Unit.FOOT));
 			uom = createScalarUOM(UnitType.LENGTH, Unit.FATHOM, symbols.getString("fth.name"),
 					symbols.getString("fth.symbol"), symbols.getString("fth.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("6"), getUOM(Unit.FOOT));
 
 			break;
 
@@ -962,19 +945,16 @@ public class MeasurementSystem {
 
 		case IN_HG:
 			// inches of Mercury
-			conversion = new Conversion(Quantity.createAmount("0.4911531047"), getUOM(Unit.PSI));
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.IN_HG, symbols.getString("inhg.name"),
 					symbols.getString("inhg.symbol"), symbols.getString("inhg.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.4911531047"), getUOM(Unit.PSI));
 			break;
 
 		case SQUARE_INCH:
 			// square inch
-			factor = Quantity.divideAmounts("1", "144");
-			conversion = new Conversion(factor, getUOM(Unit.SQUARE_FOOT));
 			uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_INCH, symbols.getString("in2.name"),
 					symbols.getString("in2.symbol"), symbols.getString("in2.desc"), getUOM(Unit.INCH), 2);
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1", "144"), getUOM(Unit.SQUARE_FOOT));
 			break;
 
 		case SQUARE_FOOT:
@@ -991,19 +971,16 @@ public class MeasurementSystem {
 
 		case ACRE:
 			// acre
-			conversion = new Conversion(Quantity.createAmount("43560"), getUOM(Unit.SQUARE_FOOT));
 			uom = createScalarUOM(UnitType.AREA, Unit.ACRE, symbols.getString("acre.name"),
 					symbols.getString("acre.symbol"), symbols.getString("acre.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("43560"), getUOM(Unit.SQUARE_FOOT));
 			break;
 
 		case CUBIC_INCH:
 			// cubic inch
-			factor = Quantity.divideAmounts("1", "1728");
-			conversion = new Conversion(factor, getUOM(Unit.CUBIC_FOOT));
 			uom = createPowerUOM(UnitType.VOLUME, Unit.CUBIC_INCH, symbols.getString("in3.name"),
 					symbols.getString("in3.symbol"), symbols.getString("in3.desc"), getUOM(Unit.INCH), 3);
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1", "1728"), getUOM(Unit.CUBIC_FOOT));
 			break;
 
 		case CUBIC_FOOT:
@@ -1012,12 +989,18 @@ public class MeasurementSystem {
 					symbols.getString("ft3.symbol"), symbols.getString("ft3.desc"), getUOM(Unit.FOOT), 3);
 			break;
 
+		case CUBIC_FEET_PER_SEC:
+			// flow (volume)
+			uom = createQuotientUOM(UnitType.VOLUMETRIC_FLOW, Unit.CUBIC_FEET_PER_SEC,
+					symbols.getString("ft3PerSec.name"), symbols.getString("ft3PerSec.symbol"),
+					symbols.getString("ft3PerSec.desc"), getUOM(Unit.CUBIC_FOOT), getSecond());
+			break;
+
 		case CORD:
 			// cord
-			conversion = new Conversion(Quantity.createAmount("128"), getUOM(Unit.CUBIC_FOOT));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.CORD, symbols.getString("cord.name"),
 					symbols.getString("cord.symbol"), symbols.getString("cord.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("128"), getUOM(Unit.CUBIC_FOOT));
 			break;
 
 		case CUBIC_YARD:
@@ -1026,42 +1009,39 @@ public class MeasurementSystem {
 					symbols.getString("yd3.symbol"), symbols.getString("yd3.desc"), getUOM(Unit.YARD), 3);
 			break;
 
-		case FEET_PER_SECOND:
+		case FEET_PER_SEC:
 			// feet/sec
-			uom = createQuotientUOM(UnitType.VELOCITY, Unit.FEET_PER_SECOND, symbols.getString("fps.name"),
+			uom = createQuotientUOM(UnitType.VELOCITY, Unit.FEET_PER_SEC, symbols.getString("fps.name"),
 					symbols.getString("fps.symbol"), symbols.getString("fps.desc"), getUOM(Unit.FOOT), getSecond());
 			break;
 
 		case KNOT:
 			// knot
-			factor = Quantity.divideAmounts("6080", "3600");
-			conversion = new Conversion(factor, getUOM(Unit.FEET_PER_SECOND));
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.KNOT, symbols.getString("knot.name"),
 					symbols.getString("knot.symbol"), symbols.getString("knot.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("6080", "3600"), getUOM(Unit.FEET_PER_SEC));
 			break;
 
-		case FEET_PER_SECOND_SQUARED:
+		case FEET_PER_SEC_SQUARED:
 			// acceleration
-			uom = createQuotientUOM(UnitType.ACCELERATION, Unit.FEET_PER_SECOND_SQUARED,
-					symbols.getString("ftps2.name"), symbols.getString("ftps2.symbol"), symbols.getString("ftps2.desc"),
-					getUOM(Unit.FOOT), getUOM(Unit.SQUARE_SECOND));
+			uom = createQuotientUOM(UnitType.ACCELERATION, Unit.FEET_PER_SEC_SQUARED, symbols.getString("ftps2.name"),
+					symbols.getString("ftps2.symbol"), symbols.getString("ftps2.desc"), getUOM(Unit.FOOT),
+					getUOM(Unit.SQUARE_SECOND));
 			break;
 
 		case HP:
 			// HP (mechanical)
 			uom = createProductUOM(UnitType.POWER, Unit.HP, symbols.getString("hp.name"),
 					symbols.getString("hp.symbol"), symbols.getString("hp.desc"), getUOM(Unit.POUND_FORCE),
-					getUOM(Unit.FEET_PER_SECOND));
+					getUOM(Unit.FEET_PER_SEC));
 			uom.setScalingFactor(Quantity.createAmount("550"));
 			break;
 
 		case BTU:
 			// BTU = 1055.056 Joules (778.169 ft-lbf)
-			conversion = new Conversion(Quantity.createAmount("778.1692622659652"), getUOM(Unit.FOOT_POUND_FORCE));
 			uom = createScalarUOM(UnitType.ENERGY, Unit.BTU, symbols.getString("btu.name"),
 					symbols.getString("btu.symbol"), symbols.getString("btu.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("778.1692622659652"), getUOM(Unit.FOOT_POUND_FORCE));
 			break;
 
 		case FOOT_POUND_FORCE:
@@ -1075,29 +1055,25 @@ public class MeasurementSystem {
 			// force F = m·A (lbf)
 			uom = createProductUOM(UnitType.FORCE, Unit.POUND_FORCE, symbols.getString("lbf.name"),
 					symbols.getString("lbf.symbol"), symbols.getString("lbf.desc"), getUOM(Unit.POUND_MASS),
-					getUOM(Unit.FEET_PER_SECOND_SQUARED));
+					getUOM(Unit.FEET_PER_SEC_SQUARED));
 
 			// factor is acceleration of gravity
-			Quantity gravity = getQuantity(Constant.GRAVITY).convert(getUOM(Unit.FEET_PER_SECOND_SQUARED));
+			Quantity gravity = getQuantity(Constant.GRAVITY).convert(getUOM(Unit.FEET_PER_SEC_SQUARED));
 			uom.setScalingFactor(gravity.getAmount());
 			break;
 
 		case GRAIN:
 			// mass
-			amount = Quantity.divideAmounts("1", "7000");
-			conversion = new Conversion(amount, getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.GRAIN, symbols.getString("grain.name"),
 					symbols.getString("grain.symbol"), symbols.getString("grain.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1", "7000"), getUOM(Unit.POUND_MASS));
 			break;
 
 		case MILES_PER_HOUR:
 			// velocity
-			amount = Quantity.divideAmounts("5280", "3600");
-			conversion = new Conversion(amount, getUOM(Unit.FEET_PER_SECOND));
 			uom = createScalarUOM(UnitType.VELOCITY, Unit.MILES_PER_HOUR, symbols.getString("mph.name"),
 					symbols.getString("mph.symbol"), symbols.getString("mph.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("5280", "3600"), getUOM(Unit.FEET_PER_SEC));
 			break;
 
 		case REV_PER_MIN:
@@ -1114,92 +1090,78 @@ public class MeasurementSystem {
 	}
 
 	private UnitOfMeasure createUSUnit(Unit unit) throws Exception {
-
 		UnitOfMeasure uom = null;
-		Conversion conversion = null;
-		BigDecimal factor = null;
 
 		switch (unit) {
 
 		case US_GALLON:
 			// gallon
-			conversion = new Conversion(Quantity.createAmount("231"), getUOM(Unit.CUBIC_INCH));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_GALLON, symbols.getString("us_gallon.name"),
 					symbols.getString("us_gallon.symbol"), symbols.getString("us_gallon.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("231"), getUOM(Unit.CUBIC_INCH));
 			break;
 
 		case US_BARREL:
 			// barrel
-			conversion = new Conversion(Quantity.createAmount("42"), getUOM(Unit.US_GALLON));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_BARREL, symbols.getString("us_bbl.name"),
 					symbols.getString("us_bbl.symbol"), symbols.getString("us_bbl.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("42"), getUOM(Unit.US_GALLON));
 			break;
 
 		case US_BUSHEL:
 			// bushel
-			conversion = new Conversion(Quantity.createAmount("2150.42058"), getUOM(Unit.CUBIC_INCH));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_BUSHEL, symbols.getString("us_bu.name"),
 					symbols.getString("us_bu.symbol"), symbols.getString("us_bu.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("2150.42058"), getUOM(Unit.CUBIC_INCH));
 			break;
 
 		case US_FLUID_OUNCE:
 			// fluid ounce
-			conversion = new Conversion(Quantity.createAmount("0.0078125"), getUOM(Unit.US_GALLON));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_FLUID_OUNCE, symbols.getString("us_fl_oz.name"),
 					symbols.getString("us_fl_oz.symbol"), symbols.getString("us_fl_oz.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.0078125"), getUOM(Unit.US_GALLON));
 			break;
 
 		case US_CUP:
 			// cup
-			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.US_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_CUP, symbols.getString("us_cup.name"),
 					symbols.getString("us_cup.symbol"), symbols.getString("us_cup.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("8"), getUOM(Unit.US_FLUID_OUNCE));
 			break;
 
 		case US_PINT:
 			// pint
-			conversion = new Conversion(Quantity.createAmount("16"), getUOM(Unit.US_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_PINT, symbols.getString("us_pint.name"),
 					symbols.getString("us_pint.symbol"), symbols.getString("us_pint.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("16"), getUOM(Unit.US_FLUID_OUNCE));
 			break;
 
 		case US_QUART:
 			// quart
-			conversion = new Conversion(Quantity.createAmount("32"), getUOM(Unit.US_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_QUART, symbols.getString("us_quart.name"),
 					symbols.getString("us_quart.symbol"), symbols.getString("us_quart.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("32"), getUOM(Unit.US_FLUID_OUNCE));
 			break;
 
 		case US_TABLESPOON:
 			// tablespoon
-			conversion = new Conversion(Quantity.createAmount("0.5"), getUOM(Unit.US_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_TABLESPOON, symbols.getString("us_tbsp.name"),
 					symbols.getString("us_tbsp.symbol"), symbols.getString("us_tbsp.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.5"), getUOM(Unit.US_FLUID_OUNCE));
 			break;
 
 		case US_TEASPOON:
 			// teaspoon
-			factor = Quantity.divideAmounts("1", "6");
-			conversion = new Conversion(factor, getUOM(Unit.US_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.US_TEASPOON, symbols.getString("us_tsp.name"),
 					symbols.getString("us_tsp.symbol"), symbols.getString("us_tsp.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("1", "6"), getUOM(Unit.US_FLUID_OUNCE));
 			break;
 
 		case US_TON:
 			// ton
-			conversion = new Conversion(Quantity.createAmount("2000"), getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.US_TON, symbols.getString("us_ton.name"),
 					symbols.getString("us_ton.symbol"), symbols.getString("us_ton.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("2000"), getUOM(Unit.POUND_MASS));
 			break;
 
 		default:
@@ -1212,81 +1174,69 @@ public class MeasurementSystem {
 	private UnitOfMeasure createBRUnit(Unit unit) throws Exception {
 
 		UnitOfMeasure uom = null;
-		Conversion conversion = null;
-		BigDecimal factor = null;
 
 		switch (unit) {
 		case BR_GALLON:
 			// gallon
-			conversion = new Conversion(Quantity.createAmount("277.4194327916215"), getUOM(Unit.CUBIC_INCH));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_GALLON, symbols.getString("br_gallon.name"),
 					symbols.getString("br_gallon.symbol"), symbols.getString("br_gallon.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("277.4194327916215"), getUOM(Unit.CUBIC_INCH));
 			break;
 
 		case BR_BUSHEL:
 			// bushel
-			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BR_GALLON));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_BUSHEL, symbols.getString("br_bu.name"),
 					symbols.getString("br_bu.symbol"), symbols.getString("br_bu.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("8"), getUOM(Unit.BR_GALLON));
 			break;
 
 		case BR_FLUID_OUNCE:
 			// fluid ounce
-			conversion = new Conversion(Quantity.createAmount("0.00625"), getUOM(Unit.BR_GALLON));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_FLUID_OUNCE, symbols.getString("br_fl_oz.name"),
 					symbols.getString("br_fl_oz.symbol"), symbols.getString("br_fl_oz.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.00625"), getUOM(Unit.BR_GALLON));
 			break;
 
 		case BR_CUP:
 			// cup
-			conversion = new Conversion(Quantity.createAmount("8"), getUOM(Unit.BR_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_CUP, symbols.getString("br_cup.name"),
 					symbols.getString("br_cup.symbol"), symbols.getString("br_cup.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("8"), getUOM(Unit.BR_FLUID_OUNCE));
 			break;
 
 		case BR_PINT:
 			// pint
-			conversion = new Conversion(Quantity.createAmount("20"), getUOM(Unit.BR_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_PINT, symbols.getString("br_pint.name"),
 					symbols.getString("br_pint.symbol"), symbols.getString("br_pint.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("20"), getUOM(Unit.BR_FLUID_OUNCE));
 			break;
 
 		case BR_QUART:
 			// quart
-			conversion = new Conversion(Quantity.createAmount("40"), getUOM(Unit.BR_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_QUART, symbols.getString("br_quart.name"),
 					symbols.getString("br_quart.symbol"), symbols.getString("br_quart.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("40"), getUOM(Unit.BR_FLUID_OUNCE));
 			break;
 
 		case BR_TABLESPOON:
 			// tablespoon
-			conversion = new Conversion(Quantity.createAmount("0.625"), getUOM(Unit.BR_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_TABLESPOON, symbols.getString("br_tbsp.name"),
 					symbols.getString("br_tbsp.symbol"), symbols.getString("br_tbsp.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.625"), getUOM(Unit.BR_FLUID_OUNCE));
 			break;
 
 		case BR_TEASPOON:
 			// teaspoon
-			factor = Quantity.divideAmounts("5", "24");
-			conversion = new Conversion(factor, getUOM(Unit.BR_FLUID_OUNCE));
 			uom = createScalarUOM(UnitType.VOLUME, Unit.BR_TEASPOON, symbols.getString("br_tsp.name"),
 					symbols.getString("br_tsp.symbol"), symbols.getString("br_tsp.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.divideAmounts("5", "24"), getUOM(Unit.BR_FLUID_OUNCE));
 			break;
 
 		case BR_TON:
 			// ton
-			conversion = new Conversion(Quantity.createAmount("2240"), getUOM(Unit.POUND_MASS));
 			uom = createScalarUOM(UnitType.MASS, Unit.BR_TON, symbols.getString("br_ton.name"),
 					symbols.getString("br_ton.symbol"), symbols.getString("br_ton.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("2240"), getUOM(Unit.POUND_MASS));
 			break;
 
 		default:
@@ -1298,30 +1248,28 @@ public class MeasurementSystem {
 
 	private UnitOfMeasure createFinancialUnit(Unit unit) throws Exception {
 		UnitOfMeasure uom = null;
-		Conversion conversion = null;
 
 		switch (unit) {
 
 		case US_DOLLAR:
-			uom = createScalarUOM(UnitType.FINANCIAL, Unit.US_DOLLAR, symbols.getString("us_dollar.name"),
+			uom = createScalarUOM(UnitType.CURRENCY, Unit.US_DOLLAR, symbols.getString("us_dollar.name"),
 					symbols.getString("us_dollar.symbol"), symbols.getString("us_dollar.desc"));
 			break;
 
 		case EURO:
-			uom = createScalarUOM(UnitType.FINANCIAL, Unit.EURO, symbols.getString("euro.name"),
+			uom = createScalarUOM(UnitType.CURRENCY, Unit.EURO, symbols.getString("euro.name"),
 					symbols.getString("euro.symbol"), symbols.getString("euro.desc"));
 			break;
 
 		case YUAN:
-			uom = createScalarUOM(UnitType.FINANCIAL, Unit.YUAN, symbols.getString("yuan.name"),
+			uom = createScalarUOM(UnitType.CURRENCY, Unit.YUAN, symbols.getString("yuan.name"),
 					symbols.getString("yuan.symbol"), symbols.getString("yuan.desc"));
 			break;
 
 		case PERCENT:
-			conversion = new Conversion(Quantity.createAmount("0.01"), getOne());
-			uom = createScalarUOM(UnitType.FINANCIAL, Unit.PERCENT, symbols.getString("percent.name"),
+			uom = createScalarUOM(UnitType.UNITY, Unit.PERCENT, symbols.getString("percent.name"),
 					symbols.getString("percent.symbol"), symbols.getString("percent.desc"));
-			uom.setConversion(conversion);
+			uom.setConversion(Quantity.createAmount("0.01"), getOne());
 			break;
 
 		default:
@@ -1857,12 +1805,9 @@ public class MeasurementSystem {
 			BigDecimal scalingFactor = UnitOfMeasure.decimalMultiply(targetUOM.getScalingFactor(),
 					prefix.getScalingFactor());
 
-			// conversion factor
-			Conversion conversion = new Conversion(scalingFactor, targetUOM.getAbscissaUnit());
-
 			// create the unit of measure and set conversion
 			scaled = createScalarUOM(targetUOM.getUnitType(), null, name, symbol, description);
-			scaled.setConversion(conversion);
+			scaled.setConversion(scalingFactor, targetUOM.getAbscissaUnit());
 		}
 		return scaled;
 	}
@@ -1882,5 +1827,340 @@ public class MeasurementSystem {
 	 */
 	public UnitOfMeasure getUOM(Prefix prefix, Unit unit) throws Exception {
 		return getUOM(prefix, MeasurementSystem.getSystem().getUOM(unit));
+	}
+
+	/**
+	 * Get all the units of measure of the specified type
+	 * 
+	 * @param type
+	 *            {@link UnitType}
+	 * @return List of {@link UnitOfMeasure}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public List<UnitOfMeasure> getUnitsOfMeasure(UnitType type) throws Exception {
+		List<UnitOfMeasure> units = new ArrayList<>();
+
+		switch (type) {
+		case LENGTH:
+			// SI
+			units.add(getUOM(Unit.METRE));
+			units.add(getUOM(Unit.ANGSTROM));
+			units.add(getUOM(Unit.PARSEC));
+			units.add(getUOM(Unit.ASTRONOMICAL_UNIT));
+
+			// customary
+			units.add(getUOM(Unit.FOOT));
+			units.add(getUOM(Unit.INCH));
+			units.add(getUOM(Unit.MIL));
+			units.add(getUOM(Unit.POINT));
+			units.add(getUOM(Unit.YARD));
+			units.add(getUOM(Unit.MILE));
+			units.add(getUOM(Unit.NAUTICAL_MILE));
+			units.add(getUOM(Unit.FATHOM));
+			break;
+
+		case MASS:
+			// SI
+			units.add(getUOM(Unit.KILOGRAM));
+			units.add(getUOM(Unit.TONNE));
+			units.add(getUOM(Unit.CARAT));
+
+			// customary
+			units.add(getUOM(Unit.POUND_MASS));
+			units.add(getUOM(Unit.OUNCE));
+			units.add(getUOM(Unit.TROY_OUNCE));
+			units.add(getUOM(Unit.SLUG));
+			units.add(getUOM(Unit.GRAIN));
+
+			// US
+			units.add(getUOM(Unit.US_TON));
+
+			// British
+			units.add(getUOM(Unit.BR_TON));
+			break;
+
+		case TIME:
+			units.add(getUOM(Unit.SECOND));
+			units.add(getUOM(Unit.MINUTE));
+			units.add(getUOM(Unit.HOUR));
+			units.add(getUOM(Unit.DAY));
+			units.add(getUOM(Unit.WEEK));
+			units.add(getUOM(Unit.JULIAN_YEAR));
+
+			break;
+
+		case ACCELERATION:
+			units.add(getUOM(Unit.METRE_PER_SEC_SQUARED));
+			units.add(getUOM(Unit.FEET_PER_SEC_SQUARED));
+			break;
+
+		case AREA:
+			// customary
+			units.add(getUOM(Unit.SQUARE_INCH));
+			units.add(getUOM(Unit.SQUARE_FOOT));
+			units.add(getUOM(Unit.SQUARE_YARD));
+			units.add(getUOM(Unit.ACRE));
+
+			// SI
+			units.add(getUOM(Unit.SQUARE_METRE));
+			units.add(getUOM(Unit.HECTARE));
+
+			break;
+
+		case CATALYTIC_ACTIVITY:
+			units.add(getUOM(Unit.KATAL));
+			units.add(getUOM(Unit.UNIT));
+			break;
+
+		case COMPUTER_SCIENCE:
+			units.add(getUOM(Unit.BIT));
+			units.add(getUOM(Unit.BYTE));
+			break;
+
+		case DENSITY:
+			units.add(getUOM(Unit.KILOGRAM_PER_CU_METRE));
+			break;
+
+		case DYNAMIC_VISCOSITY:
+			units.add(getUOM(Unit.PASCAL_SECOND));
+			break;
+
+		case ELECTRIC_CAPACITANCE:
+			units.add(getUOM(Unit.FARAD));
+			break;
+
+		case ELECTRIC_CHARGE:
+			units.add(getUOM(Unit.COULOMB));
+			break;
+
+		case ELECTRIC_CONDUCTANCE:
+			units.add(getUOM(Unit.SIEMENS));
+			break;
+
+		case ELECTRIC_CURRENT:
+			units.add(getUOM(Unit.AMPERE));
+			break;
+
+		case ELECTRIC_FIELD_STRENGTH:
+			units.add(getUOM(Unit.AMPERE_PER_METRE));
+			break;
+
+		case ELECTRIC_INDUCTANCE:
+			units.add(getUOM(Unit.HENRY));
+			break;
+
+		case ELECTRIC_PERMITTIVITY:
+			units.add(getUOM(Unit.FARAD_PER_METRE));
+			break;
+
+		case ELECTRIC_RESISTANCE:
+			units.add(getUOM(Unit.OHM));
+			break;
+
+		case ELECTROMOTIVE_FORCE:
+			units.add(getUOM(Unit.VOLT));
+			break;
+
+		case ENERGY:
+			// customary
+			units.add(getUOM(Unit.BTU));
+			units.add(getUOM(Unit.FOOT_POUND_FORCE));
+
+			// SI
+			units.add(getUOM(Unit.CALORIE));
+			units.add(getUOM(Unit.NEWTON_METRE));
+			units.add(getUOM(Unit.JOULE));
+			units.add(getUOM(Unit.WATT_HOUR));
+			units.add(getUOM(Unit.ELECTRON_VOLT));
+			break;
+
+		case CURRENCY:
+			units.add(getUOM(Unit.US_DOLLAR));
+			units.add(getUOM(Unit.EURO));
+			units.add(getUOM(Unit.YUAN));
+			break;
+
+		case FORCE:
+			// customary
+			units.add(getUOM(Unit.POUND_FORCE));
+
+			// SI
+			units.add(getUOM(Unit.NEWTON));
+			break;
+
+		case FREQUENCY:
+			units.add(getUOM(Unit.REV_PER_MIN));
+			units.add(getUOM(Unit.HERTZ));
+			units.add(getUOM(Unit.RAD_PER_SEC));
+			break;
+
+		case ILLUMINANCE:
+			units.add(getUOM(Unit.LUX));
+			break;
+
+		case INTENSITY:
+			units.add(getUOM(Unit.DECIBEL));
+			break;
+
+		case IRRADIANCE:
+			units.add(getUOM(Unit.WATTS_PER_SQ_METRE));
+			break;
+
+		case KINEMATIC_VISCOSITY:
+			units.add(getUOM(Unit.SQUARE_METRE_PER_SEC));
+			break;
+
+		case LUMINOSITY:
+			units.add(getUOM(Unit.CANDELA));
+			break;
+
+		case LUMINOUS_FLUX:
+			units.add(getUOM(Unit.LUMEN));
+			break;
+
+		case MAGNETIC_FLUX:
+			units.add(getUOM(Unit.WEBER));
+			break;
+
+		case MAGNETIC_FLUX_DENSITY:
+			units.add(getUOM(Unit.TESLA));
+			break;
+
+		case MASS_FLOW:
+			units.add(getUOM(Unit.KILOGRAM_PER_SEC));
+			break;
+
+		case MOLAR_CONCENTRATION:
+			units.add(getUOM(Unit.PH));
+			break;
+
+		case PLANE_ANGLE:
+			units.add(getUOM(Unit.DEGREE));
+			units.add(getUOM(Unit.RADIAN));
+			units.add(getUOM(Unit.ARC_SECOND));
+			break;
+
+		case POWER:
+			units.add(getUOM(Unit.HP));
+			units.add(getUOM(Unit.WATT));
+			break;
+
+		case PRESSURE:
+			// customary
+			units.add(getUOM(Unit.PSI));
+			units.add(getUOM(Unit.IN_HG));
+
+			// SI
+			units.add(getUOM(Unit.PASCAL));
+			units.add(getUOM(Unit.ATMOSPHERE));
+			units.add(getUOM(Unit.BAR));
+			break;
+
+		case RADIATION_DOSE_ABSORBED:
+			units.add(getUOM(Unit.GRAY));
+			break;
+
+		case RADIATION_DOSE_EFFECTIVE:
+			units.add(getUOM(Unit.SIEVERT));
+			break;
+
+		case RADIATION_DOSE_RATE:
+			units.add(getUOM(Unit.SIEVERTS_PER_HOUR));
+			break;
+
+		case RADIOACTIVITY:
+			units.add(getUOM(Unit.BECQUEREL));
+			break;
+
+		case RECIPROCAL_LENGTH:
+			units.add(getUOM(Unit.DIOPTER));
+			break;
+
+		case SOLID_ANGLE:
+			units.add(getUOM(Unit.STERADIAN));
+			break;
+
+		case SUBSTANCE_AMOUNT:
+			units.add(getUOM(Unit.MOLE));
+			units.add(getUOM(Unit.EQUIVALENT));
+			units.add(getUOM(Unit.INTERNATIONAL_UNIT));
+			break;
+
+		case TEMPERATURE:
+			// customary
+			units.add(getUOM(Unit.RANKINE));
+			units.add(getUOM(Unit.FAHRENHEIT));
+
+			// SI
+			units.add(getUOM(Unit.KELVIN));
+			units.add(getUOM(Unit.CELSIUS));
+			break;
+
+		case TIME_SQUARED:
+			units.add(getUOM(Unit.SQUARE_SECOND));
+			break;
+
+		case UNCLASSIFIED:
+			break;
+
+		case UNITY:
+			units.add(getUOM(Unit.ONE));
+			units.add(getUOM(Unit.PERCENT));
+			break;
+
+		case VELOCITY:
+			// customary
+			units.add(getUOM(Unit.FEET_PER_SEC));
+			units.add(getUOM(Unit.MILES_PER_HOUR));
+			units.add(getUOM(Unit.KNOT));
+
+			// SI
+			units.add(getUOM(Unit.METRE_PER_SEC));
+			break;
+
+		case VOLUME:
+			// British
+			units.add(getUOM(Unit.BR_BUSHEL));
+			units.add(getUOM(Unit.BR_CUP));
+			units.add(getUOM(Unit.BR_FLUID_OUNCE));
+			units.add(getUOM(Unit.BR_GALLON));
+			units.add(getUOM(Unit.BR_PINT));
+			units.add(getUOM(Unit.BR_QUART));
+			units.add(getUOM(Unit.BR_TABLESPOON));
+			units.add(getUOM(Unit.BR_TEASPOON));
+
+			// customary
+			units.add(getUOM(Unit.CUBIC_FOOT));
+			units.add(getUOM(Unit.CUBIC_YARD));
+			units.add(getUOM(Unit.CUBIC_INCH));
+			units.add(getUOM(Unit.CORD));
+
+			// SI
+			units.add(getUOM(Unit.CUBIC_METRE));
+			units.add(getUOM(Unit.LITRE));
+
+			// US
+			units.add(getUOM(Unit.US_BARREL));
+			units.add(getUOM(Unit.US_BUSHEL));
+			units.add(getUOM(Unit.US_CUP));
+			units.add(getUOM(Unit.US_FLUID_OUNCE));
+			units.add(getUOM(Unit.US_GALLON));
+			units.add(getUOM(Unit.US_PINT));
+			units.add(getUOM(Unit.US_QUART));
+			units.add(getUOM(Unit.US_TABLESPOON));
+			units.add(getUOM(Unit.US_TEASPOON));
+			break;
+
+		case VOLUMETRIC_FLOW:
+			units.add(getUOM(Unit.CUBIC_METRE_PER_SEC));
+			units.add(getUOM(Unit.CUBIC_FEET_PER_SEC));
+			break;
+
+		default:
+			break;
+		}
+
+		return units;
 	}
 }

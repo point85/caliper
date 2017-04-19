@@ -32,7 +32,7 @@ package org.point85.uom;
  */
 public enum Unit {
 	// dimension-less "1" or unity
-	ONE,
+	ONE, PERCENT,
 	// time
 	SECOND, MINUTE, HOUR, DAY, WEEK, JULIAN_YEAR, SQUARE_SECOND,
 	// substance amount
@@ -55,21 +55,21 @@ public enum Unit {
 	// volume
 	CUBIC_METRE, LITRE,
 	// volumetric flow
-	CUBIC_METRE_PER_SECOND,
+	CUBIC_METRE_PER_SEC, CUBIC_FEET_PER_SEC,
 	// mass flow
-	KILOGRAM_PER_SECOND,
+	KILOGRAM_PER_SEC,
 	// viscosity
-	PASCAL_SECOND, SQUARE_METRE_PER_SECOND,
+	PASCAL_SECOND, SQUARE_METRE_PER_SEC,
 	// velocity
-	METRE_PER_SECOND,
+	METRE_PER_SEC,
 	// acceleration
-	METRE_PER_SECOND_SQUARED,
+	METRE_PER_SEC_SQUARED,
 	// energy
 	JOULE, ELECTRON_VOLT, CALORIE, WATT_HOUR,
 	// force
 	NEWTON,
 	// power
-	WATT, WATTS_PER_SQUARE_METRE,
+	WATT, WATTS_PER_SQ_METRE,
 	// frequency
 	HERTZ, RAD_PER_SEC,
 	// pressure
@@ -85,7 +85,7 @@ public enum Unit {
 	// catalytic activity
 	KATAL, UNIT,
 	// density
-	KILOGRAM_PER_CUBIC_METRE,
+	KILOGRAM_PER_CU_METRE,
 	// torque (moment of force and energy)
 	NEWTON_METRE,
 	// IT
@@ -106,11 +106,11 @@ public enum Unit {
 	// volume
 	CUBIC_INCH, CUBIC_FOOT, CUBIC_YARD, CORD,
 	// velocity
-	FEET_PER_SECOND, KNOT, MILES_PER_HOUR,
+	FEET_PER_SEC, KNOT, MILES_PER_HOUR,
 	// frequency
 	REV_PER_MIN,
 	// acceleration
-	FEET_PER_SECOND_SQUARED,
+	FEET_PER_SEC_SQUARED,
 	// power
 	HP,
 	// energy
@@ -128,7 +128,6 @@ public enum Unit {
 	// mass
 	BR_TON,
 	// currency
-	US_DOLLAR, EURO, YUAN,
-	// other
-	PERCENT;
+	US_DOLLAR, EURO, YUAN;
+
 }

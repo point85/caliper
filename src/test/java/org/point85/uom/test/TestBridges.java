@@ -31,7 +31,6 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 
 import org.junit.Test;
-import org.point85.uom.Conversion;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -97,11 +96,9 @@ public class TestBridges extends BaseTest {
 		UnitOfMeasure mhr = sys.getUOM("m/hr");
 
 		if (mhr == null) {
-			Conversion conversion = new Conversion(
-					BigDecimal.ONE.divide(Quantity.createAmount("3600"), MathContext.DECIMAL64),
-					sys.getUOM(Unit.METRE_PER_SECOND));
 			mhr = sys.createScalarUOM(UnitType.VELOCITY, "m/hr", "m/hr", "");
-			mhr.setConversion(conversion);
+			mhr.setConversion(BigDecimal.ONE.divide(Quantity.createAmount("3600"), MathContext.DECIMAL64),
+					sys.getUOM(Unit.METRE_PER_SEC));
 		}
 
 		q1 = new Quantity(BigDecimal.TEN, psi);
@@ -111,7 +108,7 @@ public class TestBridges extends BaseTest {
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
 
 		q1 = new Quantity(BigDecimal.TEN, mhr);
-		q2 = q1.convert(sys.getUOM(Unit.FEET_PER_SECOND));
+		q2 = q1.convert(sys.getUOM(Unit.FEET_PER_SEC));
 		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("0.009113444152814231"), DELTA6));
 		q2 = q2.convert(mhr);
 		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
@@ -204,10 +201,10 @@ public class TestBridges extends BaseTest {
 
 		UnitOfMeasure v1 = sys.getUOM("m/hr");
 
-		UnitOfMeasure v2 = sys.getUOM(Unit.METRE_PER_SECOND);
+		UnitOfMeasure v2 = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure v3 = sys.createQuotientUOM(UnitType.VELOCITY, "", "ft/usec", "", ft, usSec);
 
-		UnitOfMeasure d1 = sys.getUOM(Unit.KILOGRAM_PER_CUBIC_METRE);
+		UnitOfMeasure d1 = sys.getUOM(Unit.KILOGRAM_PER_CU_METRE);
 		UnitOfMeasure d2 = sys.createQuotientUOM(UnitType.DENSITY, "density", "lbm/gal", "", lbm, gal);
 
 		q1 = new Quantity(BigDecimal.TEN, v1);

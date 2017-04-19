@@ -45,10 +45,12 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testPrefixes() {
 		for (Prefix prefix : Prefix.values()) {
-			assertTrue(prefix.getPrefixName().length() > 0);
+			String prefixName = prefix.getPrefixName();
+			assertTrue(prefixName.length() > 0);
 			assertTrue(prefix.getSymbol().length() > 0);
 			assertTrue(!prefix.getScalingFactor().equals(BigDecimal.ONE));
 			assertTrue(prefix.toString().length() > 0);
+			assertTrue(Prefix.fromName(prefixName).equals(prefix));
 		}
 	}
 
@@ -59,8 +61,8 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure uom2 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom2", "uom2", "");
 		UnitOfMeasure uom3 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom3", "uom3", "");
 
-		uom1.setConversion(new Conversion(BigDecimal.ONE, uom3, BigDecimal.TEN));
-		uom2.setConversion(new Conversion(BigDecimal.ONE, uom3, BigDecimal.ONE));
+		uom1.setConversion(BigDecimal.ONE, uom3, BigDecimal.TEN);
+		uom2.setConversion(BigDecimal.ONE, uom3, BigDecimal.ONE);
 		assertFalse(uom1.equals(uom2));
 
 		try {
@@ -230,34 +232,32 @@ public class TestUnits extends BaseTest {
 
 		try {
 			UnitOfMeasure abscissaUnit = null;
-			new Conversion(abscissaUnit);
+			uno.setConversion(abscissaUnit);
 			fail();
 		} catch (Exception e) {
 		}
 
 		try {
 			UnitOfMeasure abscissaUnit = sys.getOne();
-			;
 			BigDecimal decimal = null;
-			new Conversion(decimal, abscissaUnit);
+			uno.setConversion(decimal, abscissaUnit);
 			fail();
 		} catch (Exception e) {
 		}
 
 		try {
 			UnitOfMeasure abscissaUnit = sys.getOne();
-			String decimal = null;
-			new Conversion(decimal, abscissaUnit);
+			BigDecimal decimal = null;
+			uno.setConversion(decimal, abscissaUnit);
 			fail();
 		} catch (Exception e) {
 		}
 
 		try {
 			UnitOfMeasure abscissaUnit = sys.getOne();
-			;
 			BigDecimal decimal = BigDecimal.ONE;
 			BigDecimal offset = null;
-			new Conversion(decimal, abscissaUnit, offset);
+			uno.setConversion(decimal, abscissaUnit, offset);
 			fail();
 		} catch (Exception e) {
 		}
@@ -287,11 +287,8 @@ public class TestUnits extends BaseTest {
 		u = sys.getOne().divide(metre).multiply(metre);
 		assertTrue(u.equals(sys.getOne()));
 
-		Conversion conversion = new Conversion(BigDecimal.ONE, sys.getOne(), BigDecimal.ONE);
 		UnitOfMeasure uom = sys.createScalarUOM(UnitType.UNCLASSIFIED, "1/1", "1/1", "");
-		uom.setConversion(conversion);
-		Conversion c = uom.getConversion();
-		assertTrue(c.equals(conversion));
+		uom.setConversion(BigDecimal.ONE, sys.getOne(), BigDecimal.ONE);
 
 		assertThat(uom.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
 		assertTrue(uom.getAbscissaUnit().equals(sys.getOne()));
@@ -331,9 +328,8 @@ public class TestUnits extends BaseTest {
 
 		// scalar
 		BigDecimal two = Quantity.createAmount("2");
-		Conversion conversion = new Conversion(two, b, BigDecimal.ONE);
 		UnitOfMeasure ab1 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a=2b+1", "a=2b+1", "custom");
-		ab1.setConversion(conversion);
+		ab1.setConversion(two, b, BigDecimal.ONE);
 
 		assertThat(ab1.getScalingFactor(), closeTo(two, DELTA6));
 		assertTrue(ab1.getAbscissaUnit().equals(b));
@@ -498,7 +494,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
 		UnitOfMeasure flush = sys.createScalarUOM(UnitType.UNCLASSIFIED, "flush", "f", "");
 		UnitOfMeasure gpf = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "gal per flush", "gpf", "", gal, flush);
-		UnitOfMeasure velocity = sys.getUOM(Unit.FEET_PER_SECOND);
+		UnitOfMeasure velocity = sys.getUOM(Unit.FEET_PER_SEC);
 
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 		UnitOfMeasure lpf = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "litre per flush", "lpf", "", litre, flush);
@@ -578,15 +574,23 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 
 		// multiply2
-		UnitOfMeasure velocity = sys.getUOM("m/hr");
+		UnitOfMeasure velocity = sys.getUOM("meter/hr");
 
 		if (velocity == null) {
-			Conversion conversion = new Conversion(
-					BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT),
-					sys.getUOM(Unit.METRE_PER_SECOND));
-			velocity = sys.createScalarUOM(UnitType.VELOCITY, "m/hr", "m/hr", "");
-			velocity.setConversion(conversion);
+			velocity = sys.createScalarUOM(UnitType.VELOCITY, "meter/hr", "meter/hr", "");
+			velocity.setConversion(BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT),
+					sys.getUOM(Unit.METRE_PER_SEC));
 		}
+
+		Conversion conversion = velocity.getConversion();
+		BigDecimal sf = BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT);
+		assertThat(conversion.getScalingFactor(), closeTo(sf, DELTA6));
+		assertTrue(conversion.getAbscissaUnit().equals(sys.getUOM(Unit.METRE_PER_SEC)));
+		assertThat(conversion.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+
+		conversion = new Conversion();
+		conversion.setKey(100);
+		assertTrue(conversion.getKey() == 100);
 
 		u = velocity.multiply(hour);
 		BigDecimal bd = u.getConversionFactor(metre);
@@ -603,6 +607,7 @@ public class TestUnits extends BaseTest {
 
 		// divide2
 		u = metre.divide(hour);
+
 		bd = u.getConversionFactor(velocity);
 		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
 
@@ -878,7 +883,7 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		UnitOfMeasure N = sys.getUOM(Unit.NEWTON);
 		UnitOfMeasure Nm = sys.getUOM(Unit.NEWTON_METRE);
-		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
+		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure sqm = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure mm = sys.createProductUOM(UnitType.AREA, "mxm", "mTimesm", "", m, m);
 		UnitOfMeasure mcm = sys.createProductUOM(UnitType.AREA, "mxcm", "mxcm", "", m, cm);
@@ -985,7 +990,7 @@ public class TestUnits extends BaseTest {
 		bd = ft.getConversionFactor(m);
 		assertThat(bd, closeTo(Quantity.createAmount("0.3048"), DELTA6));
 
-		Quantity g = sys.getQuantity(Constant.GRAVITY).convert(sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
+		Quantity g = sys.getQuantity(Constant.GRAVITY).convert(sys.getUOM(Unit.FEET_PER_SEC_SQUARED));
 		bd = g.getAmount();
 		assertThat(bd, closeTo(Quantity.createAmount("32.17404855"), DELTA6));
 
@@ -1070,41 +1075,38 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure degree = sys.getUOM(Unit.DEGREE);
 		UnitOfMeasure arcsec = sys.getUOM(Unit.ARC_SECOND);
 		UnitOfMeasure radian = sys.getUOM(Unit.RADIAN);
-		UnitOfMeasure kgPerM3 = sys.getUOM(Unit.KILOGRAM_PER_CUBIC_METRE);
-		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
+		UnitOfMeasure kgPerM3 = sys.getUOM(Unit.KILOGRAM_PER_CU_METRE);
+		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure pascal = sys.getUOM(Unit.PASCAL);
 		UnitOfMeasure s2 = sys.getUOM(Unit.SQUARE_SECOND);
 		UnitOfMeasure joule = sys.getUOM(Unit.JOULE);
 		UnitOfMeasure rpm = sys.getUOM(Unit.REV_PER_MIN);
 		UnitOfMeasure rps = sys.getUOM(Unit.RAD_PER_SEC);
-		UnitOfMeasure m3s = sys.getUOM(Unit.CUBIC_METRE_PER_SECOND);
-		UnitOfMeasure ms2 = sys.getUOM(Unit.METRE_PER_SECOND_SQUARED);
+		UnitOfMeasure m3s = sys.getUOM(Unit.CUBIC_METRE_PER_SEC);
+		UnitOfMeasure ms2 = sys.getUOM(Unit.METRE_PER_SEC_SQUARED);
 
 		UnitOfMeasure lbm = sys.getUOM(Unit.POUND_MASS);
 		UnitOfMeasure acreFoot = sys.createProductUOM(UnitType.VOLUME, "acreFoot", "ac-ft", "", sys.getUOM(Unit.ACRE),
 				sys.getUOM(Unit.FOOT));
 		UnitOfMeasure lbmPerFt3 = sys.createQuotientUOM(UnitType.DENSITY, "lbmPerFt3", "lbm/ft^3", null, lbm, ft3);
-		UnitOfMeasure fps = sys.getUOM(Unit.FEET_PER_SECOND);
+		UnitOfMeasure fps = sys.getUOM(Unit.FEET_PER_SEC);
 		UnitOfMeasure knot = sys.getUOM(Unit.KNOT);
 		UnitOfMeasure btu = sys.getUOM(Unit.BTU);
 
-		Conversion conversion = new Conversion("1.466666666666667", sys.getUOM(Unit.FEET_PER_SECOND_SQUARED));
 		UnitOfMeasure miphs = sys.createScalarUOM(UnitType.ACCELERATION, "mph/sec", "mi/hr-sec",
 				"mile per hour per second");
-		miphs.setConversion(conversion);
+		miphs.setConversion(Quantity.createAmount("1.466666666666667"), sys.getUOM(Unit.FEET_PER_SEC_SQUARED));
 
-		conversion = new Conversion(Quantity.createAmount("3386.389"), pascal);
 		UnitOfMeasure inHg = sys.createScalarUOM(UnitType.PRESSURE, "inHg", "inHg", "inHg");
-		inHg.setConversion(conversion);
+		inHg.setConversion(Quantity.createAmount("3386.389"), pascal);
 
 		Quantity atm = new Quantity(BigDecimal.ONE, Unit.ATMOSPHERE).convert(Unit.PASCAL);
 		assertThat(atm.getAmount(), closeTo(Quantity.createAmount("101325"), DELTA6));
 
 		UnitOfMeasure ft2ft = sys.createProductUOM(UnitType.VOLUME, "ft2ft", "ft2ft", null, ft2, ft);
 
-		conversion = new Conversion("3600", sys.getUOM(Unit.SQUARE_SECOND));
 		UnitOfMeasure hrsec = sys.createScalarUOM(UnitType.TIME_SQUARED, "", "hr.sec", "");
-		hrsec.setConversion(conversion);
+		hrsec.setConversion(Quantity.createAmount("3600"), sys.getUOM(Unit.SQUARE_SECOND));
 		bd = hrsec.getConversionFactor(s2);
 		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
 
@@ -1344,7 +1346,7 @@ public class TestUnits extends BaseTest {
 
 		u = K.divide(K);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
-		
+
 		// hectare to acre
 		UnitOfMeasure ha = sys.getUOM(Unit.HECTARE);
 		from = new Quantity(BigDecimal.ONE, ha);
@@ -1688,5 +1690,24 @@ public class TestUnits extends BaseTest {
 		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("0.40")) == 1);
 		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("5.50")) == -1);
 
+	}
+
+	@Test
+	public void testCategory() throws Exception {
+		String category = "category";
+		UnitOfMeasure m = sys.getUOM(Unit.METRE);
+		m.setCategory(category);
+		assertTrue(m.getCategory().equals(category));
+
+		m.setKey(100);
+		assertTrue(m.getKey() == 100);
+
+		Quantity q = new Quantity(BigDecimal.ONE, m);
+		q.setKey(101);
+		assertTrue(q.getKey() == 101);
+
+		Conversion c = new Conversion();
+		c.setKey(102);
+		assertTrue(c.getKey() == 102);
 	}
 }

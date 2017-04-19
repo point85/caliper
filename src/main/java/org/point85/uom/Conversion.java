@@ -46,13 +46,24 @@ public class Conversion {
 	// x-axis unit
 	private UnitOfMeasure abscissaUnit;
 
+	// database primary key
+	private Integer primaryKey;
+
+	/**
+	 * Construct a default unit of measure conversion
+	 */
+	public Conversion() {
+
+	}
+
 	/**
 	 * Construct a conversion with a scaling factor of 1 and offset of 0 for the
 	 * specified abscissa unit of measure.
 	 * 
 	 * @param abscissaUnit
 	 *            {@link UnitOfMeasure}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	public Conversion(UnitOfMeasure abscissaUnit) throws Exception {
 		if (abscissaUnit == null) {
@@ -69,7 +80,8 @@ public class Conversion {
 	 *            Factor
 	 * @param abscissaUnit
 	 *            {@link UnitOfMeasure}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	public Conversion(BigDecimal scalingFactor, UnitOfMeasure abscissaUnit) throws Exception {
 		this(abscissaUnit);
@@ -78,20 +90,6 @@ public class Conversion {
 			throw new Exception(MeasurementSystem.getMessage("factor.cannot.be.null"));
 		}
 		this.scalingFactor = scalingFactor;
-	}
-
-	/**
-	 * Construct a conversion with an offset of 0 for the specified scaling
-	 * factor and abscissa unit of measure.
-	 * 
-	 * @param scalingFactor
-	 *            Factor
-	 * @param abscissaUnit
-	 *            {@link UnitOfMeasure}
-	 * @throws Exception Exception
-	 */
-	public Conversion(String scalingFactor, UnitOfMeasure abscissaUnit) throws Exception {
-		this(Quantity.createAmount(scalingFactor), abscissaUnit);
 	}
 
 	/**
@@ -104,7 +102,8 @@ public class Conversion {
 	 *            {@link UnitOfMeasure}
 	 * @param offset
 	 *            Offset
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
 	public Conversion(BigDecimal scalingFactor, UnitOfMeasure abscissaUnit, BigDecimal offset) throws Exception {
 		this(scalingFactor, abscissaUnit);
@@ -124,7 +123,7 @@ public class Conversion {
 		return this.abscissaUnit;
 	}
 
-	void setAbscissaUnit(UnitOfMeasure abscissaUnit) {
+	public void setAbscissaUnit(UnitOfMeasure abscissaUnit) {
 		this.abscissaUnit = abscissaUnit;
 	}
 
@@ -137,7 +136,13 @@ public class Conversion {
 		return this.offset;
 	}
 
-	void setOffset(BigDecimal offset) {
+	/**
+	 * Set the offset (y-intercept)
+	 * 
+	 * @param offset
+	 *            Offset
+	 */
+	public void setOffset(BigDecimal offset) {
 		this.offset = offset;
 	}
 
@@ -150,7 +155,32 @@ public class Conversion {
 		return this.scalingFactor;
 	}
 
-	void setScalingFactor(BigDecimal scalingFactor) {
+	/**
+	 * Set the scaling factor (slope)
+	 * 
+	 * @param scalingFactor
+	 *            Scaling factor
+	 */
+	public void setScalingFactor(BigDecimal scalingFactor) {
 		this.scalingFactor = scalingFactor;
+	}
+
+	/**
+	 * Get the database record's primary key
+	 * 
+	 * @return Key
+	 */
+	public Integer getKey() {
+		return primaryKey;
+	}
+
+	/**
+	 * Set the database record's primary key
+	 * 
+	 * @param key
+	 *            Key
+	 */
+	public void setKey(Integer key) {
+		this.primaryKey = key;
 	}
 }

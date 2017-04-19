@@ -35,7 +35,6 @@ import java.math.BigInteger;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
-import org.point85.uom.Conversion;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -48,7 +47,6 @@ public class TestQuantity extends BaseTest {
 	public void testNamedQuantity() throws Exception {
 
 		Quantity q = new Quantity(BigDecimal.TEN, Unit.CELSIUS);
-		q.setId(null, null, null);
 		assertTrue(q.toString() != null);
 
 		// faraday
@@ -321,14 +319,13 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
-		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
+		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure secPerM = sys.createQuotientUOM(UnitType.UNCLASSIFIED, null, "s/m", null, sys.getSecond(), m);
 		UnitOfMeasure oneOverM = sys.getUOM(Unit.DIOPTER);
 		UnitOfMeasure fperm = sys.getUOM(Unit.FARAD_PER_METRE);
 
-		Conversion conversion = new Conversion(Quantity.createAmount("100"), oneOverM);
 		UnitOfMeasure oneOverCm = sys.createScalarUOM(UnitType.UNCLASSIFIED, null, "1/cm", null);
-		oneOverCm.setConversion(conversion);
+		oneOverCm.setConversion(Quantity.createAmount("100"), oneOverM);
 
 		Quantity q1 = new Quantity(ten, litre);
 		Quantity q2 = q1.convert(m3);
@@ -527,7 +524,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, metre);
-		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND);
+		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure joule = sys.getUOM(Unit.JOULE);
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure farad = sys.getUOM(Unit.FARAD);
@@ -620,7 +617,7 @@ public class TestQuantity extends BaseTest {
 
 		// inversions
 		UnitOfMeasure u = metre.invert();
-		String sym = u.getConversion().getAbscissaUnit().getSymbol();
+		String sym = u.getAbscissaUnit().getSymbol();
 		assertTrue(sym.equals(sys.getUOM(Unit.DIOPTER).getSymbol()));
 
 		u = mps.invert();
@@ -739,7 +736,7 @@ public class TestQuantity extends BaseTest {
 		BigDecimal forty = Quantity.createAmount("40");
 
 		UnitOfMeasure one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
-		one16ozCan.setConversion(new Conversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE)));
+		one16ozCan.setConversion(Quantity.createAmount("16"), sys.getUOM(Unit.US_FLUID_OUNCE));
 
 		Quantity q400 = new Quantity("400", one16ozCan);
 		Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
@@ -747,20 +744,18 @@ public class TestQuantity extends BaseTest {
 
 		// 1 12 oz can = 12 fl.oz.
 		UnitOfMeasure one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
-		one12ozCan.setConversion(new Conversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE)));
+		one12ozCan.setConversion(Quantity.createAmount("12"), sys.getUOM(Unit.US_FLUID_OUNCE));
 
 		Quantity q48 = new Quantity("48", one12ozCan);
 		Quantity q36 = q48.convert(one16ozCan);
 		assertThat(q36.getAmount(), closeTo(Quantity.createAmount("36"), DELTA6));
 
 		// 6 12 oz cans = 1 6-pack of 12 oz cans
-		Conversion conversion = new Conversion(six, one12ozCan);
 		UnitOfMeasure sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
-		sixPackCan.setConversion(conversion);
+		sixPackCan.setConversion(six, one12ozCan);
 
-		conversion = new Conversion(four, sixPackCan);
 		UnitOfMeasure fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "4 pack case", "4PCase", "case of 4 6-packs");
-		fourPackCase.setConversion(conversion);
+		fourPackCase.setConversion(four, sixPackCan);
 
 		BigDecimal bd = fourPackCase.getConversionFactor(one12ozCan);
 		assertThat(bd, closeTo(Quantity.createAmount("24"), DELTA6));
@@ -813,9 +808,8 @@ public class TestQuantity extends BaseTest {
 
 		UnitOfMeasure a = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a", "aUOM", "A");
 
-		Conversion conversion = new Conversion(BigDecimal.TEN, a);
 		UnitOfMeasure b = sys.createScalarUOM(UnitType.UNCLASSIFIED, "b", "b", "B");
-		b.setConversion(conversion);
+		b.setConversion(BigDecimal.TEN, a);
 
 		BigDecimal four = Quantity.multiplyAmounts("2", "2");
 
@@ -891,6 +885,13 @@ public class TestQuantity extends BaseTest {
 
 		Quantity q1 = new Quantity(BigDecimal.TEN, sys.getDay());
 		Quantity q2 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.BR_FLUID_OUNCE));
+		
+		try {
+			String amount = null;
+			Quantity.createAmount(amount);
+			fail("create");
+		} catch (Exception e) {
+		}
 
 		try {
 			q1.convert(floz);
