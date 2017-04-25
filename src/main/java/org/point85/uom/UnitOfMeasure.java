@@ -189,6 +189,61 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return this.uom2;
 	}
 
+	boolean isQuotient() {
+		return (getExponent2() != null && getExponent2() < 0) ? true : false;
+	}
+
+	UnitOfMeasure clonePower(UnitOfMeasure uom) throws Exception {
+
+		UnitOfMeasure newUOM = new UnitOfMeasure();
+		newUOM.setUnitType(getUnitType());
+
+		// check if quotient
+		int exponent = 1;
+		if (getPowerExponent() != null) {
+			exponent = getPowerExponent();
+		}
+
+		UnitOfMeasure one = MeasurementSystem.getSystem().getOne();
+		if (isQuotient()) {
+			if (getDividend().equals(one)) {
+				exponent = getExponent2();
+			} else if (getDivisor().equals(one)) {
+				exponent = getExponent1();
+			}
+		}
+		newUOM.setPowerUnits(uom, exponent);
+		String symbol = UnitOfMeasure.generatePowerSymbol(uom, exponent);
+		newUOM.setSymbol(symbol);
+		newUOM.setName(symbol);
+
+		return newUOM;
+	}
+
+	UnitOfMeasure clonePowerProduct(UnitOfMeasure uom1, UnitOfMeasure uom2) throws Exception {
+		boolean invert = false;
+		UnitOfMeasure one = MeasurementSystem.getSystem().getOne();
+
+		// check if quotient
+		if (isQuotient()) {
+			if (uom2.equals(one)) {
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("incompatible.units"), this, one);
+				throw new Exception(msg);
+			}
+			invert = true;
+		} else {
+			if (uom1.equals(one) || uom2.equals(one)) {
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("incompatible.units"), this, one);
+				throw new Exception(msg);
+			}
+		}
+
+		UnitOfMeasure newUOM = uom1.multiplyOrDivide(uom2, invert);
+		newUOM.setUnitType(getUnitType());
+
+		return newUOM;
+	}
+
 	/**
 	 * Remove all cached conversions
 	 */
@@ -784,6 +839,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		Map<UnitOfMeasure, Integer> fromMap = fromPowerMap.getTerms();
 		Map<UnitOfMeasure, Integer> toMap = toPowerMap.getTerms();
 
+		if (fromMap.size() != toMap.size()) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("incompatible.units"), this, targetUOM);
+			throw new Exception(msg);
+		}
+
 		BigDecimal fromFactor = fromPowerMap.getScalingFactor();
 		BigDecimal toFactor = toPowerMap.getScalingFactor();
 
@@ -841,6 +901,15 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	private boolean isTerminal() {
 		return this.equals(getAbscissaUnit()) ? true : false;
+	}
+
+	/**
+	 * Check to see if this UOM has a conversion to another UOM
+	 * 
+	 * @return true if it does
+	 */
+	public boolean hasConversion() {
+		return !isTerminal();
 	}
 
 	/**

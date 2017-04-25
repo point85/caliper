@@ -901,6 +901,8 @@ public class TestUnits extends BaseTest {
 				sys.getHour());
 		UnitOfMeasure ftlb = sys.getUOM(Unit.FOOT_POUND_FORCE);
 		UnitOfMeasure sqft = sys.getUOM(Unit.SQUARE_FOOT);
+		
+		assertTrue(cm.hasConversion());
 
 		UnitOfMeasure oneDivSec = sys.getOne().divide(sys.getSecond());
 		UnitOfMeasure inverted = oneDivSec.invert();

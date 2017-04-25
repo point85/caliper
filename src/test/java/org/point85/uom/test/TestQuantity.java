@@ -1020,4 +1020,125 @@ public class TestQuantity extends BaseTest {
 		Quantity q3 = q2.subtract(q1).divide(q1).convert(Unit.PERCENT);
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("20"), DELTA6));
 	}
+	
+	@Test
+	public void testPowerProductConversions() throws Exception {
+		
+		UnitOfMeasure one = sys.getOne();
+		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
+		UnitOfMeasure fps = sys.getUOM(Unit.FEET_PER_SEC);
+		UnitOfMeasure nm = sys.getUOM(Unit.NEWTON_METRE);
+		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
+		UnitOfMeasure in = sys.getUOM(Unit.INCH);
+		UnitOfMeasure mi = sys.getUOM(Unit.MILE);
+		UnitOfMeasure hr = sys.getUOM(Unit.HOUR);
+		UnitOfMeasure m = sys.getUOM(Unit.METRE);
+		UnitOfMeasure s = sys.getUOM(Unit.SECOND);
+		UnitOfMeasure n = sys.getUOM(Unit.NEWTON);
+		UnitOfMeasure lbf = sys.getUOM(Unit.POUND_FORCE);
+		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
+		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
+		UnitOfMeasure ft2 = sys.getUOM(Unit.SQUARE_FOOT);
+		
+		// test products and quotients
+		sys.unregisterUnit(sys.getUOM(Unit.FOOT_POUND_FORCE));
+		Quantity nmQ = new Quantity("1", nm);
+		Quantity lbfinQ = nmQ.convertToPowerProduct(lbf, in);
+		assertThat(lbfinQ.getAmount(), closeTo(Quantity.createAmount("8.850745791327183"), DELTA6));
+		Quantity mpsQ = new Quantity("1", mps);
+
+		Quantity fphQ = mpsQ.convertToPowerProduct(ft, hr);
+		assertThat(fphQ.getAmount(), closeTo(Quantity.createAmount("11811.02362204724"), DELTA6));
+
+		Quantity mps2Q = fphQ.convertToPowerProduct(m, s);
+		assertThat(mps2Q.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+
+		Quantity mps3Q = mpsQ.convertToPowerProduct(m, s);
+		assertThat(mps3Q.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+
+		Quantity inlbfQ = nmQ.convertToPowerProduct(in, lbf);
+		assertThat(inlbfQ.getAmount(), closeTo(Quantity.createAmount("8.850745791327183"), DELTA6));
+
+		Quantity nm2Q = lbfinQ.convertToPowerProduct(n, m);
+		assertThat(nm2Q.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		
+		nm2Q = lbfinQ.convertToPowerProduct(m, n);
+		assertThat(nm2Q.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+
+		Quantity mQ = new Quantity("1", m);
+		try {
+			mQ.convertToPowerProduct(ft, hr);
+			fail();
+		} catch (Exception e) {
+		}
+
+		sys.unregisterUnit(sys.getUOM(Unit.SQUARE_FOOT));
+		Quantity m2Q = new Quantity("1", m2);
+		Quantity ft2Q = m2Q.convertToPowerProduct(ft, ft);
+		assertThat(ft2Q.getAmount(), closeTo(Quantity.createAmount("10.76391041670972"), DELTA6));
+
+		Quantity mmQ = ft2Q.convertToPowerProduct(m, m);
+		assertThat(mmQ.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+
+		try {
+			m2Q.convertToPowerProduct(m, one);
+			fail();
+		} catch (Exception e) {
+		}
+
+		sys.unregisterUnit(sys.getUOM(Unit.CUBIC_FOOT));
+		Quantity m3Q = new Quantity("1", m3);
+		Quantity ft3Q = m3Q.convertToPowerProduct(ft2, ft);
+		assertThat(ft3Q.getAmount(), closeTo(Quantity.createAmount("35.31466672148858"), DELTA6));
+		
+		Quantity m3Q2 = m3Q.convertToPowerProduct(m2, m);
+		assertThat(m3Q2.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		
+		ft3Q = m3Q.convertToPowerProduct(ft, ft2);
+		assertThat(ft3Q.getAmount(), closeTo(Quantity.createAmount("35.31466672148858"), DELTA6));
+
+		UnitOfMeasure perM = sys.getUOM(Unit.DIOPTER);
+		Quantity perMQ = new Quantity(BigDecimal.ONE, perM);
+		Quantity perInQ = perMQ.convertToPowerProduct(one, in);
+		assertThat(perInQ.getAmount(), closeTo(Quantity.createAmount("0.0254"), DELTA6));
+
+		try {
+			perMQ.convertToPowerProduct(in, one);
+			fail();
+		} catch (Exception e) {
+		}
+		
+		try {
+			perMQ.convertToPowerProduct(in, in);
+			fail();
+		} catch (Exception e) {
+		}
+		
+		Quantity fpsQ = new Quantity(BigDecimal.ONE, fps);
+		Quantity mphQ = fpsQ.convertToPowerProduct(mi, hr);
+		assertThat(mphQ.getAmount(), closeTo(Quantity.createAmount("0.6818181818181818"), DELTA6));
+
+		// test powers
+		Quantity in2Q = m2Q.convertToPower(in);
+		assertThat(in2Q.getAmount(), closeTo(Quantity.createAmount("1550.003100006200"), DELTA6));
+		
+		Quantity m2Q2 = in2Q.convertToPower(m);
+		assertThat(m2Q2.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		
+		Quantity perInQ2 = perMQ.convertToPower(in);
+		assertThat(perInQ2.getAmount(), closeTo(Quantity.createAmount("0.0254"), DELTA6));
+		
+		Quantity q1 = perInQ2.convertToPower(m);
+		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		
+		Quantity inQ2 = mQ.convertToPower(in);
+		assertThat(inQ2.getAmount(), closeTo(Quantity.createAmount("39.37007874015748"), DELTA6));
+		
+		q1 = inQ2.convertToPower(m);
+		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		
+		Quantity one1 = new Quantity(BigDecimal.ONE, sys.getOne());
+		q1 = one1.convertToPower(sys.getOne());
+		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+	}
 }

@@ -398,6 +398,40 @@ public class Quantity extends Symbolic {
 	}
 
 	/**
+	 * Convert this quantity with a product or quotient unit of measure to the
+	 * specified units of measure.
+	 * 
+	 * @param uom1
+	 *            Multiplier or dividend {@link UnitOfMeasure}
+	 * @param uom2
+	 *            Multiplicand or divisor {@link UnitOfMeasure}
+	 * @return Converted quantity
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity convertToPowerProduct(UnitOfMeasure uom1, UnitOfMeasure uom2) throws Exception {
+		UnitOfMeasure newUOM = getUOM().clonePowerProduct(uom1, uom2);
+
+		return convert(newUOM);
+	}
+
+	/**
+	 * Convert this quantity of a power unit using the specified base unit of
+	 * measure.
+	 * 
+	 * @param uom
+	 *            Base {@link UnitOfMeasure}
+	 * @return Converted quantity
+	 * @throws Exception
+	 *             exception
+	 */
+	public Quantity convertToPower(UnitOfMeasure uom) throws Exception {
+		UnitOfMeasure newUOM = getUOM().clonePower(uom);
+
+		return convert(newUOM);
+	}
+
+	/**
 	 * Convert this quantity to the target unit
 	 * 
 	 * @param unit

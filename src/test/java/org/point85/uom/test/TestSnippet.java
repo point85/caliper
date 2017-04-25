@@ -46,6 +46,6 @@ public class TestSnippet extends BaseTest {
 
 	@Test
 	public void testCase() throws Exception {
-
+		sys.getUOM(Unit.METRE);
 	}
 }

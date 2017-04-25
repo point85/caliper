@@ -203,6 +203,25 @@ and, a megabyte (MB = 2^20 bytes) is created by:
 UnitOfMeasure mB = sys.getUOM(Prefix.MEBI, Unit.BYTE);
 ```
 
+*Implicit Conversions*
+A quantity can be converted to another unit of measure without requiring the target UOM to first be created.  If the quantity has a product or quotient UOM, use the convertToPowerProduct() method.  For example:
+
+```java
+// convert 1 newton-metre to pound force-inches
+Quantity nmQ = new Quantity("1", sys.getUOM(Unit.NEWTON_METRE));
+Quantity lbfinQ = nmQ.convertToPowerProduct(sys.getUOM(Unit.POUND_FORCE), sys.getUOM(Unit.INCH));
+```
+
+If the quantity has power UOM, use the convertToPower() method.  For example:
+
+```java
+// convert square metres to square inches
+Quantity m2Q = new Quantity("1", sys.getUOM(Unit.SQUARE_METRE));
+Quantity in2Q = m2Q.convertToPower(sys.getUOM(Unit.INCH));
+```
+
+Other UOMs can be converted using the convert() method.
+
 ## Physical Unit Equation Examples
 
 One's Body Mass Index (BMI) can be calculated as:
