@@ -204,6 +204,7 @@ UnitOfMeasure mB = sys.getUOM(Prefix.MEBI, Unit.BYTE);
 ```
 
 *Implicit Conversions*
+
 A quantity can be converted to another unit of measure without requiring the target UOM to first be created.  If the quantity has a product or quotient UOM, use the convertToPowerProduct() method.  For example:
 
 ```java
@@ -215,7 +216,7 @@ Quantity lbfinQ = nmQ.convertToPowerProduct(sys.getUOM(Unit.POUND_FORCE), sys.ge
 If the quantity has power UOM, use the convertToPower() method.  For example:
 
 ```java
-// convert square metres to square inches
+// convert 1 square metre to square inches
 Quantity m2Q = new Quantity("1", sys.getUOM(Unit.SQUARE_METRE));
 Quantity in2Q = m2Q.convertToPower(sys.getUOM(Unit.INCH));
 ```
