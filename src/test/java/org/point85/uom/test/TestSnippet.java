@@ -32,7 +32,6 @@ import org.point85.uom.Unit;
 public class TestSnippet extends BaseTest {
 	@AfterClass
 	public static void cleanUp() throws Exception {
-
 		assertTrue(sys.getSymbolCache().size() > 0);
 		assertTrue(sys.getBaseSymbolCache().size() > 0);
 		assertTrue(sys.getEnumerationCache().size() > 0);
@@ -46,6 +45,6 @@ public class TestSnippet extends BaseTest {
 
 	@Test
 	public void testCase() throws Exception {
-		sys.getUOM(Unit.METRE);
+
 	}
 }

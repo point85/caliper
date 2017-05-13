@@ -66,6 +66,8 @@ public class TestBridges extends BaseTest {
 		UnitOfMeasure ftlbf = sys.getUOM(Unit.FOOT_POUND_FORCE);
 		UnitOfMeasure psi = sys.getUOM(Unit.PSI);
 		UnitOfMeasure fahrenheit = sys.getUOM(Unit.FAHRENHEIT);
+		
+		assertTrue(ft.getBridgeOffset() == null);
 
 		Quantity q1 = new Quantity(BigDecimal.TEN, ft);
 		Quantity q2 = q1.convert(m);

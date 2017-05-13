@@ -836,7 +836,7 @@ public class MeasurementSystem {
 					symbols.getString("rankine.symbol"), symbols.getString("rankine.desc"));
 
 			// create bridge to SI
-			uom.setBridgeConversion(Quantity.divideAmounts("5", "9"), getUOM(Unit.KELVIN));
+			uom.setBridgeConversion(Quantity.divideAmounts("5", "9"), getUOM(Unit.KELVIN), null);
 			break;
 
 		case FAHRENHEIT:
@@ -852,7 +852,7 @@ public class MeasurementSystem {
 					symbols.getString("lbm.symbol"), symbols.getString("lbm.desc"));
 
 			// create bridge to SI
-			uom.setBridgeConversion(Quantity.createAmount("0.45359237"), getUOM(Unit.KILOGRAM));
+			uom.setBridgeConversion(Quantity.createAmount("0.45359237"), getUOM(Unit.KILOGRAM), null);
 			break;
 
 		case OUNCE:
@@ -883,7 +883,7 @@ public class MeasurementSystem {
 					symbols.getString("foot.symbol"), symbols.getString("foot.desc"));
 
 			// bridge to SI
-			uom.setBridgeConversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
+			uom.setBridgeConversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE), null);
 			break;
 
 		case INCH:
@@ -1282,17 +1282,17 @@ public class MeasurementSystem {
 	/**
 	 * Get the unit of measure with this unique enumerated type
 	 * 
-	 * @param enumeration
+	 * @param unit
 	 *            {@link Unit}
 	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception Exception
 	 */
-	public UnitOfMeasure getUOM(Unit enumeration) throws Exception {
-		UnitOfMeasure uom = unitRegistry.get(enumeration);
+	public UnitOfMeasure getUOM(Unit unit) throws Exception {
+		UnitOfMeasure uom = unitRegistry.get(unit);
 
 		if (uom == null) {
-			uom = createUOM(enumeration);
+			uom = createUOM(unit);
 		}
 		return uom;
 	}
@@ -1455,7 +1455,7 @@ public class MeasurementSystem {
 		return symbols;
 	}
 
-	void cacheUnit(UnitOfMeasure uom) throws Exception {
+	void registerUnit(UnitOfMeasure uom) throws Exception {
 		String key = uom.getSymbol();
 
 		// get first by symbol
@@ -1511,7 +1511,7 @@ public class MeasurementSystem {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
 		uom.setEnumeration(id);
-		cacheUnit(uom);
+		registerUnit(uom);
 
 		return uom;
 	}
@@ -1563,7 +1563,7 @@ public class MeasurementSystem {
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
 		uom.setQuotientUnits(dividend, divisor);
 		uom.setEnumeration(id);
-		cacheUnit(uom);
+		registerUnit(uom);
 		return uom;
 	}
 
@@ -1645,7 +1645,7 @@ public class MeasurementSystem {
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
 		uom.setProductUnits(multiplier, multiplicand);
 		uom.setEnumeration(id);
-		cacheUnit(uom);
+		registerUnit(uom);
 		return uom;
 	}
 
@@ -1728,7 +1728,7 @@ public class MeasurementSystem {
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
 		uom.setPowerUnits(base, power);
 		uom.setEnumeration(id);
-		cacheUnit(uom);
+		registerUnit(uom);
 		return uom;
 	}
 

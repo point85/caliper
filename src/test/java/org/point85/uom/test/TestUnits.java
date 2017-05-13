@@ -33,7 +33,6 @@ import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
-import org.point85.uom.Conversion;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -492,7 +491,7 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure foot = sys.getUOM(Unit.FOOT);
 		UnitOfMeasure gal = sys.getUOM(Unit.US_GALLON);
-		UnitOfMeasure flush = sys.createScalarUOM(UnitType.UNCLASSIFIED, "flush", "f", "");
+		UnitOfMeasure flush = sys.createScalarUOM(UnitType.UNCLASSIFIED, "flush", "flush", "");
 		UnitOfMeasure gpf = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "gal per flush", "gpf", "", gal, flush);
 		UnitOfMeasure velocity = sys.getUOM(Unit.FEET_PER_SEC);
 
@@ -582,15 +581,10 @@ public class TestUnits extends BaseTest {
 					sys.getUOM(Unit.METRE_PER_SEC));
 		}
 
-		Conversion conversion = velocity.getConversion();
 		BigDecimal sf = BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT);
-		assertThat(conversion.getScalingFactor(), closeTo(sf, DELTA6));
-		assertTrue(conversion.getAbscissaUnit().equals(sys.getUOM(Unit.METRE_PER_SEC)));
-		assertThat(conversion.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
-
-		conversion = new Conversion();
-		conversion.setKey(100);
-		assertTrue(conversion.getKey() == 100);
+		assertThat(velocity.getScalingFactor(), closeTo(sf, DELTA6));
+		assertTrue(velocity.getAbscissaUnit().equals(sys.getUOM(Unit.METRE_PER_SEC)));
+		assertThat(velocity.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
 
 		u = velocity.multiply(hour);
 		BigDecimal bd = u.getConversionFactor(metre);
@@ -901,8 +895,6 @@ public class TestUnits extends BaseTest {
 				sys.getHour());
 		UnitOfMeasure ftlb = sys.getUOM(Unit.FOOT_POUND_FORCE);
 		UnitOfMeasure sqft = sys.getUOM(Unit.SQUARE_FOOT);
-		
-		assertTrue(cm.hasConversion());
 
 		UnitOfMeasure oneDivSec = sys.getOne().divide(sys.getSecond());
 		UnitOfMeasure inverted = oneDivSec.invert();
@@ -1708,8 +1700,18 @@ public class TestUnits extends BaseTest {
 		q.setKey(101);
 		assertTrue(q.getKey() == 101);
 
-		Conversion c = new Conversion();
-		c.setKey(102);
-		assertTrue(c.getKey() == 102);
+	}
+	
+	@Test
+	public void testMeasurementTypes() throws Exception {
+		UnitOfMeasure m = sys.getUOM(Unit.METRE);
+		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
+		UnitOfMeasure n = sys.getUOM(Unit.NEWTON_METRE);
+		UnitOfMeasure a = sys.getUOM(Unit.SQUARE_METRE);
+		
+		assertTrue(m.getMeasurementType().equals(UnitOfMeasure.MeasurementType.SCALAR));
+		assertTrue(mps.getMeasurementType().equals(UnitOfMeasure.MeasurementType.QUOTIENT));
+		assertTrue(n.getMeasurementType().equals(UnitOfMeasure.MeasurementType.PRODUCT));
+		assertTrue(a.getMeasurementType().equals(UnitOfMeasure.MeasurementType.POWER));
 	}
 }
