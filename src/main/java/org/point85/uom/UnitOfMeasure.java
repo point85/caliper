@@ -86,6 +86,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure> {
 
+	// UOM types
 	public enum MeasurementType {
 		SCALAR, PRODUCT, QUOTIENT, POWER
 	};
@@ -234,7 +235,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 				exponent = getExponent1();
 			}
 		}
-		newUOM.setPowerUnits(uom, exponent);
+		newUOM.setPowerUnit(uom, exponent);
 		String symbol = UnitOfMeasure.generatePowerSymbol(uom, exponent);
 		newUOM.setSymbol(symbol);
 		newUOM.setName(symbol);
@@ -285,14 +286,29 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return MeasurementSystem.getSystem().getBaseUOM(baseSymbol);
 	}
 
+	/**
+	 * Get the bridge UOM scaling factor
+	 * 
+	 * @return Scaling factor
+	 */
 	public BigDecimal getBridgeScalingFactor() {
 		return this.bridgeScalingFactor;
 	}
 
+	/**
+	 * Get the bridge UOM abscissa UOM
+	 * 
+	 * @return {@link UnitOfMeasure}
+	 */
 	public UnitOfMeasure getBridgeAbscissaUnit() {
 		return this.bridgeAbscissaUnit;
 	}
 
+	/**
+	 * Get the bridge UOM offset
+	 * 
+	 * @return Offset
+	 */
 	public BigDecimal getBridgeOffset() {
 		return this.bridgeOffset;
 	}
@@ -653,15 +669,22 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		if (scalingFactor == null) {
 			throw new Exception(MeasurementSystem.getMessage("factor.cannot.be.null"));
 		}
-		
+
 		if (abscissaUnit == null) {
 			throw new Exception(MeasurementSystem.getMessage("unit.cannot.be.null"));
 		}
-		
+
 		if (offset == null) {
 			throw new Exception(MeasurementSystem.getMessage("offset.cannot.be.null"));
 		}
-		
+
+		// self conversion is special
+		if (this.equals(abscissaUnit)) {
+			if (!scalingFactor.equals(BigDecimal.ONE) || !offset.equals(BigDecimal.ZERO)) {
+				throw new Exception(MeasurementSystem.getMessage("conversion.not.allowed"));
+			}
+		}
+
 		// unit has been previously cached, so first remove it, then cache again
 		MeasurementSystem.getSystem().unregisterUnit(this);
 		baseSymbol = null;
@@ -669,7 +692,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		this.scalingFactor = scalingFactor;
 		this.abscissaUnit = abscissaUnit;
 		this.offset = offset;
-		
+
 		// re-cache
 		MeasurementSystem.getSystem().registerUnit(this);
 	}
@@ -870,6 +893,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		BigDecimal factor = BigDecimal.ONE;
 
+		// compute map factor
+		int matchCount = 0;
+
 		for (Entry<UnitOfMeasure, Integer> fromEntry : fromMap.entrySet()) {
 			UnitType fromType = fromEntry.getKey().getUnitType();
 			UnitOfMeasure fromUOM = fromEntry.getKey();
@@ -879,15 +905,20 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 				UnitType toType = toEntry.getKey().getUnitType();
 
 				if (fromType.equals(toType)) {
+					matchCount++;
 					UnitOfMeasure toUOM = toEntry.getKey();
 					BigDecimal bd = fromUOM.convertScalarToScalar(toUOM);
 					bd = decimalPower(bd, fromPower);
 					factor = decimalMultiply(factor, bd);
-
 					break;
 				}
 			} // to map
 		} // from map
+
+		if (matchCount != fromMap.size()) {
+			String msg = MessageFormat.format(MeasurementSystem.getMessage("incompatible.units"), this, targetUOM);
+			throw new Exception(msg);
+		}
 
 		BigDecimal scaling = decimalDivide(fromFactor, toFactor);
 		cachedFactor = decimalMultiply(factor, scaling);
@@ -994,7 +1025,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * @throws Exception
 	 *             Exception
 	 */
-	public void setPowerUnits(UnitOfMeasure base, Integer exponent) throws Exception {
+	public void setPowerUnit(UnitOfMeasure base, Integer exponent) throws Exception {
 		if (base == null) {
 			String msg = MessageFormat.format(MeasurementSystem.getMessage("base.cannot.be.null"), getSymbol());
 			throw new Exception(msg);
@@ -1219,6 +1250,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	// reduce a unit of measure to its most basic scalar units of measure.
 	private class Reducer {
+		private static final int MAX_RECURSIONS = 100;
+
 		// starting level
 		private static final int STARTING_LEVEL = -1;
 
@@ -1230,6 +1263,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// list of exponents down a path to the leaf UOM
 		private List<Integer> pathExponents = new ArrayList<>();
+
+		// recursion counter
+		private int counter = 0;
 
 		private Reducer() {
 
@@ -1247,11 +1283,17 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			this.terms = terms;
 		}
 
-		public void explode(UnitOfMeasure unit) throws Exception {
+		private void explode(UnitOfMeasure unit) throws Exception {
 			explodeRecursively(unit, STARTING_LEVEL);
 		}
 
 		private void explodeRecursively(UnitOfMeasure unit, int level) throws Exception {
+			if (++counter > MAX_RECURSIONS) {
+				String msg = MessageFormat.format(MeasurementSystem.getMessage("circular.references"),
+						unit.getSymbol());
+				throw new Exception(msg);
+			}
+
 			// down a level
 			level++;
 

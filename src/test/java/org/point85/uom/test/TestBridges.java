@@ -26,6 +26,7 @@ package org.point85.uom.test;
 import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
@@ -66,7 +67,7 @@ public class TestBridges extends BaseTest {
 		UnitOfMeasure ftlbf = sys.getUOM(Unit.FOOT_POUND_FORCE);
 		UnitOfMeasure psi = sys.getUOM(Unit.PSI);
 		UnitOfMeasure fahrenheit = sys.getUOM(Unit.FAHRENHEIT);
-		
+
 		assertTrue(ft.getBridgeOffset() == null);
 
 		Quantity q1 = new Quantity(BigDecimal.TEN, ft);
@@ -218,5 +219,30 @@ public class TestBridges extends BaseTest {
 		q1 = new Quantity(BigDecimal.TEN, d1);
 		q2 = q1.convert(d2);
 
+	}
+
+	@Test
+	public void testBridgeUnits() throws Exception {
+		UnitOfMeasure bridge1 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "Bridge1", "B1", "description");
+		UnitOfMeasure bridge2 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "Bridge2", "B2", "description");
+
+		bridge1.setBridgeConversion(BigDecimal.ONE, bridge2, BigDecimal.ZERO);
+		assertTrue(bridge1.getBridgeScalingFactor().equals(BigDecimal.ONE));
+		assertTrue(bridge1.getBridgeAbscissaUnit().equals(bridge2));
+		assertTrue(bridge1.getBridgeOffset().equals(BigDecimal.ZERO));
+
+		try {
+			bridge1.setConversion(BigDecimal.TEN, bridge1, BigDecimal.ZERO);
+			fail();
+		} catch (Exception e) {
+
+		}
+
+		try {
+			bridge1.setConversion(BigDecimal.ONE, bridge1, BigDecimal.TEN);
+			fail();
+		} catch (Exception e) {
+
+		}
 	}
 }

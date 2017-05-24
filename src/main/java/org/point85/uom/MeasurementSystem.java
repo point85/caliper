@@ -83,7 +83,7 @@ public class MeasurementSystem {
 	private static ResourceBundle messages;
 
 	// standard unified system
-	private static MeasurementSystem unifiedSystem;
+	private static MeasurementSystem unifiedSystem = new MeasurementSystem();
 
 	// name of resource bundle with translatable strings for UOMs (e.g. time)
 	private static final String UNIT_BUNDLE_NAME = "Unit";
@@ -100,11 +100,7 @@ public class MeasurementSystem {
 	// registry for units by enumeration
 	private Map<Unit, UnitOfMeasure> unitRegistry = new ConcurrentHashMap<Unit, UnitOfMeasure>();
 
-	private MeasurementSystem() {
-		initialize();
-	}
-
-	private void initialize() {
+	protected MeasurementSystem() {
 		// common unit strings
 		symbols = ResourceBundle.getBundle(UNIT_BUNDLE_NAME, Locale.getDefault());
 		messages = ResourceBundle.getBundle(MESSAGES_BUNDLE_NAME, Locale.getDefault());
@@ -122,15 +118,7 @@ public class MeasurementSystem {
 	 * @return {@link MeasurementSystem}
 	 */
 	public static MeasurementSystem getSystem() {
-		if (unifiedSystem == null) {
-			createUnifiedSystem();
-		}
-
 		return unifiedSystem;
-	}
-
-	private static void createUnifiedSystem() {
-		unifiedSystem = new MeasurementSystem();
 	}
 
 	private UnitOfMeasure createUOM(Unit enumeration) throws Exception {
@@ -1455,7 +1443,15 @@ public class MeasurementSystem {
 		return symbols;
 	}
 
-	void registerUnit(UnitOfMeasure uom) throws Exception {
+	/**
+	 * Cache this unit of measure
+	 * 
+	 * @param uom
+	 *            {@link UnitOfMeasure} to cache
+	 * @throws Exception
+	 *             Exception
+	 */
+	public void registerUnit(UnitOfMeasure uom) throws Exception {
 		String key = uom.getSymbol();
 
 		// get first by symbol
@@ -1726,7 +1722,7 @@ public class MeasurementSystem {
 			UnitOfMeasure base, int power) throws Exception {
 
 		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
-		uom.setPowerUnits(base, power);
+		uom.setPowerUnit(base, power);
 		uom.setEnumeration(id);
 		registerUnit(uom);
 		return uom;
