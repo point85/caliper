@@ -680,7 +680,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// self conversion is special
 		if (this.equals(abscissaUnit)) {
-			if (!scalingFactor.equals(BigDecimal.ONE) || !offset.equals(BigDecimal.ZERO)) {
+			if (scalingFactor.compareTo(BigDecimal.ONE) != 0 || offset.compareTo(BigDecimal.ZERO) != 0) {
 				throw new Exception(MeasurementSystem.getMessage("conversion.not.allowed"));
 			}
 		}
