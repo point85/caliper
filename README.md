@@ -377,13 +377,13 @@ The screen capture below shows the converter:
 ![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/UOM_Converter.png)
 
 The "Editor ..." button launches the editor (see below).  To convert a unit of measure follow these steps:
-*  Select the unit type in the drop-down, e.g. VOLUME.  
-*  Enter the amount to convert from, e.g. 48
+*  Select the unit type in the drop-down, e.g. LENGTH.  
+*  Enter the amount to convert from, e.g. 1
 *  Select the from prefix if desired.  For example, "kilo" is 1000 of the units.
-*  Select the from unit of measure, e.g. "12ozCan" in the drop-down.
+*  Select the from unit of measure, e.g. "m (metre)" in the drop-down.
 *  Select the to prefix if desired.  
-*  Select the to unit of measure, e.g. "16ozCan" in the drop-down.
-*  Click the "Convert" button.  The converted amount will be displayed below the from amount, e.g. 36.
+*  Select the to unit of measure, e.g. "mi (mile)" in the drop-down.
+*  Click the "Convert" button.  The converted amount will be displayed below the from amount, e.g. 0.621371192.
 
 The screen capture below shows the unit of measure editor:
 ![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/UOM_Editor.png) 
@@ -391,9 +391,9 @@ The screen capture below shows the unit of measure editor:
 To create a unit of measure, click the "New" button and follow these steps:
 *  Enter a name, symbol, category (or choose one already defined) and description.
 *  Choose the type from the drop-down.  For custom units, choose "UNCLASSIFIED".  Only units of the same type can be converted.
-*  If the unit of measure is related to another unit of measure via a conversion, enter the scaling factor ("a"), abscissa (x) and offset (b).  The conversion will default to the unit of measure itself.
+*  If the unit of measure is related to another unit of measure via a conversion, enter the scaling factor (a), abscissa (x) and offset (b).  The conversion will default to the unit of measure itself.
 *  For a simple scalar unit, no additional properties are required.
-*  For a product or quotient unit of measure, the multiplier/multiplicand or dividend/divisor properties must be entered.  First select the respective unit type (e.g. VOLUME) then the unit of measure.  Click the respective radip button to indicate whether this is product or quotient.
+*  For a product or quotient unit of measure, the multiplier/multiplicand or dividend/divisor properties must be entered.  First select the respective unit type (e.g. VOLUME) then the unit of measure.  Click the respective radio button to indicate whether this is product or quotient.
 *  For a power unit, the base unit of measure and exponent must be entered.  First select the unit type, then the base unit of measure.  Enter the exponent.
 *  Click the "Save" button.  The new unit of measure will appear in the tree view on the left under its category.
 
@@ -406,16 +406,16 @@ To delete a unit of measure, select it in the tree view then click the "Delete" 
 
 
 ## Project Structure
-The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+.
+The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+ and a JPA implementation (e.g. EclipseLink http://www.eclipse.org/eclipselink/#jpa).
 
-Caliper, when built with Gradle, has the following structure:
- * `/build/docs/javadoc` - javadoc files
- * `/build/libs` - compiled caliper.jar 
+The Caliper library and application, when built with Gradle, has the following structure:
+ * `/build/docs/javadoc` - javadoc files for the library
+ * `/build/libs` - compiled caliper.jar library
  * `/doc` - documentation
  * `/src/main/java` - java library source files
- * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol, description and UCUM symbol.
- * `/src/test/java` - JUnit test java source files 
- * `/src/ui/java` - java source files for JPA persistency and JavaFX 8 user interface
+ * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol and description.
+ * `/src/test/java` - JUnit test java source files for the library
+ * `/src/ui/java` - java source files for JPA persistency and JavaFX 8 user interface for the application
  * `/src/ui/resources` - images and XML files for for JPA persistency
  * `/database` - SQL script files for table and index generation
  
