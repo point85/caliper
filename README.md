@@ -348,7 +348,7 @@ UnitOfMeasure uiuPerml = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "uI
 testResult = new Quantity("2.0", uiuPerml);
 ```
 
-###Caching
+### Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
 
 The BigDecimal value of a unit of measure conversion is also cached.  This performance optimization eliminates the need to calculate the conversion multiple times if many quantities are being converted at once; for example, operations upon a vector or matrix of quantities all with the same unit of measure.
@@ -368,18 +368,58 @@ and for an exception:
 already.created = The unit of measure with symbol {0} has already been created by {1}.  Did you intend to scale this unit with a linear conversion?
 ```
 
+## Unit of Measure Application
+An example Unit of Measure converter and editor desktop application has been built to demonstrate fundamental capabilities of the library.  The user interface is implemented in JavaFX 8 and database persistency is provided by JPA (Java Persistence API) with FXML descriptors.  EclipseLink is the JPA implementation for a Microsoft SQL Server database.
+
+The editor allows new units of measure to be created and saved to the database as well as updated and deleted.  All of the units of measure pre-defined in the library are available for use in the editor or in the converter. 
+
+The screen capture below shows the converter:
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/UOM_Converter.png)
+
+The "Editor ..." button launches the editor (see below).  To convert a unit of measure follow these steps:
+*  Select the unit type in the drop-down, e.g. VOLUME.  
+*  Enter the amount to convert from, e.g. 48
+*  Select the from prefix if desired.  For example, "kilo" is 1000 of the units.
+*  Select the from unit of measure, e.g. "12ozCan" in the drop-down.
+*  Select the to prefix if desired.  
+*  Select the to unit of measure, e.g. "16ozCan" in the drop-down.
+*  Click the "Convert" button.  The converted amount will be displayed below the from amount, e.g. 36.
+
+The screen capture below shows the unit of measure editor:
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/UOM_Editor.png) 
+
+To create a unit of measure, click the "New" button and follow these steps:
+*  Enter a name, symbol, category (or choose one already defined) and description.
+*  Choose the type from the drop-down.  For custom units, choose "UNCLASSIFIED".  Only units of the same type can be converted.
+*  If the unit of measure is related to another unit of measure via a conversion, enter the scaling factor ("a"), abscissa (x) and offset (b).  The conversion will default to the unit of measure itself.
+*  For a simple scalar unit, no additional properties are required.
+*  For a product or quotient unit of measure, the multiplier/multiplicand or dividend/divisor properties must be entered.  First select the respective unit type (e.g. VOLUME) then the unit of measure.  Click the respective radip button to indicate whether this is product or quotient.
+*  For a power unit, the base unit of measure and exponent must be entered.  First select the unit type, then the base unit of measure.  Enter the exponent.
+*  Click the "Save" button.  The new unit of measure will appear in the tree view on the left under its category.
+
+
+To edit a unit of measure, select it in the tree view.  It's properties will be displayed on the right.  Change properties as required, then click the "Save" button.
+
+To refresh the state of the unit that is selected in the tree view from the database, click the "Refresh" button.
+
+To delete a unit of measure, select it in the tree view then click the "Delete" button.
+
+
 ## Project Structure
-Caliper depends upon Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request). 
+The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+.
 
 Caliper, when built with Gradle, has the following structure:
- * `/build/docs/javadoc` javadoc files
- * `/build/libs` compiled caliper.jar 
- * `/doc` documentation
- * `/src/main/java` - java source files
+ * `/build/docs/javadoc` - javadoc files
+ * `/build/libs` - compiled caliper.jar 
+ * `/doc` - documentation
+ * `/src/main/java` - java library source files
  * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol, description and UCUM symbol.
  * `/src/test/java` - JUnit test java source files 
+ * `/src/ui/java` - java source files for JPA persistency and JavaFX 8 user interface
+ * `/src/ui/resources` - images and XML files for for JPA persistency
+ * `/database` - SQL script files for table and index generation
  
-When Caliper is built with Maven, the javadoc and jar files are in the 'target' folder.
+When Caliper is built with Maven, the javadoc and jar files for the base library are in the 'target' folder.
 
 ## JSR 363
 JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular:
