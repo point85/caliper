@@ -27,6 +27,7 @@ package org.point85.uom.app;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.point85.uom.Prefix;
 import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitOfMeasure.MeasurementType;
 import org.point85.uom.UnitType;
@@ -89,7 +90,7 @@ public class UnitOfMeasureController extends BaseController {
 	private TextArea taDescription;
 
 	@FXML
-	private TextField tfScalingFactor;
+	private ComboBox<String> cbScalingFactor;
 
 	@FXML
 	private TextField tfOffset;
@@ -181,6 +182,10 @@ public class UnitOfMeasureController extends BaseController {
 
 		// fill in the top-level category nodes
 		populateCategories();
+
+		// set scaling factor prefixes
+		ObservableList<String> prefixes = getPrefixes();
+		cbScalingFactor.getItems().addAll(prefixes);
 	}
 
 	// images for editor buttons
@@ -273,7 +278,13 @@ public class UnitOfMeasureController extends BaseController {
 		String offsetText = formatBigDecimal(offset);
 
 		// scaling
-		tfScalingFactor.setText(factorText);
+		Prefix prefix = Prefix.fromFactor(scalingFactor);
+
+		if (prefix != null) {
+			cbScalingFactor.setValue(prefix.getPrefixName());
+		} else {
+			cbScalingFactor.setValue(factorText);
+		}
 
 		// X-axis unit
 		selectSymbol(displayAbscissa, cbAbscissaUnits);
@@ -296,7 +307,7 @@ public class UnitOfMeasureController extends BaseController {
 			// multiplicand UOM
 			cbUom2Types.getSelectionModel().select(multiplicand.getUnitType().toString());
 			selectSymbol(multiplicand, cbUom2Units);
-			
+
 			tpProductPower.getSelectionModel().select(tProductQuotient);
 			break;
 		}
@@ -314,7 +325,7 @@ public class UnitOfMeasureController extends BaseController {
 			// divisor UOM
 			cbUom2Types.getSelectionModel().select(divisor.getUnitType().toString());
 			selectSymbol(divisor, cbUom2Units);
-			
+
 			tpProductPower.getSelectionModel().select(tProductQuotient);
 			break;
 		}
@@ -328,7 +339,7 @@ public class UnitOfMeasureController extends BaseController {
 
 			// exponent
 			tfExponent.setText(uom.getPowerExponent().toString());
-			
+
 			tpProductPower.getSelectionModel().select(tPower);
 			break;
 		}
@@ -348,7 +359,7 @@ public class UnitOfMeasureController extends BaseController {
 			cbPowerUnits.getSelectionModel().clearSelection();
 
 			tfExponent.setText(null);
-			
+
 			tpProductPower.getSelectionModel().select(tScalar);
 			break;
 		}
@@ -401,7 +412,7 @@ public class UnitOfMeasureController extends BaseController {
 		this.taDescription.clear();
 
 		// conversion
-		this.tfScalingFactor.clear();
+		this.cbScalingFactor.setValue(null);
 		this.cbAbscissaUnits.getSelectionModel().clearSelection();
 		this.tfOffset.clear();
 
@@ -556,13 +567,20 @@ public class UnitOfMeasureController extends BaseController {
 			uom.setCategory(category);
 
 			// conversion scaling factor
-			String factor = removeThousandsSeparator(tfScalingFactor.getText());
 			BigDecimal scalingFactor = BigDecimal.ONE;
-			if (factor != null && factor.length() > 0) {
-				try {
-					scalingFactor = new BigDecimal(factor);
-				} catch (NumberFormatException e) {
-					throw new Exception(factor + " is not a valid number");
+			Prefix prefix = Prefix.fromName(cbScalingFactor.getValue());
+
+			if (prefix != null) {
+				scalingFactor = prefix.getScalingFactor();
+			} else {
+				String factor = removeThousandsSeparator(cbScalingFactor.getValue());
+
+				if (factor != null && factor.length() > 0) {
+					try {
+						scalingFactor = new BigDecimal(factor);
+					} catch (NumberFormatException e) {
+						throw new Exception(factor + " is not a valid number");
+					}
 				}
 			}
 

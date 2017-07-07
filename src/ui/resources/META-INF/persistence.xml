@@ -19,7 +19,6 @@
          <property name="javax.persistence.jdbc.password" value="btnet"/>
          <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
          <property name="eclipselink.logging.level" value="WARNING"/>
-         <!-- <property name="eclipselink.ddl-generation" value="create-tables"/> -->
          <property name="eclipselink.ddl-generation" value="none"/>
         </properties>
     </persistence-unit>

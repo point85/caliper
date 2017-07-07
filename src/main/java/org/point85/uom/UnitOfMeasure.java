@@ -156,6 +156,12 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	// second exponent
 	private Integer exponent2;
+	
+	// database primary key
+	private Integer primaryKey;
+	
+	// optimistic locking version
+	private Integer version;
 
 	/**
 	 * Construct a default unit of measure
@@ -167,6 +173,44 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	UnitOfMeasure(UnitType type, String name, String symbol, String description) {
 		super(name, symbol, description);
 		this.unitType = type;
+	}
+	
+	/**
+	 * Get the database record's primary key
+	 * 
+	 * @return Key
+	 */
+	public Integer getKey() {
+		return primaryKey;
+	}
+
+	/**
+	 * Set the database record's primary key
+	 * 
+	 * @param key
+	 *            Key
+	 */
+	public void setKey(Integer key) {
+		this.primaryKey = key;
+	}
+	
+	/**
+	 * Get the optimistic locking version
+	 * 
+	 * @return version
+	 */
+	public Integer getVersion() {
+		return version;
+	}
+
+	/**
+	 * Set the optimistic locking version
+	 * 
+	 * @param version
+	 *            Version
+	 */
+	public void setVersion(Integer version) {
+		this.version = version;
 	}
 
 	private void setPowerProduct(UnitOfMeasure uom1, Integer exponent1) {

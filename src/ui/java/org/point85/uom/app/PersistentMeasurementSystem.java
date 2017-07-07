@@ -43,7 +43,7 @@ import org.point85.uom.UnitOfMeasure.MeasurementType;
 import org.point85.uom.UnitType;
 
 // class to manage saving UOMs to a database using JPA
-class PersistentMeasurementSystem extends MeasurementSystem {
+public class PersistentMeasurementSystem extends MeasurementSystem {
 	// JPA persistence unit name
 	private static final String PERSISTENCE_UNIT = "UOM";
 
@@ -88,7 +88,7 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 	}
 
 	// query for UOM based on its unique symbol
-	UnitOfMeasure fetchUOMBySymbol(String symbol, boolean cascade) throws Exception {
+	public UnitOfMeasure fetchUOMBySymbol(String symbol, boolean cascade) throws Exception {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("symbol", symbol);
 
@@ -105,7 +105,7 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 
 	// fetch recursively all referenced units to make them managed in the
 	// persistence unit
-	void fetchReferencedUnits(UnitOfMeasure uom) throws Exception {
+	public void fetchReferencedUnits(UnitOfMeasure uom) throws Exception {
 		String id = null;
 		UnitOfMeasure referenced = null;
 		UnitOfMeasure fetched = null;
@@ -140,43 +140,53 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 		// UOM1 and UOM2
 		if (uom.getMeasurementType().equals(MeasurementType.PRODUCT)) {
 			// multiplier
-			referenced = uom.getMultiplier();
-			id = referenced.getSymbol();
+			UnitOfMeasure uom1 = uom.getMultiplier();
+			id = uom1.getSymbol();
 			fetched = fetchUOMBySymbol(id, true);
 
-			// multiplicand
-			UnitOfMeasure referenced2 = uom.getMultiplicand();
-			id = referenced2.getSymbol();
-			UnitOfMeasure fetched2 = fetchUOMBySymbol(id, true);
-
-			if (fetched != null && fetched2 != null) {
-				// already in database
-				uom.setProductUnits(fetched, fetched2);
+			if (fetched != null) {
+				uom1 = fetched;
 			}
 
+			// multiplicand
+			UnitOfMeasure uom2 = uom.getMultiplicand();
+			id = uom2.getSymbol();
+			UnitOfMeasure fetched2 = fetchUOMBySymbol(id, true);
+
+			if (fetched2 != null) {
+				uom2 = fetched2;
+			}
+
+			uom.setProductUnits(uom1, uom2);
+
 			// units referenced by UOM1 & 2
-			fetchReferencedUnits(referenced);
-			fetchReferencedUnits(referenced2);
+			fetchReferencedUnits(uom1);
+			fetchReferencedUnits(uom2);
 
 		} else if (uom.getMeasurementType().equals(MeasurementType.QUOTIENT)) {
 			// dividend
-			referenced = uom.getDividend();
-			id = referenced.getSymbol();
+			UnitOfMeasure uom1 = uom.getDividend();
+			id = uom1.getSymbol();
 			fetched = fetchUOMBySymbol(id, true);
 
-			// divisor
-			UnitOfMeasure referenced2 = uom.getDivisor();
-			id = referenced2.getSymbol();
-			UnitOfMeasure fetched2 = fetchUOMBySymbol(id, true);
-
-			if (fetched != null && fetched2 != null) {
-				// already in database
-				uom.setQuotientUnits(fetched, fetched2);
+			if (fetched != null) {
+				uom1 = fetched;
 			}
 
+			// divisor
+			UnitOfMeasure uom2 = uom.getDivisor();
+			id = uom2.getSymbol();
+			UnitOfMeasure fetched2 = fetchUOMBySymbol(id, true);
+
+			if (fetched2 != null) {
+				uom2 = fetched2;
+			}
+
+			uom.setQuotientUnits(uom1, uom2);
+
 			// units referenced by UOM1 & 2
-			fetchReferencedUnits(referenced);
-			fetchReferencedUnits(referenced2);
+			fetchReferencedUnits(uom1);
+			fetchReferencedUnits(uom2);
 
 		} else if (uom.getMeasurementType().equals(MeasurementType.POWER)) {
 			referenced = uom.getPowerBase();
@@ -194,7 +204,7 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 	}
 
 	// fetch UOM by its enumeration
-	UnitOfMeasure fetchUOMByUnit(Unit unit) throws Exception {
+	public UnitOfMeasure fetchUOMByUnit(Unit unit) throws Exception {
 		UnitOfMeasure uom = null;
 
 		if (unit == null) {
@@ -229,9 +239,9 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("key", key);
 
-		Object result = fetchUnitOfMeasure(NQ_UOM_BY_KEY, parameters);
+		UnitOfMeasure result = fetchUnitOfMeasure(NQ_UOM_BY_KEY, parameters);
 
-		return (UnitOfMeasure) result;
+		return result;
 	}
 
 	// execute the named query
@@ -257,10 +267,12 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 				query.setParameter(entry.getKey(), entry.getValue());
 			}
 		}
+
+		// the UOM might not be in the database
 		try {
 			uom = (UnitOfMeasure) query.getSingleResult();
 		} catch (Exception e) {
-			//
+			// ignore
 		}
 		return uom;
 	}
@@ -271,7 +283,7 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 	}
 
 	// save the UOM to the database
-	void saveUOM(UnitOfMeasure entity) throws Exception {
+	public void saveUOM(UnitOfMeasure entity) throws Exception {
 		try {
 			// start transaction
 			getEntityManager().getTransaction().begin();
@@ -291,7 +303,7 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 	}
 
 	// delete the UOM from the database
-	void deleteUOM(UnitOfMeasure entity) throws Exception {
+	public void deleteUOM(UnitOfMeasure entity) throws Exception {
 		if (entity == null) {
 			return;
 		}
@@ -379,5 +391,16 @@ class PersistentMeasurementSystem extends MeasurementSystem {
 				PersistentMeasurementSystem.NQ_UOM_SYMBOLS_IN_CATEGORY, parameters);
 
 		return values;
+	}
+
+	@Override
+	public UnitOfMeasure getSecond() throws Exception {
+		// first look in the database
+		UnitOfMeasure uom = fetchUOMByUnit(Unit.SECOND);
+
+		if (uom == null) {
+			uom = super.getSecond();
+		}
+		return uom;
 	}
 }

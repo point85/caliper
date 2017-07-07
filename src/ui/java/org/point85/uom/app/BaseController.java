@@ -146,21 +146,22 @@ abstract class BaseController {
 	}
 
 	// display a general alert
-	protected ButtonType showAlert(Stage dialogStage, AlertType type, String title, String header, String errorMessage) {
+	protected ButtonType showAlert(Stage dialogStage, AlertType type, String title, String header,
+			String errorMessage) {
 		// Show the error message.
-		Alert alert = new Alert(type); 
+		Alert alert = new Alert(type);
 		alert.initOwner(dialogStage);
 		alert.setTitle(title);
 		alert.setHeaderText(header);
 		alert.setContentText(errorMessage);
 
 		Optional<ButtonType> result = alert.showAndWait();
-		
+
 		ButtonType buttonType = null;
 		try {
 			buttonType = result.get();
 		} catch (NoSuchElementException e) {
-			
+
 		}
 		return buttonType;
 	}
@@ -169,17 +170,17 @@ abstract class BaseController {
 	protected void showErrorDialog(Stage dialogStage, String message) {
 		showAlert(dialogStage, AlertType.ERROR, "Application Error", "Exception", message);
 	}
-	
+
 	// display an error dialog
 	protected void showErrorDialog(Stage dialogStage, Exception e) {
 		String message = e.getMessage();
-		
+
 		if (message == null) {
 			message = e.getClass().getSimpleName();
 		}
 		showAlert(dialogStage, AlertType.ERROR, "Application Error", "Exception", message);
 	}
-	
+
 	// display an ok/cancel dialog
 	protected ButtonType showConfirmationDialog(Stage dialogStage, String message) {
 		return showAlert(dialogStage, AlertType.CONFIRMATION, "Confirmation", "Confirm Action", message);

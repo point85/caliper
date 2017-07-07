@@ -1696,10 +1696,8 @@ public class TestUnits extends BaseTest {
 		m.setKey(100);
 		assertTrue(m.getKey() == 100);
 
-		Quantity q = new Quantity(BigDecimal.ONE, m);
-		q.setKey(101);
-		assertTrue(q.getKey() == 101);
-
+		m.setVersion(101);
+		assertTrue(m.getVersion() == 101);
 	}
 	
 	@Test

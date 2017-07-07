@@ -82,7 +82,7 @@
                                     <Insets right="10.0" />
                                  </padding>
                               </Label>
-                              <TextArea fx:id="taDescription" prefHeight="200.0" prefWidth="200.0" promptText="Description of the unit of measure" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.rowSpan="4" />
+                              <TextArea fx:id="taDescription" prefHeight="200.0" prefWidth="200.0" promptText="Description of the unit of measure" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.rowSpan="4" />
                               <ComboBox fx:id="cbUnitTypes" maxWidth="1.7976931348623157E308" onAction="#setPossibleAbscissaUnits" prefWidth="150.0" promptText="Select UOM type" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Label text="Type" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                                  <GridPane.margin>
@@ -127,7 +127,6 @@
                                  <font>
                                     <Font size="18.0" />
                                  </font></Label>
-                              <TextField fx:id="tfScalingFactor" promptText="Scaling factor" GridPane.rowIndex="2" />
                               <ComboBox fx:id="cbAbscissaUnits" maxWidth="1.7976931348623157E308" prefWidth="200.0" promptText="Abscissa UOM" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2">
                                  <GridPane.margin>
                                     <Insets left="5.0" />
@@ -137,6 +136,7 @@
                                  <GridPane.margin>
                                     <Insets left="5.0" />
                                  </GridPane.margin></TextField>
+                              <ComboBox fx:id="cbScalingFactor" editable="true" prefWidth="150.0" promptText="Scaling factor" GridPane.rowIndex="2" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="25.0" />

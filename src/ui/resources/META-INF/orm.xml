@@ -16,6 +16,11 @@
 				<generated-value strategy="IDENTITY"/>
 			</id>
 			
+			<!-- version -->
+			<version name="version" >
+				<column name="VERSION"/> 
+			</version>
+			
 			<!-- name -->
 			<basic name="name" attribute-type="String">
 				<column name="NAME" />

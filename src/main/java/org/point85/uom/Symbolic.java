@@ -41,9 +41,6 @@ abstract class Symbolic {
 	// description
 	private String description;
 
-	// database primary key
-	private Integer primaryKey;
-
 	protected Symbolic() {
 
 	}
@@ -136,24 +133,5 @@ abstract class Symbolic {
 		}
 
 		return sb.toString();
-	}
-
-	/**
-	 * Get the database record's primary key
-	 * 
-	 * @return Key
-	 */
-	public Integer getKey() {
-		return primaryKey;
-	}
-
-	/**
-	 * Set the database record's primary key
-	 * 
-	 * @param key
-	 *            Key
-	 */
-	public void setKey(Integer key) {
-		this.primaryKey = key;
 	}
 }

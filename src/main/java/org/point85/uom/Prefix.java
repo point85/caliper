@@ -58,7 +58,7 @@ public enum Prefix {
 	// SI prefix 10^-3
 	MILLI("milli", "m", "1.0E-03"),
 	// SI prefix 10^-6
-	MICRO("micro", "u", "1.0E-06"),
+	MICRO("micro", "\u03BC", "1.0E-06"),
 	// SI prefix 10^-9
 	NANO("nano", "n", "1.0E-09"),
 	// SI prefix 10^-12
@@ -134,6 +134,26 @@ public enum Prefix {
 
 		for (Prefix p : values()) {
 			if (p.getPrefixName().equals(name)) {
+				prefix = p;
+				break;
+			}
+		}
+
+		return prefix;
+	}
+
+	/**
+	 * Find the prefix with the specified scaling factor
+	 * 
+	 * @param factor
+	 *            Scaling factor
+	 * @return {@link Prefix}
+	 */
+	public static Prefix fromFactor(BigDecimal factor) {
+		Prefix prefix = null;
+
+		for (Prefix p : values()) {
+			if (p.getScalingFactor().compareTo(factor) == 0) {
 				prefix = p;
 				break;
 			}

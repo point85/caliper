@@ -24,16 +24,17 @@ CREATE TABLE [dbo].[UOM](
 	[CATEGORY] [nvarchar](50) NULL,
 	[UNIT_TYPE] [nvarchar](32) NULL,
 	[UNIT] [nvarchar](32) NULL,
-	[CONV_FACTOR] [numeric](16, 9) NULL,
+	[CONV_FACTOR] [numeric](19, 9) NULL,
 	[CONV_UOM_KEY] [int] NULL,
-	[CONV_OFFSET] [numeric](16, 9) NULL,
-	[BRIDGE_FACTOR] [numeric](16, 9) NULL,
+	[CONV_OFFSET] [numeric](19, 9) NULL,
+	[BRIDGE_FACTOR] [numeric](19, 9) NULL,
 	[BRIDGE_UOM_KEY] [int] NULL,
-	[BRIDGE_OFFSET] [numeric](16, 9) NULL,
+	[BRIDGE_OFFSET] [numeric](19, 9) NULL,
 	[UOM1_KEY] [int] NULL,
 	[EXP1] [int] NULL,
 	[UOM2_KEY] [int] NULL,
 	[EXP2] [int] NULL,
+	[VERSION] [int] NOT NULL,
  CONSTRAINT [PK_UOM] PRIMARY KEY CLUSTERED 
 (
 	[UOM_KEY] ASC

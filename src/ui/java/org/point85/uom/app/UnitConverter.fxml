@@ -51,7 +51,7 @@
                </padding>
             </Label>
             <ComboBox fx:id="cbUnitTypes" maxWidth="1.7976931348623157E308" onAction="#setPossibleConversions" prefWidth="250.0" promptText="Type of the unit" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-            <Button fx:id="btEditor" mnemonicParsing="false" onAction="#handleEditorButton" prefWidth="100.0" text="Editor ..." GridPane.halignment="CENTER">
+            <Button fx:id="btEditor" mnemonicParsing="false" onAction="#handleEditorButton" prefWidth="100.0" text="Editor ..." GridPane.halignment="LEFT">
                <GridPane.margin>
                   <Insets />
                </GridPane.margin>

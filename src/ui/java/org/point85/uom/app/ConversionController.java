@@ -35,7 +35,10 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * Controller for converting Units of Measure
@@ -83,6 +86,9 @@ public class ConversionController extends BaseController {
 		ObservableList<String> prefixes = getPrefixes();
 		cbFromPrefixes.getItems().addAll(prefixes);
 		cbToPrefixes.getItems().addAll(prefixes);
+		
+		// button images
+		setButtonImages();
 	}
 
 	// Populate from and to conversion comboBoxes. Called when user selects a
@@ -203,5 +209,18 @@ public class ConversionController extends BaseController {
 		} catch (Exception e) {
 			showErrorDialog(getApp().getPrimaryStage(), e);
 		}
+	}
+	
+	// images for buttons
+	private void setButtonImages() {
+		// editor
+		ImageView editorView = new ImageView(new Image("images/UOMs.png", 16, 16, true, true));
+		btEditor.setGraphic(editorView);
+		btEditor.setContentDisplay(ContentDisplay.LEFT);
+		
+		// converter
+		ImageView convertView = new ImageView(new Image("images/Convert.png", 16, 16, true, true));
+		btConvert.setGraphic(convertView);
+		btConvert.setContentDisplay(ContentDisplay.LEFT);
 	}
 }
