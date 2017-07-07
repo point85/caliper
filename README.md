@@ -391,7 +391,7 @@ The screen capture below shows the unit of measure editor:
 To create a unit of measure, click the "New" button and follow these steps:
 *  Enter a name, symbol, category (or choose one already defined) and description.
 *  Choose the type from the drop-down.  For custom units, choose "UNCLASSIFIED".  Only units of the same type can be converted.
-*  If the unit of measure is related to another unit of measure via a conversion, enter the scaling factor (a), abscissa (x) and offset (b).  The conversion will default to the unit of measure itself.
+*  If the unit of measure is related to another unit of measure via a conversion, enter the scaling factor (a), abscissa (x) and offset (b).  A prefix (e.g. kilo) may be chosen for the scaling factor.  The conversion will default to the unit of measure itself.
 *  For a simple scalar unit, no additional properties are required.
 *  For a product or quotient unit of measure, the multiplier/multiplicand or dividend/divisor properties must be entered.  First select the respective unit type (e.g. VOLUME) then the unit of measure.  Click the respective radio button to indicate whether this is product or quotient.
 *  For a power unit, the base unit of measure and exponent must be entered.  First select the unit type, then the base unit of measure.  Enter the exponent.
