@@ -268,6 +268,9 @@ abstract class BaseController {
 
 	// removed formatting from decimal string
 	protected String removeThousandsSeparator(String formattedString) {
+		if (formattedString == null) {
+			return null;
+		}
 		DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols();
 
 		StringBuffer sb = new StringBuffer();

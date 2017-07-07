@@ -142,7 +142,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private String baseSymbol;
 
 	// user-defined category
-	private String category;
+	private String category = MeasurementSystem.getSystem().getSymbols().getString("default.category.text");
 
 	// base UOMs and exponents for a product of two power UOMs follow
 	// power base unit, product multiplier or quotient dividend
@@ -156,10 +156,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	// second exponent
 	private Integer exponent2;
-	
+
 	// database primary key
 	private Integer primaryKey;
-	
+
 	// optimistic locking version
 	private Integer version;
 
@@ -174,7 +174,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		super(name, symbol, description);
 		this.unitType = type;
 	}
-	
+
 	/**
 	 * Get the database record's primary key
 	 * 
@@ -193,7 +193,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	public void setKey(Integer key) {
 		this.primaryKey = key;
 	}
-	
+
 	/**
 	 * Get the optimistic locking version
 	 * 
