@@ -46,6 +46,13 @@ public class Quantity extends Symbolic {
 
 	// and its unit of measure
 	private UnitOfMeasure uom;
+	
+	/**
+	 * Default constructor
+	 */
+	public Quantity() {
+		super();
+	}
 
 	/**
 	 * Create a quantity with an amount and unit of measure
