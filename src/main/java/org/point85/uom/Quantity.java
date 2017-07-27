@@ -46,7 +46,7 @@ public class Quantity extends Symbolic {
 
 	// and its unit of measure
 	private UnitOfMeasure uom;
-	
+
 	/**
 	 * Default constructor
 	 */
@@ -65,6 +65,21 @@ public class Quantity extends Symbolic {
 	public Quantity(BigDecimal amount, UnitOfMeasure uom) {
 		this.amount = amount;
 		this.uom = uom;
+	}
+
+	/**
+	 * Create a quantity with an amount, prefix and unit
+	 * 
+	 * @param amount
+	 *            Amount
+	 * @param prefix
+	 *            {@link Prefix}
+	 * @param unit
+	 *            {@link Unit}
+	 * @throws Exception Exception
+	 */
+	public Quantity(BigDecimal amount, Prefix prefix, Unit unit) throws Exception {
+		this(amount, MeasurementSystem.getSystem().getUOM(prefix, unit));
 	}
 
 	/**

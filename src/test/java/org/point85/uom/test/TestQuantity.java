@@ -307,6 +307,11 @@ public class TestQuantity extends BaseTest {
 		// troy ounce to ounce
 		q1 = new Quantity(BigDecimal.TEN, Unit.TROY_OUNCE);
 		assertThat(q1.convert(Unit.OUNCE).getAmount(), closeTo(Quantity.createAmount("10.971"), DELTA3));
+		
+		// deci-litre to quart
+		q1 = new Quantity(BigDecimal.TEN, Prefix.DECI, Unit.LITRE);
+		q2 = q1.convert(Unit.US_QUART);
+		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("1.0566882"), DELTA6));
 	}
 
 	@Test
