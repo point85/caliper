@@ -304,7 +304,10 @@ Device Characteristic Life
 // 85 degrees Celsius.
 
 // Convert the Boltzman constant from J/K to eV/K for the Arrhenius equation
-Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(Quantity.createAmount("6.242E+18"));
+Quantity j = new Quantity(BigDecimal.ONE, Unit.JOULE);
+Quantity eV = j.convert(Unit.ELECTRON_VOLT);
+// Boltzmann constant
+Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(eV.getAmount());
 // accelerated temperature
 Quantity Ta = new Quantity("150", Unit.CELSIUS);
 // expected use temperature

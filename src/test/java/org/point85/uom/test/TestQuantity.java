@@ -738,7 +738,11 @@ public class TestQuantity extends BaseTest {
 
 		// Convert the Boltzman constant from J/K to eV/K for the Arrhenius
 		// equation
-		Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(Quantity.createAmount("6.242E+18"));
+		// eV per Joule
+		Quantity j = new Quantity(BigDecimal.ONE, Unit.JOULE);
+		Quantity eV = j.convert(Unit.ELECTRON_VOLT);
+		// Boltzmann constant
+		Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(eV.getAmount());
 		// accelerated temperature
 		Quantity Ta = new Quantity("150", Unit.CELSIUS);
 		// expected use temperature
@@ -751,7 +755,7 @@ public class TestQuantity extends BaseTest {
 		// calculate longer life at expected use temperature
 		Quantity life85 = new Quantity("2750", Unit.HOUR);
 		Quantity life150 = life85.multiply(new BigDecimal(AF));
-		assertThat(life150.getAmount(), closeTo(Quantity.createAmount("33114.9"), DELTA1));
+		assertThat(life150.getAmount(), closeTo(Quantity.createAmount("33121.4"), DELTA1));
 	}
 
 	@Test
