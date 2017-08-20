@@ -281,7 +281,7 @@ public class MeasurementSystem {
 		case STEFAN_BOLTZMANN:
 			UnitOfMeasure k4 = createPowerUOM(getUOM(Unit.KELVIN), 4);
 			UnitOfMeasure sb = createQuotientUOM(getUOM(Unit.WATTS_PER_SQ_METRE), k4);
-			named = new Quantity(Quantity.createAmount("5.67E-08"), sb);
+			named = new Quantity(Quantity.createAmount("5.67036713E-08"), sb);
 			named.setName(symbols.getString("sb.name"));
 			named.setSymbol(symbols.getString("sb.symbol"));
 			named.setDescription(symbols.getString("sb.desc"));

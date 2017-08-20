@@ -307,7 +307,7 @@ public class TestQuantity extends BaseTest {
 		// troy ounce to ounce
 		q1 = new Quantity(BigDecimal.TEN, Unit.TROY_OUNCE);
 		assertThat(q1.convert(Unit.OUNCE).getAmount(), closeTo(Quantity.createAmount("10.971"), DELTA3));
-		
+
 		// deci-litre to quart
 		q1 = new Quantity(BigDecimal.TEN, Prefix.DECI, Unit.LITRE);
 		q2 = q1.convert(Unit.US_QUART);
@@ -722,13 +722,36 @@ public class TestQuantity extends BaseTest {
 		// calculate at 1000 Kelvin
 		Quantity temp = new Quantity("1000", Unit.KELVIN);
 		Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(temp.power(4));
-		assertThat(intensity.getAmount(), closeTo(Quantity.createAmount("56700"), DELTA6));
+		assertThat(intensity.getAmount(), closeTo(Quantity.createAmount("56703.67"), DELTA2));
 
 		// Hubble's law, v = H0 x D. Let D = 10 Mpc
 		Quantity d = new Quantity(BigDecimal.TEN, sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC)));
 		Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
 		Quantity velocity = h0.multiply(d);
 		assertThat(velocity.getAmount(), closeTo(Quantity.createAmount("719"), DELTA3));
+
+		// Arrhenius equation
+		// A device has an activation energy of 0.5 and a characteristic life of
+		// 2,750 hours at an accelerated temperature of 150 degrees Celsius.
+		// Calculate the characteristic life at an expected use temperature of
+		// 85 degrees Celsius.
+
+		// Convert the Boltzman constant from J/K to eV/K for the Arrhenius
+		// equation
+		Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(Quantity.createAmount("6.242E+18"));
+		// accelerated temperature
+		Quantity Ta = new Quantity("150", Unit.CELSIUS);
+		// expected use temperature
+		Quantity Tu = new Quantity("85", Unit.CELSIUS);
+		// calculate the acceleration factor
+		Quantity factor1 = Tu.convert(Unit.KELVIN).invert().subtract(Ta.convert(Unit.KELVIN).invert());
+		Quantity factor2 = Kb.invert().multiply(Quantity.createAmount("0.5"));
+		Quantity factor3 = factor1.multiply(factor2);
+		double AF = Math.exp(factor3.getAmount().doubleValue());
+		// calculate longer life at expected use temperature
+		Quantity life85 = new Quantity("2750", Unit.HOUR);
+		Quantity life150 = life85.multiply(new BigDecimal(AF));
+		assertThat(life150.getAmount(), closeTo(Quantity.createAmount("33114.9"), DELTA1));
 	}
 
 	@Test
@@ -890,7 +913,7 @@ public class TestQuantity extends BaseTest {
 
 		Quantity q1 = new Quantity(BigDecimal.TEN, sys.getDay());
 		Quantity q2 = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.BR_FLUID_OUNCE));
-		
+
 		try {
 			String amount = null;
 			Quantity.createAmount(amount);
@@ -1025,10 +1048,10 @@ public class TestQuantity extends BaseTest {
 		Quantity q3 = q2.subtract(q1).divide(q1).convert(Unit.PERCENT);
 		assertThat(q3.getAmount(), closeTo(Quantity.createAmount("20"), DELTA6));
 	}
-	
+
 	@Test
 	public void testPowerProductConversions() throws Exception {
-		
+
 		UnitOfMeasure one = sys.getOne();
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure fps = sys.getUOM(Unit.FEET_PER_SEC);
@@ -1044,7 +1067,7 @@ public class TestQuantity extends BaseTest {
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure ft2 = sys.getUOM(Unit.SQUARE_FOOT);
-		
+
 		// test products and quotients
 		sys.unregisterUnit(sys.getUOM(Unit.FOOT_POUND_FORCE));
 		Quantity nmQ = new Quantity("1", nm);
@@ -1066,7 +1089,7 @@ public class TestQuantity extends BaseTest {
 
 		Quantity nm2Q = lbfinQ.convertToPowerProduct(n, m);
 		assertThat(nm2Q.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
-		
+
 		nm2Q = lbfinQ.convertToPowerProduct(m, n);
 		assertThat(nm2Q.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
 
@@ -1095,10 +1118,10 @@ public class TestQuantity extends BaseTest {
 		Quantity m3Q = new Quantity("1", m3);
 		Quantity ft3Q = m3Q.convertToPowerProduct(ft2, ft);
 		assertThat(ft3Q.getAmount(), closeTo(Quantity.createAmount("35.31466672148858"), DELTA6));
-		
+
 		Quantity m3Q2 = m3Q.convertToPowerProduct(m2, m);
 		assertThat(m3Q2.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
-		
+
 		ft3Q = m3Q.convertToPowerProduct(ft, ft2);
 		assertThat(ft3Q.getAmount(), closeTo(Quantity.createAmount("35.31466672148858"), DELTA6));
 
@@ -1112,13 +1135,13 @@ public class TestQuantity extends BaseTest {
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 		try {
 			perMQ.convertToPowerProduct(in, in);
 			fail();
 		} catch (Exception e) {
 		}
-		
+
 		Quantity fpsQ = new Quantity(BigDecimal.ONE, fps);
 		Quantity mphQ = fpsQ.convertToPowerProduct(mi, hr);
 		assertThat(mphQ.getAmount(), closeTo(Quantity.createAmount("0.6818181818181818"), DELTA6));
@@ -1126,22 +1149,22 @@ public class TestQuantity extends BaseTest {
 		// test powers
 		Quantity in2Q = m2Q.convertToPower(in);
 		assertThat(in2Q.getAmount(), closeTo(Quantity.createAmount("1550.003100006200"), DELTA6));
-		
+
 		Quantity m2Q2 = in2Q.convertToPower(m);
 		assertThat(m2Q2.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
-		
+
 		Quantity perInQ2 = perMQ.convertToPower(in);
 		assertThat(perInQ2.getAmount(), closeTo(Quantity.createAmount("0.0254"), DELTA6));
-		
+
 		Quantity q1 = perInQ2.convertToPower(m);
 		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
-		
+
 		Quantity inQ2 = mQ.convertToPower(in);
 		assertThat(inQ2.getAmount(), closeTo(Quantity.createAmount("39.37007874015748"), DELTA6));
-		
+
 		q1 = inQ2.convertToPower(m);
 		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
-		
+
 		Quantity one1 = new Quantity(BigDecimal.ONE, sys.getOne());
 		q1 = one1.convertToPower(sys.getOne());
 		assertThat(q1.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
