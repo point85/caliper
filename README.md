@@ -295,6 +295,30 @@ Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
 Quantity velocity = h0.multiply(d);
 ```
 
+Device Characteristic Life
+
+```java
+// A device has an activation energy of 0.5 and a characteristic life of
+// 2,750 hours at an accelerated temperature of 150 degrees Celsius.
+// Calculate the characteristic life at an expected use temperature of
+// 85 degrees Celsius.
+
+// Convert the Boltzman constant from J/K to eV/K for the Arrhenius equation
+Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(Quantity.createAmount("6.242E+18"));
+// accelerated temperature
+Quantity Ta = new Quantity("150", Unit.CELSIUS);
+// expected use temperature
+Quantity Tu = new Quantity("85", Unit.CELSIUS);
+// calculate the acceleration factor
+Quantity factor1 = Tu.convert(Unit.KELVIN).invert().subtract(Ta.convert(Unit.KELVIN).invert());
+Quantity factor2 = Kb.invert().multiply(Quantity.createAmount("0.5"));
+Quantity factor3 = factor1.multiply(factor2);
+double AF = Math.exp(factor3.getAmount().doubleValue());
+// calculate longer life at expected use temperature
+Quantity life85 = new Quantity("2750", Unit.HOUR);
+Quantity life150 = life85.multiply(new BigDecimal(AF));
+```
+
 ## Financial Examples
 
 Value of a stock portfolio:
