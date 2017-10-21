@@ -23,26 +23,24 @@ SOFTWARE.
 */
 package org.point85.uom.test;
 
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.point85.uom.MeasurementSystem;
-import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
 
 public class BaseTest {
 
-	protected static BigDecimal DELTA6;
-	protected static BigDecimal DELTA5;
-	protected static BigDecimal DELTA4;
-	protected static BigDecimal DELTA3;
-	protected static BigDecimal DELTA2;
-	protected static BigDecimal DELTA1;
-	protected static BigDecimal DELTA0;
-	protected static BigDecimal DELTA_10;
+	protected static double DELTA6;
+	protected static double DELTA5;
+	protected static double DELTA4;
+	protected static double DELTA3;
+	protected static double DELTA2;
+	protected static double DELTA1;
+	protected static double DELTA0;
+	protected static double DELTA_10;
 
 	protected final static MeasurementSystem sys = initializeSystem();
 
@@ -50,14 +48,14 @@ public class BaseTest {
 		MeasurementSystem system = MeasurementSystem.getSystem();
 
 		try {
-			DELTA6 = Quantity.createAmount("0.000001");
-			DELTA5 = Quantity.createAmount("0.00001");
-			DELTA4 = Quantity.createAmount("0.0001");
-			DELTA3 = Quantity.createAmount("0.001");
-			DELTA2 = Quantity.createAmount("0.01");
-			DELTA1 = Quantity.createAmount("0.1");
-			DELTA0 = Quantity.createAmount("1");
-			DELTA_10 = Quantity.createAmount("10");
+			DELTA6 = 0.000001;
+			DELTA5 = 0.00001;
+			DELTA4 = 0.0001;
+			DELTA3 = 0.001;
+			DELTA2 = 0.01;
+			DELTA1 = 0.1;
+			DELTA0 = 1;
+			DELTA_10 = 10;
 
 		} catch (Exception e) {
 
@@ -78,7 +76,7 @@ public class BaseTest {
 		int count = 0;
 		for (Entry<String, UnitOfMeasure> entry : treeMap.entrySet()) {
 			count++;
-			System.out.println("(" + count + ") " + entry.getKey() + (", ") + entry.getValue());
+			System.out.println("(" + count + ") " + entry.getKey() + ", " + entry.getValue());
 		}
 	}
 
@@ -89,7 +87,7 @@ public class BaseTest {
 		int count = 0;
 		for (Entry<String, UnitOfMeasure> entry : treeMap.entrySet()) {
 			count++;
-			System.out.println("(" + count + ") " + entry.getKey() + (", ") + entry.getValue());
+			System.out.println("(" + count + ") " + entry.getKey() + ", " + entry.getValue());
 		}
 	}
 
@@ -100,7 +98,12 @@ public class BaseTest {
 		int count = 0;
 		for (Entry<Unit, UnitOfMeasure> entry : treeMap.entrySet()) {
 			count++;
-			System.out.println("(" + count + ") " + entry.getKey() + (", ") + entry.getValue());
+			System.out.println("(" + count + ") " + entry.getKey() + ", " + entry.getValue());
 		}
+	}
+	
+	protected boolean isCloseTo(double actualValue, double expectedValue, double delta) {
+		double diff = Math.abs(actualValue - expectedValue);
+		return (diff <= delta) ? true : false;
 	}
 }

@@ -23,13 +23,9 @@ SOFTWARE.
 */
 package org.point85.uom.test;
 
-import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import java.math.BigDecimal;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
@@ -43,11 +39,11 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testPrefixes() {
-		for (Prefix prefix : Prefix.values()) {
-			String prefixName = prefix.getPrefixName();
+		for (Prefix prefix : Prefix.getDefinedPrefixes()) {
+			String prefixName = prefix.getName();
 			assertTrue(prefixName.length() > 0);
 			assertTrue(prefix.getSymbol().length() > 0);
-			assertTrue(!prefix.getScalingFactor().equals(BigDecimal.ONE));
+			assertTrue(prefix.getFactor() != 1.0d);
 			assertTrue(prefix.toString().length() > 0);
 			assertTrue(Prefix.fromName(prefixName).equals(prefix));
 		}
@@ -60,8 +56,8 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure uom2 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom2", "uom2", "");
 		UnitOfMeasure uom3 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "uom3", "uom3", "");
 
-		uom1.setConversion(BigDecimal.ONE, uom3, BigDecimal.TEN);
-		uom2.setConversion(BigDecimal.ONE, uom3, BigDecimal.ONE);
+		uom1.setConversion(1.0d, uom3, 10.0d);
+		uom2.setConversion(1.0d, uom3, 1.0d);
 		assertFalse(uom1.equals(uom2));
 
 		try {
@@ -119,7 +115,7 @@ public class TestUnits extends BaseTest {
 		}
 
 		try {
-			Quantity q = new Quantity(BigDecimal.TEN, Unit.METRE);
+			Quantity q = new Quantity(10.0d, Unit.METRE);
 			q.convert(Unit.SECOND);
 			fail("no conversion");
 		} catch (Exception e) {
@@ -173,38 +169,38 @@ public class TestUnits extends BaseTest {
 		}
 
 		u = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "1/1", "1/1", "", sys.getOne(), sys.getOne());
-		Quantity q1 = new Quantity(BigDecimal.TEN, u);
+		Quantity q1 = new Quantity(10.0d, u);
 		Quantity q2 = q1.convert(sys.getOne());
-		assertThat(q2.getAmount(), closeTo(BigDecimal.TEN, DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 10.0d, DELTA6));
 		assertTrue(q2.getUOM().equals(sys.getOne()));
 
 		u = sys.createProductUOM(UnitType.UNCLASSIFIED, "1x1", "1x1", "", sys.getOne(), sys.getOne());
-		BigDecimal bd = u.getConversionFactor(sys.getOne());
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		double bd = u.getConversionFactor(sys.getOne());
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = sys.createProductUOM(UnitType.UNCLASSIFIED, "1x1", "1x1", "", sys.getOne(), sys.getOne());
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^2", "1^2", "", sys.getOne(), 2);
 		bd = u.getConversionFactor(sys.getOne());
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^2", "1^2", "", sys.getOne(), 2);
 		bd = u.getConversionFactor(sys.getOne());
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^0", "1^0", "", sys.getOne(), 0);
 		bd = u.getConversionFactor(sys.getOne());
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "1^0", "1^0", "", sys.getOne(), 0);
 		bd = u.getConversionFactor(sys.getOne());
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		UnitOfMeasure uno = sys.getOne();
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m^0", "m^0", "", sys.getUOM(Unit.METRE), 0);
 		bd = u.getConversionFactor(uno);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		UnitOfMeasure m1 = sys.getUOM(Unit.METRE);
@@ -221,7 +217,7 @@ public class TestUnits extends BaseTest {
 
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m*-1", "m*-1", "", sys.getUOM(Unit.METRE), -1);
 		UnitOfMeasure mult = u.multiply(m1);
-		assertTrue(mult.equals(sys.getUOM(Unit.ONE)));
+		assertTrue(mult.getBaseSymbol().equals(sys.getUOM(Unit.ONE).getBaseSymbol()));
 
 		UnitOfMeasure perMetre2 = m2.invert();
 		u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "m*-2", "m*-2", "", sys.getUOM(Unit.METRE), -2);
@@ -232,31 +228,6 @@ public class TestUnits extends BaseTest {
 		try {
 			UnitOfMeasure abscissaUnit = null;
 			uno.setConversion(abscissaUnit);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			UnitOfMeasure abscissaUnit = sys.getOne();
-			BigDecimal decimal = null;
-			uno.setConversion(decimal, abscissaUnit);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			UnitOfMeasure abscissaUnit = sys.getOne();
-			BigDecimal decimal = null;
-			uno.setConversion(decimal, abscissaUnit);
-			fail();
-		} catch (Exception e) {
-		}
-
-		try {
-			UnitOfMeasure abscissaUnit = sys.getOne();
-			BigDecimal decimal = BigDecimal.ONE;
-			BigDecimal offset = null;
-			uno.setConversion(decimal, abscissaUnit, offset);
 			fail();
 		} catch (Exception e) {
 		}
@@ -278,23 +249,23 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.equals(metre));
 
 		u = oneOverM.multiply(metre);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = metre.divide(metre);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = sys.getOne().divide(metre).multiply(metre);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		UnitOfMeasure uom = sys.createScalarUOM(UnitType.UNCLASSIFIED, "1/1", "1/1", "");
-		uom.setConversion(BigDecimal.ONE, sys.getOne(), BigDecimal.ONE);
+		uom.setConversion(1.0d, sys.getOne(), 1.0d);
 
-		assertThat(uom.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(uom.getScalingFactor(), 1.0d, DELTA6));
 		assertTrue(uom.getAbscissaUnit().equals(sys.getOne()));
-		assertThat(uom.getOffset(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(uom.getOffset(), 1.0d, DELTA6));
 
 		u = sys.getOne().invert();
-		assertTrue(u.getAbscissaUnit().equals(sys.getOne()));
+		assertTrue(u.getAbscissaUnit().getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		UnitOfMeasure one = sys.getOne();
 		assertTrue(one.getBaseSymbol().equals("1"));
@@ -326,13 +297,13 @@ public class TestUnits extends BaseTest {
 		assertFalse(b.equals(null));
 
 		// scalar
-		BigDecimal two = Quantity.createAmount("2");
+		double two = 2d;
 		UnitOfMeasure ab1 = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a=2b+1", "a=2b+1", "custom");
-		ab1.setConversion(two, b, BigDecimal.ONE);
+		ab1.setConversion(2d, b, 1.0d);
 
-		assertThat(ab1.getScalingFactor(), closeTo(two, DELTA6));
+		assertTrue(isCloseTo(ab1.getScalingFactor(), two, DELTA6));
 		assertTrue(ab1.getAbscissaUnit().equals(b));
-		assertThat(ab1.getOffset(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(ab1.getOffset(), 1.0d, DELTA6));
 
 		// quotient
 		UnitOfMeasure a = sys.createScalarUOM(UnitType.UNCLASSIFIED, "a", "alpha", "Alpha");
@@ -341,10 +312,10 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure aOverb = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "a/b", "a/b", "", a, b);
 		aOverb.setScalingFactor(two);
 
-		assertThat(aOverb.getScalingFactor(), closeTo(two, DELTA6));
+		assertTrue(isCloseTo(aOverb.getScalingFactor(), two, DELTA6));
 		assertTrue(aOverb.getDividend().equals(a));
 		assertTrue(aOverb.getDivisor().equals(b));
-		assertThat(aOverb.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(aOverb.getOffset(), 0.0d, DELTA6));
 		assertTrue(aOverb.getAbscissaUnit().equals(aOverb));
 
 		UnitOfMeasure bOvera = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "b/a", "b/a", "", b, a);
@@ -353,16 +324,16 @@ public class TestUnits extends BaseTest {
 
 		// multiply2
 		UnitOfMeasure uom = aOverb.multiply(b);
-		assertTrue(uom.getAbscissaUnit().equals(a));
-		assertThat(uom.getScalingFactor(), closeTo(two, DELTA6));
-		BigDecimal bd = uom.getConversionFactor(a);
-		assertThat(bd, closeTo(two, DELTA6));
+		assertTrue(uom.getAbscissaUnit().getBaseSymbol().equals(a.getBaseSymbol()));
+		assertTrue(isCloseTo(uom.getScalingFactor(), two, DELTA6));
+		double bd = uom.getConversionFactor(a);
+		assertTrue(isCloseTo(bd, two, DELTA6));
 
 		// divide2
 		UnitOfMeasure uom2 = uom.divide(b);
-		assertThat(uom2.getScalingFactor(), closeTo(two, DELTA6));
-		assertThat(uom2.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
-		assertTrue(uom2.equals(aOverb));
+		assertTrue(isCloseTo(uom2.getScalingFactor(), two, DELTA6));
+		assertTrue(isCloseTo(uom2.getOffset(), 0.0d, DELTA6));
+		assertTrue(uom2.getBaseSymbol().equals(aOverb.getBaseSymbol()));
 
 		// invert
 		UnitOfMeasure uom3 = uom2.invert();
@@ -371,49 +342,49 @@ public class TestUnits extends BaseTest {
 
 		// product
 		UnitOfMeasure ab = sys.createProductUOM(UnitType.UNCLASSIFIED, "name", "symbol", "custom", a, b);
-		ab.setOffset(BigDecimal.ONE);
+		ab.setOffset(1.0d);
 
-		assertThat(ab.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(ab.getScalingFactor(), 1.0d, DELTA6));
 		assertTrue(ab.getMultiplier().equals(a));
 		assertTrue(ab.getMultiplicand().equals(b));
-		assertThat(ab.getOffset(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(ab.getOffset(), 1.0d, DELTA6));
 		assertTrue(ab.getAbscissaUnit().equals(ab));
 
-		ab.setOffset(BigDecimal.ZERO);
+		ab.setOffset(0.0d);
 
 		UnitOfMeasure uom4 = ab.divide(a);
-		assertThat(uom4.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
-		assertTrue(uom4.getAbscissaUnit().equals(b));
+		assertTrue(isCloseTo(uom4.getScalingFactor(), 1.0d, DELTA6));
+		assertTrue(uom4.getAbscissaUnit().getBaseSymbol().equals(b.getBaseSymbol()));
 
 		UnitOfMeasure uom5 = uom4.multiply(a);
-		assertThat(uom5.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(uom5.getScalingFactor(), 1.0d, DELTA6));
 		u = uom5.getAbscissaUnit();
 		assertTrue(u.getBaseSymbol().equals(ab.getBaseSymbol()));
 
 		// invert
 		UnitOfMeasure uom6 = ab.invert();
-		assertThat(uom6.getScalingFactor(), closeTo(Quantity.createAmount("1"), DELTA6));
+		assertTrue(isCloseTo(uom6.getScalingFactor(), 1, DELTA6));
 		assertTrue(uom6.getDividend().equals(sys.getOne()));
 		assertTrue(uom6.getDivisor().equals(ab));
-		assertThat(uom6.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(uom6.getOffset(), 0.0d, DELTA6));
 
 		// power
 		UnitOfMeasure a2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "name", "a**2", "custom", a, 2);
 
-		assertThat(a2.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(a2.getScalingFactor(), 1.0d, DELTA6));
 		assertTrue(a2.getPowerBase().equals(a));
 		assertTrue(a2.getPowerExponent() == 2);
-		assertThat(a2.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(a2.getOffset(), 0.0d, DELTA6));
 		assertTrue(a2.getAbscissaUnit().equals(a2));
 
 		UnitOfMeasure uom8 = a2.divide(a);
-		assertThat(uom8.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
-		assertThat(uom8.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
-		assertTrue(uom8.getAbscissaUnit().equals(a));
+		assertTrue(isCloseTo(uom8.getScalingFactor(), 1.0d, DELTA6));
+		assertTrue(isCloseTo(uom8.getOffset(), 0.0d, DELTA6));
+		assertTrue(uom8.getAbscissaUnit().getBaseSymbol().equals(a.getBaseSymbol()));
 
 		UnitOfMeasure uom9 = uom8.multiply(a);
-		assertThat(uom9.getScalingFactor(), closeTo(Quantity.createAmount("1"), DELTA6));
-		assertThat(uom9.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(uom9.getScalingFactor(), 1, DELTA6));
+		assertTrue(isCloseTo(uom9.getOffset(), 0.0d, DELTA6));
 		u = uom9.getAbscissaUnit();
 		assertTrue(u.getBaseSymbol().equals(a2.getBaseSymbol()));
 
@@ -433,13 +404,18 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.getBaseSymbol().equals(a.getBaseSymbol()));
 
 		UnitOfMeasure cOverx = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "", "c/x", "", c, x);
-		assertTrue(aOverb.divide(cOverx).multiply(cOverx).equals(aOverb));
-		assertTrue(aOverb.multiply(cOverx).divide(cOverx).equals(aOverb));
+		UnitOfMeasure alpha = aOverb.divide(cOverx);
+		UnitOfMeasure beta = alpha.multiply(cOverx);
+		assertTrue(beta.getBaseSymbol().equals(aOverb.getBaseSymbol()));
+		
+		u = aOverb.multiply(cOverx).divide(cOverx);	
+		assertTrue(u.getAbscissaUnit().getBaseSymbol().equals(aOverb.getBaseSymbol()));
 
 		UnitOfMeasure axb = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "a.b", "", a, b);
 		u = sys.getUOM(axb.getSymbol());
 		assertTrue(u.equals(axb));
-		assertTrue(axb.divide(a).equals(b));
+		u = axb.divide(a);
+		assertTrue(u.getBaseSymbol().equals(b.getBaseSymbol()));
 
 		String symbol = axb.getSymbol() + "." + axb.getSymbol();
 		UnitOfMeasure axbsq = sys.createProductUOM(UnitType.UNCLASSIFIED, "", symbol, "", axb, axb);
@@ -464,7 +440,6 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure axbm2 = sys.createPowerUOM(UnitType.UNCLASSIFIED, "", symbol, "", axb, -2);
 		uom = axbm2.multiply(axb2);
 		assertTrue(uom.getBaseSymbol().equals(sys.getOne().getSymbol()));
-
 		UnitOfMeasure cxd = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "c.D", "", c, x);
 		final char MULT = 0xB7;
 		StringBuffer sb = new StringBuffer();
@@ -498,24 +473,24 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 		UnitOfMeasure lpf = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "litre per flush", "lpf", "", litre, flush);
 
-		BigDecimal bd = gpf.getConversionFactor(lpf);
-		assertThat(bd, closeTo(Quantity.createAmount("3.785411784"), DELTA6));
+		double bd = gpf.getConversionFactor(lpf);
+		assertTrue(isCloseTo(bd, 3.785411784, DELTA6));
 
 		bd = lpf.getConversionFactor(gpf);
-		assertThat(bd, closeTo(Quantity.createAmount("0.2641720523581484"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.2641720523581484, DELTA6));
 
 		// inversions
 		UnitOfMeasure u = foot.invert();
 		assertTrue(u.getSymbol().equals("1/ft"));
 
 		u = u.multiply(foot);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = velocity.invert();
 		assertTrue(u.getSymbol().equals("s/ft"));
 
 		u = u.multiply(velocity);
-		assertTrue(u.equals(sys.getOne()));
+		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 	}
 
@@ -532,91 +507,87 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 
-		BigDecimal bd = impGal.getConversionFactor(litre);
-		assertThat(bd, closeTo(Quantity.createAmount("4.54609"), DELTA6));
+		double bd = impGal.getConversionFactor(litre);
+		assertTrue(isCloseTo(bd, 4.54609, DELTA6));
 
 		bd = litre.getConversionFactor(impGal);
-		assertThat(bd, closeTo(Quantity.createAmount("0.2199692482990878"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.2199692482990878, DELTA6));
 
 		bd = impGal.getConversionFactor(usGal);
-		assertThat(bd, closeTo(Quantity.createAmount("1.200949925504855"), DELTA6));
+		assertTrue(isCloseTo(bd, 1.200949925504855, DELTA6));
 
 		bd = usGal.getConversionFactor(impGal);
-		assertThat(bd, closeTo(Quantity.createAmount("0.8326741846289888"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.8326741846289888, DELTA6));
 
 		bd = impGal.getConversionFactor(impPint);
-		assertThat(bd, closeTo(Quantity.createAmount("8"), DELTA6));
+		assertTrue(isCloseTo(bd, 8, DELTA6));
 
 		bd = impPint.getConversionFactor(impGal);
-		assertThat(bd, closeTo(Quantity.createAmount("0.125"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.125, DELTA6));
 
 		bd = usGal.getConversionFactor(usPint);
-		assertThat(bd, closeTo(Quantity.createAmount("8"), DELTA6));
+		assertTrue(isCloseTo(bd, 8, DELTA6));
 
 		bd = usPint.getConversionFactor(usGal);
-		assertThat(bd, closeTo(Quantity.createAmount("0.125"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.125, DELTA6));
 
 		bd = impOz.getConversionFactor(m3);
-		assertThat(bd, closeTo(Quantity.createAmount("28.4130625E-06"), DELTA6));
+		assertTrue(isCloseTo(bd, 28.4130625E-06, DELTA6));
 
 		bd = m3.getConversionFactor(impOz);
-		assertThat(bd, closeTo(Quantity.createAmount("35195.07972785405"), DELTA6));
+		assertTrue(isCloseTo(bd, 35195.07972785405, DELTA6));
 
 	}
 
 	@Test
 	public void testOperations() throws Exception {
-
+		sys.clearCache();
+		
 		UnitOfMeasure u = null;
 		UnitOfMeasure hour = sys.getHour();
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
 		UnitOfMeasure m2 = sys.getUOM(Unit.SQUARE_METRE);
 
 		// multiply2
-		UnitOfMeasure velocity = sys.getUOM("meter/hr");
+		UnitOfMeasure velocity = sys.createScalarUOM(UnitType.VELOCITY, "meter/hr", "meter/hr", "");
+		velocity.setConversion(1d / 3600d, sys.getUOM(Unit.METRE_PER_SEC));
 
-		if (velocity == null) {
-			velocity = sys.createScalarUOM(UnitType.VELOCITY, "meter/hr", "meter/hr", "");
-			velocity.setConversion(BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT),
-					sys.getUOM(Unit.METRE_PER_SEC));
-		}
-
-		BigDecimal sf = BigDecimal.ONE.divide(Quantity.createAmount("3600"), UnitOfMeasure.MATH_CONTEXT);
-		assertThat(velocity.getScalingFactor(), closeTo(sf, DELTA6));
+		double sf = 1d / 3600d;
+		assertTrue(isCloseTo(velocity.getScalingFactor(), sf, DELTA6));
 		assertTrue(velocity.getAbscissaUnit().equals(sys.getUOM(Unit.METRE_PER_SEC)));
-		assertThat(velocity.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(velocity.getOffset(), 0.0d, DELTA6));
 
 		u = velocity.multiply(hour);
-		BigDecimal bd = u.getConversionFactor(metre);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		double bd = u.getConversionFactor(metre);
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = hour.multiply(velocity);
 		bd = u.getConversionFactor(metre);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = metre.multiply(metre);
 		bd = u.getConversionFactor(m2);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 		assertTrue(u.equals(m2));
 
 		// divide2
 		u = metre.divide(hour);
-
 		bd = u.getConversionFactor(velocity);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		u = u.multiply(hour);
-		assertTrue(u.equals(metre));
+		assertTrue(u.getBaseSymbol().equals(metre.getBaseSymbol()));
 
 		// invert
 		UnitOfMeasure vinvert = velocity.invert();
-		vinvert.getScalingFactor().equals(Quantity.createAmount("3600"));
+		sf = vinvert.getScalingFactor();
+		assertTrue(sf == 1d);
 
 		// max symbol length
 		Quantity v = null;
 		Quantity h = null;
 		UnitOfMeasure mpc = sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC));
-		Quantity d = new Quantity(BigDecimal.TEN, mpc);
+		Quantity d = new Quantity(10.0d, mpc);
 		Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
 
 		for (int i = 0; i < 3; i++) {
@@ -640,26 +611,27 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure msec = sys.getUOM(Prefix.MILLI, second);
 		UnitOfMeasure min2 = sys.createPowerUOM(UnitType.TIME_SQUARED, "sqMin", "min^2", null, min, 2);
 
-		assertThat(second.getConversionFactor(msec), closeTo(Quantity.createAmount("1000"), DELTA6));
+		double factor = second.getConversionFactor(msec);
+		assertTrue(isCloseTo(factor, 1000, DELTA6));
 
-		assertThat(second.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(second.getScalingFactor(), 1.0d, DELTA6));
 		assertTrue(second.getAbscissaUnit().equals(second));
-		assertThat(second.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(second.getOffset(), 0.0d, DELTA6));
 
-		BigDecimal bd = hour.getConversionFactor(second);
+		double bd = hour.getConversionFactor(second);
 
 		UnitOfMeasure u = second.multiply(second);
 
-		assertThat(u.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
-		assertThat(u.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1.0d, DELTA6));
+		assertTrue(isCloseTo(u.getOffset(), 0.0d, DELTA6));
 		assertTrue(u.equals(s2));
 
 		u = second.divide(second);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
-		Quantity q1 = new Quantity(BigDecimal.ONE, u);
+		Quantity q1 = new Quantity(1.0d, u);
 		Quantity q2 = q1.convert(sys.getOne());
-		assertThat(q2.getAmount(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 1.0d, DELTA6));
 		assertTrue(q2.getUOM().equals(sys.getOne()));
 
 		u = second.invert();
@@ -668,40 +640,41 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.getDivisor().equals(second));
 
 		u = min.divide(second);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("60"), DELTA6));
-		assertThat(u.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		factor = u.getConversionFactor(sys.getOne());
+		assertTrue(isCloseTo(factor, 60d, DELTA6));
+		assertTrue(isCloseTo(u.getOffset(), 0.0d, DELTA6));
 
 		UnitOfMeasure uom = u.multiply(second);
 		bd = uom.getConversionFactor(min);
-		assertTrue(uom.equals(min));
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(uom.getBaseSymbol().equals(min.getBaseSymbol()));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
-		q1 = new Quantity(BigDecimal.TEN, u);
+		q1 = new Quantity(10.0d, u);
 		q2 = q1.convert(sys.getOne());
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("600"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 600, DELTA6));
 		assertTrue(q2.getUOM().equals(sys.getOne()));
 
 		// multiply2
 		u = min.multiply(min);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("3600"), DELTA6));
-		assertTrue(u.getAbscissaUnit().equals(s2));
-		assertThat(u.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 3600, DELTA6));
+		assertTrue(u.getAbscissaUnit().getBaseSymbol().equals(s2.getBaseSymbol()));
+		assertTrue(isCloseTo(u.getOffset(), 0.0d, DELTA6));
 
-		q1 = new Quantity(BigDecimal.TEN, u);
+		q1 = new Quantity(10.0d, u);
 		q2 = q1.convert(s2);
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("36000"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 36000, DELTA6));
 		assertTrue(q2.getUOM().equals(s2));
 
 		q2 = q2.convert(min2);
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("10"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 10, DELTA6));
 
 		u = min.multiply(second);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("60"), DELTA6));
-		assertTrue(u.getAbscissaUnit().equals(s2));
+		assertTrue(isCloseTo(u.getScalingFactor(), 60, DELTA6));
+		assertTrue(u.getAbscissaUnit().getBaseSymbol().equals(s2.getBaseSymbol()));
 
 		u = second.multiply(min);
 		bd = u.getConversionFactor(s2);
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 	}
 
@@ -749,7 +722,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(symbol.equals("m"));
 
 		UnitOfMeasure mm = sys.getUOM(Prefix.MILLI, metre);
-		assertTrue(Prefix.MILLI.getScalingFactor() != null);
+		assertTrue(Prefix.MILLI.getFactor() > 0);
 
 		symbol = mm.getSymbol();
 		assertTrue(symbol.equals("mm"));
@@ -905,7 +878,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(mult.getBaseSymbol().equals(sys.getUOM(Unit.ONE).getSymbol()));
 
 		UnitOfMeasure u = sys.getSecond().invert();
-		assertTrue(u.getScalingFactor().equals(oneDivSec.getScalingFactor()));
+		assertTrue(u.getScalingFactor() == oneDivSec.getScalingFactor());
 
 		inverted = u.invert();
 		assertTrue(inverted.equals(sys.getSecond()));
@@ -934,11 +907,11 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.getBaseSymbol().equals(sqMin.getBaseSymbol()));
 
 		u = perMin.invert();
-		BigDecimal bd = u.getConversionFactor(sys.getMinute());
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		double bd = u.getConversionFactor(sys.getMinute());
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = u.getConversionFactor(sys.getSecond());
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 		try {
 			m.getConversionFactor(null);
@@ -954,107 +927,107 @@ public class TestUnits extends BaseTest {
 
 		// scalar
 		bd = m.getConversionFactor(m);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 		assertTrue(m.equals(m));
 
 		bd = m.getConversionFactor(cm);
-		assertThat(bd, closeTo(Quantity.createAmount("100"), DELTA6));
+		assertTrue(isCloseTo(bd, 100, DELTA6));
 		assertTrue(m.equals(m));
 		assertTrue(cm.equals(cm));
 		assertTrue((!m.equals(cm)));
 
 		bd = m.getConversionFactor(cm);
-		assertThat(bd, closeTo(Quantity.createAmount("100"), DELTA6));
+		assertTrue(isCloseTo(bd, 100, DELTA6));
 
 		bd = cm.getConversionFactor(m);
-		assertThat(bd, closeTo(Quantity.createAmount("0.01"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.01, DELTA6));
 
 		bd = m.getConversionFactor(cm);
-		assertThat(bd, closeTo(Quantity.createAmount("100"), DELTA6));
+		assertTrue(isCloseTo(bd, 100, DELTA6));
 
 		bd = m.getConversionFactor(in);
-		assertThat(bd, closeTo(Quantity.createAmount("39.37007874015748"), DELTA6));
+		assertTrue(isCloseTo(bd, 39.37007874015748, DELTA6));
 
 		bd = in.getConversionFactor(m);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0254"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0254, DELTA6));
 
 		bd = m.getConversionFactor(ft);
-		assertThat(bd, closeTo(Quantity.createAmount("3.280839895013123"), DELTA6));
+		assertTrue(isCloseTo(bd, 3.280839895013123, DELTA6));
 
 		bd = ft.getConversionFactor(m);
-		assertThat(bd, closeTo(Quantity.createAmount("0.3048"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.3048, DELTA6));
 
 		Quantity g = sys.getQuantity(Constant.GRAVITY).convert(sys.getUOM(Unit.FEET_PER_SEC_SQUARED));
 		bd = g.getAmount();
-		assertThat(bd, closeTo(Quantity.createAmount("32.17404855"), DELTA6));
+		assertTrue(isCloseTo(bd, 32.17404855, DELTA6));
 
 		bd = lbf.getConversionFactor(N);
-		assertThat(bd, closeTo(Quantity.createAmount("4.448221615"), DELTA6));
+		assertTrue(isCloseTo(bd, 4.448221615, DELTA6));
 
 		bd = N.getConversionFactor(lbf);
-		assertThat(bd, closeTo(Quantity.createAmount("0.2248089430997105"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.2248089430997105, DELTA6));
 
 		// product
 		bd = Nm.getConversionFactor(ftlb);
-		assertThat(bd, closeTo(Quantity.createAmount("0.7375621492772656"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.7375621492772656, DELTA6));
 
 		bd = ftlb.getConversionFactor(Nm);
-		assertThat(bd, closeTo(Quantity.createAmount("1.3558179483314004"), DELTA6));
+		assertTrue(isCloseTo(bd, 1.3558179483314004, DELTA6));
 
 		// quotient
 		UnitOfMeasure one = sys.getOne();
 		bd = minOverSec.getConversionFactor(one);
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 		bd = one.getConversionFactor(minOverSec);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0166666666666667, DELTA6));
 
 		bd = mps.getConversionFactor(fph);
-		assertThat(bd, closeTo(Quantity.createAmount("11811.02362204724"), DELTA6));
+		assertTrue(isCloseTo(bd, 11811.02362204724, DELTA6));
 
 		bd = fph.getConversionFactor(mps);
-		assertThat(bd, closeTo(Quantity.createAmount("8.46666666666667E-05"), DELTA6));
+		assertTrue(isCloseTo(bd, 8.46666666666667E-05, DELTA6));
 
 		// power
 		bd = sqm.getConversionFactor(sqft);
-		assertThat(bd, closeTo(Quantity.createAmount("10.76391041670972"), DELTA6));
+		assertTrue(isCloseTo(bd, 10.76391041670972, DELTA6));
 
 		bd = sqft.getConversionFactor(sqm);
-		assertThat(bd, closeTo(Quantity.createAmount("0.09290304"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.09290304, DELTA6));
 
 		// mixed
 		bd = mm.getConversionFactor(sqm);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = sqm.getConversionFactor(mm);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = mcm.getConversionFactor(sqm);
-		assertThat(bd, closeTo(Quantity.createAmount("0.01"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.01, DELTA6));
 
 		bd = sqm.getConversionFactor(mcm);
-		assertThat(bd, closeTo(Quantity.createAmount("100"), DELTA6));
+		assertTrue(isCloseTo(bd, 100, DELTA6));
 
 		bd = minTimesSec.getConversionFactor(s2);
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 		bd = s2.getConversionFactor(minTimesSec);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0166666666666667, DELTA6));
 
 		bd = minTimesSec.getConversionFactor(sqMin);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0166666666666667, DELTA6));
 
 		bd = sqMin.getConversionFactor(minTimesSec);
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 		bd = minOverSecTimesSec.getConversionFactor(sys.getSecond());
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 	}
 
 	@Test
 	public void testConversions2() throws Exception {
-		BigDecimal bd = null;
+		double bd = 0;
 
 		sys.unregisterUnit(sys.getUOM(Unit.CUBIC_INCH));
 		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
@@ -1063,7 +1036,7 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure cubicFt = ft2.multiply(ft);
 		bd = cubicFt.getConversionFactor(ft3);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		UnitOfMeasure m3 = sys.getUOM(Unit.CUBIC_METRE);
 		UnitOfMeasure degree = sys.getUOM(Unit.DEGREE);
@@ -1089,105 +1062,105 @@ public class TestUnits extends BaseTest {
 
 		UnitOfMeasure miphs = sys.createScalarUOM(UnitType.ACCELERATION, "mph/sec", "mi/hr-sec",
 				"mile per hour per second");
-		miphs.setConversion(Quantity.createAmount("1.466666666666667"), sys.getUOM(Unit.FEET_PER_SEC_SQUARED));
+		miphs.setConversion(1.466666666666667, sys.getUOM(Unit.FEET_PER_SEC_SQUARED));
 
 		UnitOfMeasure inHg = sys.createScalarUOM(UnitType.PRESSURE, "inHg", "inHg", "inHg");
-		inHg.setConversion(Quantity.createAmount("3386.389"), pascal);
+		inHg.setConversion(3386.389, pascal);
 
-		Quantity atm = new Quantity(BigDecimal.ONE, Unit.ATMOSPHERE).convert(Unit.PASCAL);
-		assertThat(atm.getAmount(), closeTo(Quantity.createAmount("101325"), DELTA6));
+		Quantity atm = new Quantity(1.0d, Unit.ATMOSPHERE).convert(Unit.PASCAL);
+		assertTrue(isCloseTo(atm.getAmount(), 101325, DELTA6));
 
 		UnitOfMeasure ft2ft = sys.createProductUOM(UnitType.VOLUME, "ft2ft", "ft2ft", null, ft2, ft);
 
 		UnitOfMeasure hrsec = sys.createScalarUOM(UnitType.TIME_SQUARED, "", "hr.sec", "");
-		hrsec.setConversion(Quantity.createAmount("3600"), sys.getUOM(Unit.SQUARE_SECOND));
+		hrsec.setConversion(3600d, sys.getUOM(Unit.SQUARE_SECOND));
 		bd = hrsec.getConversionFactor(s2);
-		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
+		assertTrue(isCloseTo(bd, 3600, DELTA6));
 
 		bd = s2.getConversionFactor(hrsec);
-		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778E-04"), DELTA6));
+		assertTrue(isCloseTo(bd, 2.777777777777778E-04, DELTA6));
 
 		bd = ft2ft.getConversionFactor(m3);
-		assertThat(bd, closeTo(Quantity.createAmount("0.028316846592"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.028316846592, DELTA6));
 
 		bd = m3.getConversionFactor(ft2ft);
-		assertThat(bd, closeTo(Quantity.createAmount("35.31466672148859"), DELTA6));
+		assertTrue(isCloseTo(bd, 35.31466672148859, DELTA6));
 
 		bd = acreFoot.getConversionFactor(m3);
-		assertThat(bd, closeTo(Quantity.createAmount("1233.48183754752"), DELTA6));
+		assertTrue(isCloseTo(bd, 1233.48183754752, DELTA6));
 
 		bd = m3.getConversionFactor(acreFoot);
-		assertThat(bd, closeTo(Quantity.createAmount("8.107131937899125E-04"), DELTA6));
+		assertTrue(isCloseTo(bd, 8.107131937899125E-04, DELTA6));
 
 		bd = degree.getConversionFactor(radian);
-		assertThat(bd, closeTo(Quantity.createAmount("0.01745329251994329"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.01745329251994329, DELTA6));
 
 		bd = radian.getConversionFactor(degree);
-		assertThat(bd, closeTo(Quantity.createAmount("57.29577951308264"), DELTA6));
+		assertTrue(isCloseTo(bd, 57.29577951308264, DELTA6));
 
 		bd = arcsec.getConversionFactor(degree);
-		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778E-4"), DELTA6));
+		assertTrue(isCloseTo(bd, 2.777777777777778E-4, DELTA6));
 
 		bd = degree.getConversionFactor(arcsec);
-		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
+		assertTrue(isCloseTo(bd, 3600, DELTA6));
 
 		bd = lbmPerFt3.getConversionFactor(kgPerM3);
-		assertThat(bd, closeTo(Quantity.createAmount("16.01846337"), DELTA6));
+		assertTrue(isCloseTo(bd, 16.01846337, DELTA6));
 
 		bd = kgPerM3.getConversionFactor(lbmPerFt3);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0624279605915783"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0624279605915783, DELTA6));
 
 		bd = rpm.getConversionFactor(rps);
-		assertThat(bd, closeTo(Quantity.createAmount("0.104719755"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.104719755, DELTA6));
 
 		bd = rps.getConversionFactor(rpm);
-		assertThat(bd, closeTo(Quantity.createAmount("9.549296596425383"), DELTA6));
+		assertTrue(isCloseTo(bd, 9.549296596425383, DELTA6));
 
 		bd = mps.getConversionFactor(fps);
-		assertThat(bd, closeTo(Quantity.createAmount("3.280839895013123"), DELTA6));
+		assertTrue(isCloseTo(bd, 3.280839895013123, DELTA6));
 
 		bd = fps.getConversionFactor(mps);
-		assertThat(bd, closeTo(Quantity.createAmount("0.3048"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.3048, DELTA6));
 
 		bd = knot.getConversionFactor(mps);
-		assertThat(bd, closeTo(Quantity.createAmount("0.5147733333333333"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.5147733333333333, DELTA6));
 
 		bd = mps.getConversionFactor(knot);
-		assertThat(bd, closeTo(Quantity.createAmount("1.942602569415665"), DELTA6));
+		assertTrue(isCloseTo(bd, 1.942602569415665, DELTA6));
 
 		UnitOfMeasure usGal = sys.getUOM(Unit.US_GALLON);
 		UnitOfMeasure gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/hr", "gallons per hour", usGal,
 				sys.getHour());
 
 		bd = gph.getConversionFactor(m3s);
-		assertThat(bd, closeTo(Quantity.createAmount("1.051503273E-06"), DELTA6));
+		assertTrue(isCloseTo(bd, 1.051503273E-06, DELTA6));
 
 		bd = m3s.getConversionFactor(gph);
-		assertThat(bd, closeTo(Quantity.createAmount("951019.3884893342"), DELTA6));
+		assertTrue(isCloseTo(bd, 951019.3884893342, DELTA6));
 
 		bd = miphs.getConversionFactor(ms2);
-		assertThat(bd, closeTo(Quantity.createAmount("0.44704"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.44704, DELTA6));
 
 		bd = ms2.getConversionFactor(miphs);
-		assertThat(bd, closeTo(Quantity.createAmount("2.236936292054402"), DELTA6));
+		assertTrue(isCloseTo(bd, 2.236936292054402, DELTA6));
 
 		bd = pascal.getConversionFactor(inHg);
-		assertThat(bd, closeTo(Quantity.createAmount("2.952998016471232E-04"), DELTA6));
+		assertTrue(isCloseTo(bd, 2.952998016471232E-04, DELTA6));
 
 		bd = inHg.getConversionFactor(pascal);
-		assertThat(bd, closeTo(Quantity.createAmount("3386.389"), DELTA6));
+		assertTrue(isCloseTo(bd, 3386.389, DELTA6));
 
 		bd = atm.convert(inHg).getAmount();
-		assertThat(bd, closeTo(Quantity.createAmount("29.92125240189478"), DELTA6));
+		assertTrue(isCloseTo(bd, 29.92125240189478, DELTA6));
 
 		bd = inHg.getConversionFactor(atm.getUOM());
-		assertThat(bd, closeTo(Quantity.createAmount("3386.389"), DELTA6));
+		assertTrue(isCloseTo(bd, 3386.389, DELTA6));
 
 		bd = btu.getConversionFactor(joule);
-		assertThat(bd, closeTo(Quantity.createAmount("1055.05585262"), DELTA6));
+		assertTrue(isCloseTo(bd, 1055.05585262, DELTA6));
 
 		bd = joule.getConversionFactor(btu);
-		assertThat(bd, closeTo(Quantity.createAmount("9.478171203133172E-04"), DELTA6));
+		assertTrue(isCloseTo(bd, 9.478171203133172E-04, DELTA6));
 
 	}
 
@@ -1220,53 +1193,53 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure VTimesSec = sys.createProductUOM(UnitType.MAGNETIC_FLUX, "Vxs", "Vxs", null, volt, second);
 		UnitOfMeasure cdTimesSr = sys.createProductUOM(UnitType.LUMINOUS_FLUX, "cdxsr", "cdxsr", null, cd, sr);
 
-		BigDecimal bd = fTimesV.getConversionFactor(coulomb);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		double bd = fTimesV.getConversionFactor(coulomb);
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = coulomb.getConversionFactor(fTimesV);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = WeberPerSec.getConversionFactor(volt);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = volt.getConversionFactor(WeberPerSec);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = volt.getConversionFactor(WPerAmp);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = WPerAmp.getConversionFactor(volt);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = ohm.getConversionFactor(VPerA);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = VPerA.getConversionFactor(ohm);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = farad.getConversionFactor(CPerV);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = CPerV.getConversionFactor(farad);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = weber.getConversionFactor(VTimesSec);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = VTimesSec.getConversionFactor(weber);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = henry.getConversionFactor(WeberPerAmp);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = WeberPerAmp.getConversionFactor(henry);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = lumen.getConversionFactor(cdTimesSr);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = cdTimesSr.getConversionFactor(lumen);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		try {
 			bd = gray.getConversionFactor(sievert);
@@ -1291,42 +1264,41 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure R = sys.getUOM(Unit.RANKINE);
 		UnitOfMeasure F = sys.getUOM(Unit.FAHRENHEIT);
 
-		BigDecimal fiveNinths = Quantity.createAmount("5").divide(Quantity.createAmount("9"),
-				UnitOfMeasure.MATH_CONTEXT);
-		BigDecimal nineFifths = Quantity.createAmount("1.8");
+		double fiveNinths = 5d / 9d;
+		double nineFifths = 1.8;
 
 		// K to C
-		BigDecimal bd = K.getConversionFactor(C);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		double bd = K.getConversionFactor(C);
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = C.getConversionFactor(K);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		// R to F
 		bd = R.getConversionFactor(F);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		bd = F.getConversionFactor(R);
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1.0d, DELTA6));
 
 		// C to F
 		bd = F.getConversionFactor(C);
-		assertThat(bd, closeTo(fiveNinths, DELTA6));
+		assertTrue(isCloseTo(bd, fiveNinths, DELTA6));
 
 		bd = C.getConversionFactor(F);
-		assertThat(bd, closeTo(nineFifths, DELTA6));
+		assertTrue(isCloseTo(bd, nineFifths, DELTA6));
 
 		// K to R
 		bd = K.getConversionFactor(R);
-		assertThat(bd, closeTo(nineFifths, DELTA6));
+		assertTrue(isCloseTo(bd, nineFifths, DELTA6));
 
 		bd = F.getConversionFactor(K);
-		assertThat(bd, closeTo(fiveNinths, DELTA6));
+		assertTrue(isCloseTo(bd, fiveNinths, DELTA6));
 
 		// invert diopters to metre
-		Quantity from = new Quantity(BigDecimal.TEN, sys.getUOM(Unit.DIOPTER));
+		Quantity from = new Quantity(10.0d, sys.getUOM(Unit.DIOPTER));
 		Quantity inverted = from.invert();
-		assertThat(inverted.getAmount(), closeTo(Quantity.createAmount("0.1"), DELTA6));
+		assertTrue(isCloseTo(inverted.getAmount(), 0.1, DELTA6));
 
 		UnitOfMeasure u = sys.createPowerUOM(UnitType.UNCLASSIFIED, "t*4", "t*4", "", K, 4);
 		assertTrue(u != null);
@@ -1343,9 +1315,9 @@ public class TestUnits extends BaseTest {
 
 		// hectare to acre
 		UnitOfMeasure ha = sys.getUOM(Unit.HECTARE);
-		from = new Quantity(BigDecimal.ONE, ha);
+		from = new Quantity(1.0d, ha);
 		Quantity to = from.convert(Unit.ACRE);
-		assertThat(to.getAmount(), closeTo(Quantity.createAmount("2.47105"), DELTA5));
+		assertTrue(isCloseTo(to.getAmount(), 2.47105, DELTA5));
 	}
 
 	@Test
@@ -1356,8 +1328,8 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, sys.getUOM(Unit.METRE));
 		UnitOfMeasure ft = sys.getUOM(Unit.FOOT);
 
-		Quantity q1 = new Quantity("10", metre);
-		Quantity q2 = new Quantity("2", cm);
+		Quantity q1 = new Quantity(10d, metre);
+		Quantity q2 = new Quantity(2d, cm);
 
 		for (int i = 0; i < its; i++) {
 			q1.add(q2);
@@ -1388,9 +1360,9 @@ public class TestUnits extends BaseTest {
 		// mega metre
 		UnitOfMeasure mm = sys.getUOM(Prefix.MEGA, m);
 
-		Quantity qmm = new Quantity("1", mm);
+		Quantity qmm = new Quantity(1d, mm);
 		Quantity qm = qmm.convert(m);
-		assertThat(qm.getAmount(), closeTo(new BigDecimal("1.0E+06"), DELTA6));
+		assertTrue(isCloseTo(qm.getAmount(), 1.0E+06, DELTA6));
 
 		UnitOfMeasure mm2 = sys.getUOM(Prefix.MEGA, m);
 		assertTrue(mm.equals(mm2));
@@ -1398,16 +1370,16 @@ public class TestUnits extends BaseTest {
 		// centilitre
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 		UnitOfMeasure cL = sys.getUOM(Prefix.CENTI, litre);
-		Quantity qL = new Quantity("1", litre);
+		Quantity qL = new Quantity(1d, litre);
 		Quantity qcL = qL.convert(cL);
-		assertThat(qcL.getAmount(), closeTo(new BigDecimal("100"), DELTA6));
+		assertTrue(isCloseTo(qcL.getAmount(), 100, DELTA6));
 
 		// a mega buck
 		UnitOfMeasure buck = sys.createScalarUOM(UnitType.UNCLASSIFIED, "buck", "$", "one US dollar");
 		UnitOfMeasure megabuck = sys.getUOM(Prefix.MEGA, buck);
-		Quantity qmb = new Quantity("10", megabuck);
+		Quantity qmb = new Quantity(10d, megabuck);
 		Quantity qb = qmb.convert(buck);
-		assertThat(qb.getAmount(), closeTo(new BigDecimal("1.0E+07"), DELTA6));
+		assertTrue(isCloseTo(qb.getAmount(), 1.0E+07, DELTA6));
 
 		// kilogram vs. scaled gram
 		UnitOfMeasure kgm = sys.getUOM(Prefix.KILO, sys.getUOM(Unit.GRAM));
@@ -1417,15 +1389,15 @@ public class TestUnits extends BaseTest {
 		// kilo and megabytes
 		UnitOfMeasure kiB = sys.getUOM(Prefix.KIBI, sys.getUOM(Unit.BYTE));
 		UnitOfMeasure miB = sys.getUOM(Prefix.MEBI, sys.getUOM(Unit.BYTE));
-		Quantity qmB = new Quantity("1", miB);
+		Quantity qmB = new Quantity(1d, miB);
 		Quantity qkB = qmB.convert(kiB);
-		assertThat(qkB.getAmount(), closeTo(new BigDecimal("1024"), DELTA6));
+		assertTrue(isCloseTo(qkB.getAmount(), 1024, DELTA6));
 	}
 
 	@Test
 	public void testPowers() throws Exception {
 
-		BigDecimal bd = null;
+		double bd = 0;
 
 		Quantity q1 = null;
 		Quantity q2 = null;
@@ -1462,13 +1434,13 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure hz = sys.getUOM(Unit.HERTZ);
 
 		UnitOfMeasure ij = oneOveri.multiply(oneOverj);
-		assertTrue(ij.equals(ixjm1));
+		assertTrue(ij.getBaseSymbol().equals(ixjm1.getBaseSymbol()));
 
 		bd = min2.getConversionFactor(s2);
-		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
+		assertTrue(isCloseTo(bd, 3600, DELTA6));
 
 		bd = s2.getConversionFactor(min2);
-		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778e-4"), DELTA6));
+		assertTrue(isCloseTo(bd, 2.777777777777778e-4, DELTA6));
 
 		u = sys.getBaseUOM(sm1.getSymbol());
 		assertTrue(u != null);
@@ -1476,36 +1448,36 @@ public class TestUnits extends BaseTest {
 
 		u = sys.getOne().divide(min);
 		bd = u.getScalingFactor();
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(bd, 1d/60d, DELTA6));
 		bd = u.getConversionFactor(sm1);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0166666666666667, DELTA6));
 
 		u = ftm1.multiply(ft);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
 		u = ft.multiply(inm1);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("12"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 12, DELTA6));
 
 		u = inm1.multiply(ft);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("12"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 12, DELTA6));
 
 		u = s.multiply(minminus1);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 0.0166666666666667, DELTA6));
 
 		u = minminus1.multiply(s);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 0.0166666666666667, DELTA6));
 
 		u = s.multiply(minminus1Q);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 0.0166666666666667, DELTA6));
 
 		u = minminus1Q.multiply(s);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 0.0166666666666667, DELTA6));
 
 		u = ftm1.multiply(in);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0833333333333333"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1d/12d, DELTA6));
 
 		u = in.multiply(ftm1);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0833333333333333"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1d/12d, DELTA6));
 
 		u = newtonm1.multiply(newton);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
@@ -1514,24 +1486,24 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = minminus1.multiply(s);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1d/60d, DELTA6));
 
 		sys.unregisterUnit(sys.getUOM(Unit.HERTZ));
 		UnitOfMeasure min1 = min.invert();
 		bd = min1.getScalingFactor();
-		assertThat(bd, closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(bd, 1, DELTA6));
 
 		bd = sqs.getScalingFactor();
-		assertThat(bd, closeTo(Quantity.createAmount("1"), DELTA6));
+		assertTrue(isCloseTo(bd, 1, DELTA6));
 
 		u = sminus1.multiply(s);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getSymbol()));
 
 		u = sys.getOne().divide(min);
 		bd = u.getScalingFactor();
-		assertThat(bd, closeTo(Quantity.createAmount("1"), DELTA6));
+		assertTrue(isCloseTo(bd, 1, DELTA6));
 		bd = u.getConversionFactor(sm1);
-		assertThat(bd, closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(bd, 0.0166666666666667, DELTA6));
 
 		t = s2.getUnitType();
 
@@ -1547,52 +1519,52 @@ public class TestUnits extends BaseTest {
 		assertTrue(t.equals(UnitType.TIME));
 
 		u = min.multiply(min);
-		assertThat(u.getScalingFactor(), closeTo(Quantity.createAmount("3600"), DELTA6));
-		assertTrue(u.getAbscissaUnit().equals(s2));
-		assertThat(u.getOffset(), closeTo(BigDecimal.ZERO, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 3600, DELTA6));
+		assertTrue(u.getAbscissaUnit().getBaseSymbol().equals(s2.getBaseSymbol()));
+		assertTrue(isCloseTo(u.getOffset(), 0.0d, DELTA6));
 		t = u.getUnitType();
 		assertTrue(t.equals(UnitType.TIME_SQUARED));
 
 		u2 = sys.getOne().divide(min);
-		assertThat(u2.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(u2.getScalingFactor(), 1.0d, DELTA6));
 
-		q1 = new Quantity(BigDecimal.ONE, u2);
+		q1 = new Quantity(1.0d, u2);
 		q2 = q1.convert(hz);
 
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("0.0166666666666667"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 0.0166666666666667, DELTA6));
 
 		u = u2.multiply(u2);
-		assertThat(u.getScalingFactor(), closeTo(BigDecimal.ONE, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1.0d, DELTA6));
 
-		q1 = new Quantity(BigDecimal.ONE, u);
+		q1 = new Quantity(1.0d, u);
 		q2 = q1.convert(s2.invert());
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("2.777777777777778e-4"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 2.777777777777778e-4, DELTA6));
 
 		u2 = u2.divide(min);
-		q1 = new Quantity(BigDecimal.ONE, u2);
+		q1 = new Quantity(1.0d, u2);
 		q2 = q1.convert(s2.invert());
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("2.777777777777778e-4"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 2.777777777777778e-4, DELTA6));
 
 		u2 = u2.invert();
 		assertTrue(u2.getBaseSymbol().equals(min2.getBaseSymbol()));
 
-		q1 = new Quantity(BigDecimal.TEN, u2);
+		q1 = new Quantity(10.0d, u2);
 		bd = u2.getConversionFactor(s2);
-		assertThat(bd, closeTo(Quantity.createAmount("3600"), DELTA6));
+		assertTrue(isCloseTo(bd, 3600, DELTA6));
 
 		q2 = q1.convert(s2);
 		assertTrue(q2.getUOM().equals(s2));
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("36000"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 10*3600, DELTA6));
 
 		bd = min.getConversionFactor(sys.getSecond());
-		assertThat(bd, closeTo(Quantity.createAmount("60"), DELTA6));
+		assertTrue(isCloseTo(bd, 60, DELTA6));
 
 		u = q2.getUOM();
 		bd = u.getConversionFactor(min2);
-		assertThat(bd, closeTo(Quantity.createAmount("2.777777777777778e-4"), DELTA6));
+		assertTrue(isCloseTo(bd, 2.777777777777778e-4, DELTA6));
 
 		q2 = q2.convert(min2);
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("10"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 10, DELTA6));
 	}
 
 	@Test
@@ -1650,39 +1622,39 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 		UnitOfMeasure mEqPerL = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "milliNormal", "mEq/L",
 				"solute per litre of solvent ", sys.getUOM(Prefix.MILLI, eq), litre);
-		Quantity testResult = new Quantity("4.9", mEqPerL);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("3.5")) == 1);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("5.3")) == -1);
+		Quantity testResult = new Quantity(4.9, mEqPerL);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(3.5) == 1);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(5.3) == -1);
 
 		// Unit
 		UnitOfMeasure u = sys.getUOM(Unit.UNIT);
 		UnitOfMeasure katal = sys.getUOM(Unit.KATAL);
-		Quantity q1 = new Quantity(BigDecimal.ONE, u);
+		Quantity q1 = new Quantity(1.0d, u);
 		Quantity q2 = q1.convert(sys.getUOM(Prefix.NANO, katal));
-		assertThat(q2.getAmount(), closeTo(Quantity.createAmount("16.666667"), DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 16.666667, DELTA6));
 
 		// blood cell counts
 		UnitOfMeasure k = sys.getUOM(Prefix.KILO, sys.getOne());
 		UnitOfMeasure uL = sys.getUOM(Prefix.MICRO, Unit.LITRE);
 		UnitOfMeasure kul = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "K/uL", "K/uL",
 				"thousands per microlitre", k, uL);
-		testResult = new Quantity("6.6", kul);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("3.5")) == 1);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("12.5")) == -1);
+		testResult = new Quantity(6.6, kul);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(3.5) == 1);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(12.5) == -1);
 
 		UnitOfMeasure fL = sys.getUOM(Prefix.FEMTO, Unit.LITRE);
-		testResult = new Quantity("90", fL);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("80")) == 1);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("100")) == -1);
+		testResult = new Quantity(90d, fL);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(80d) == 1);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(100d) == -1);
 
 		// TSH
 		UnitOfMeasure uIU = sys.getUOM(Prefix.MICRO, Unit.INTERNATIONAL_UNIT);
 		UnitOfMeasure mL = sys.getUOM(Prefix.MILLI, Unit.LITRE);
 		UnitOfMeasure uiuPerml = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "uIU/mL", "uIU/mL",
 				"micro IU per millilitre", uIU, mL);
-		testResult = new Quantity("2.11", uiuPerml);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("0.40")) == 1);
-		assertTrue(testResult.getAmount().compareTo(Quantity.createAmount("5.50")) == -1);
+		testResult = new Quantity(2.11, uiuPerml);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(0.40) == 1);
+		assertTrue(Double.valueOf(testResult.getAmount()).compareTo(5.50) == -1);
 
 	}
 
@@ -1699,17 +1671,152 @@ public class TestUnits extends BaseTest {
 		m.setVersion(101);
 		assertTrue(m.getVersion() == 101);
 	}
-	
+
 	@Test
 	public void testMeasurementTypes() throws Exception {
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);
 		UnitOfMeasure n = sys.getUOM(Unit.NEWTON_METRE);
 		UnitOfMeasure a = sys.getUOM(Unit.SQUARE_METRE);
-		
+
 		assertTrue(m.getMeasurementType().equals(UnitOfMeasure.MeasurementType.SCALAR));
 		assertTrue(mps.getMeasurementType().equals(UnitOfMeasure.MeasurementType.QUOTIENT));
 		assertTrue(n.getMeasurementType().equals(UnitOfMeasure.MeasurementType.PRODUCT));
 		assertTrue(a.getMeasurementType().equals(UnitOfMeasure.MeasurementType.POWER));
+	}
+	
+	@Test
+	public void testScaling() throws Exception {
+		// test scaling factors
+		double sf = 0d;
+
+		UnitOfMeasure second = sys.getSecond();
+		UnitOfMeasure min = sys.getMinute();
+		UnitOfMeasure s2 = sys.getUOM(Unit.SQUARE_SECOND);
+		UnitOfMeasure msec = sys.getUOM(Prefix.MILLI, second);
+		UnitOfMeasure k = sys.getUOM(Unit.KELVIN);
+		UnitOfMeasure r = sys.getUOM(Unit.RANKINE);
+		UnitOfMeasure m = sys.getUOM(Unit.METRE);
+		UnitOfMeasure km = sys.getUOM(Prefix.KILO, m);
+
+		sf = m.getConversionFactor(km);
+		assertTrue(isCloseTo(sf, 0.001, DELTA6));
+
+		UnitOfMeasure kinv = k.invert();
+		sf = kinv.getScalingFactor();
+		assertTrue(sf == 1d);
+
+		sf = r.getConversionFactor(k);
+		assertTrue(isCloseTo(sf, 5d / 9d, DELTA6));
+
+		sf = k.getConversionFactor(r);
+		assertTrue(isCloseTo(sf, 1.8, DELTA6));
+
+		sf = second.getConversionFactor(msec);
+		assertTrue(isCloseTo(sf, 1000, DELTA6));
+
+		sf = min.getScalingFactor();
+		assertTrue(sf == 60d);
+
+		// inversions		
+		UnitOfMeasure mininv = min.invert();
+		sf = mininv.getScalingFactor();
+		assertTrue(sf == 1d/60d);
+		sf = mininv.getConversionFactor(sys.getUOM(Unit.HERTZ));
+		assertTrue(sf == 1d/60d);
+		
+		// quotient UOM
+		UnitOfMeasure q = sys.createQuotientUOM(sys.getOne(), min);
+		sf = q.getScalingFactor();
+		assertTrue(sf == 1d);
+		
+		// power UOM
+		UnitOfMeasure p = sys.createPowerUOM(min, -1);
+		sf = p.getScalingFactor();
+		assertTrue(sf == 1d);
+		
+		sf = p.getConversionFactor(sys.getUOM(Unit.HERTZ));
+		assertTrue(sf == 1d / 60d);
+
+		UnitOfMeasure u = p.invert();
+		sf = u.getScalingFactor();
+		assertTrue(sf == 60d);
+		
+		sf = min.getConversionFactor(u);
+		assertTrue(isCloseTo(sf, 1.0d, DELTA6));
+
+		sf = u.getConversionFactor(min);
+		assertTrue(isCloseTo(sf, 1.0d, DELTA6));
+
+		UnitOfMeasure min2 = mininv.invert();
+		sf = min2.getScalingFactor();
+		assertTrue(sf == 60d);
+
+		// divisions
+		UnitOfMeasure perMin = sys.getOne().divide(min);
+
+		UnitOfMeasure num = perMin.getDividend();
+		UnitOfMeasure denom = perMin.getDivisor();
+		min2 = denom.divide(num);
+		sf = min2.getScalingFactor();
+		assertTrue(sf == 60d);
+
+		sf = perMin.getScalingFactor();
+		assertTrue(sf == 1d/60d);
+
+		UnitOfMeasure perMin1 = perMin.divide(sys.getOne());
+		assertTrue(perMin1.equals(perMin));
+
+		min2 = perMin.invert();
+		sf = min2.getScalingFactor();
+		assertTrue(sf == 60d);
+
+		min2 = sys.getOne().divide(perMin);
+		sf = min2.getScalingFactor();
+		assertTrue(sf == 60d);
+
+		int count = 4;
+		UnitOfMeasure[] inversions = new UnitOfMeasure[count + 1];
+		UnitOfMeasure[] divides = new UnitOfMeasure[count + 1];
+
+		inversions[0] = min;
+		divides[0] = min;
+		for (int i = 0; i < count; i++) {
+			inversions[i+1] = inversions[i].invert();
+			divides[i+1] = sys.getOne().divide(divides[i]);
+		}
+		sf = inversions[count].getScalingFactor();
+		assertTrue(sf == 60d);
+		
+		UnitOfMeasure last = null;
+		for (int i = count; i > 0; i--) {
+			last = divides[i].invert();
+		} 
+		assertTrue(last.equals(min));	
+		
+		// multiply
+		UnitOfMeasure minsq = min.multiply(min);
+		sf = minsq.getScalingFactor();
+		assertTrue(sf == 3600d);
+		
+		sf = minsq.getConversionFactor(s2);
+		assertTrue(isCloseTo(sf, 3600d, DELTA6));
+		
+		sf = s2.getConversionFactor(minsq);
+		assertTrue(isCloseTo(sf, 1d/3600d, DELTA6));
+		
+		// power of 2
+		UnitOfMeasure p2 = sys.createPowerUOM(min, 2);
+		sf = p2.getScalingFactor();
+		assertTrue(sf == 1d);
+		
+		sf = p2.getConversionFactor(s2);
+		assertTrue(sf == 3600d);
+		
+		sf = p2.getConversionFactor(minsq);
+		assertTrue(sf == 1d);
+		
+		sf = minsq.getConversionFactor(p2);
+		assertTrue(sf == 1d);	
 	}
 }

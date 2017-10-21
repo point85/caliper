@@ -128,6 +128,6 @@ public enum Unit {
 	// mass
 	BR_TON,
 	// currency
-	US_DOLLAR, EURO, YUAN;
+	US_DOLLAR, EURO, YUAN
 
 }

@@ -23,18 +23,11 @@ SOFTWARE.
 */
 package org.point85.uom;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 
 /**
  * The Quantity class represents an amount and {@link UnitOfMeasure}. A constant
  * quantity can be named and given a symbol, e.g. the speed of light.
- * <p>
- * The amount is expressed as a BigDecimal in order to control the precision of
- * floating point arithmetic. A MathContext is used with a precision setting
- * matching the IEEE 754R Decimal64 format, 16 digits, and a rounding mode of
- * HALF_EVEN, the IEEE 754R default.
- * </p>
  * 
  * @author Kent Randall
  *
@@ -42,7 +35,7 @@ import java.math.BigInteger;
 public class Quantity extends Symbolic {
 
 	// the amount
-	private BigDecimal amount;
+	private double amount;
 
 	// and its unit of measure
 	private UnitOfMeasure uom;
@@ -62,7 +55,7 @@ public class Quantity extends Symbolic {
 	 * @param uom
 	 *            {@link UnitOfMeasure}
 	 */
-	public Quantity(BigDecimal amount, UnitOfMeasure uom) {
+	public Quantity(double amount, UnitOfMeasure uom) {
 		this.amount = amount;
 		this.uom = uom;
 	}
@@ -76,9 +69,10 @@ public class Quantity extends Symbolic {
 	 *            {@link Prefix}
 	 * @param unit
 	 *            {@link Unit}
-	 * @throws Exception Exception
+	 * @throws Exception
+	 *             Exception
 	 */
-	public Quantity(BigDecimal amount, Prefix prefix, Unit unit) throws Exception {
+	public Quantity(double amount, Prefix prefix, Unit unit) throws Exception {
 		this(amount, MeasurementSystem.getSystem().getUOM(prefix, unit));
 	}
 
@@ -107,7 +101,7 @@ public class Quantity extends Symbolic {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public Quantity(BigDecimal amount, Unit unit) throws Exception {
+	public Quantity(double amount, Unit unit) throws Exception {
 		this(amount, MeasurementSystem.getSystem().getUOM(unit));
 	}
 
@@ -132,7 +126,7 @@ public class Quantity extends Symbolic {
 	 */
 	@Override
 	public int hashCode() {
-		return getAmount().hashCode() ^ getUOM().hashCode();
+		return Double.valueOf(getAmount()).hashCode() ^ getUOM().hashCode();
 	}
 
 	/**
@@ -150,7 +144,7 @@ public class Quantity extends Symbolic {
 			Quantity otherQuantity = (Quantity) other;
 
 			// same amount and same unit of measure
-			if (getAmount().compareTo(otherQuantity.getAmount()) == 0 && getUOM().equals(otherQuantity.getUOM())) {
+			if (getAmount() == otherQuantity.getAmount() && getUOM().equals(otherQuantity.getUOM())) {
 				answer = true;
 			}
 		}
@@ -158,8 +152,7 @@ public class Quantity extends Symbolic {
 	}
 
 	/**
-	 * Create an amount of a quantity that adheres to precision and rounding
-	 * settings from a String
+	 * Create an amount of a quantity from a String
 	 * 
 	 * @param value
 	 *            Text value of amount
@@ -167,13 +160,11 @@ public class Quantity extends Symbolic {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public static BigDecimal createAmount(String value) throws Exception {
-		// use String constructor for exact precision with rounding mode in math
-		// context
+	public static double createAmount(String value) throws Exception {
 		if (value == null) {
 			throw new Exception(MeasurementSystem.getMessage("amount.cannot.be.null"));
 		}
-		return new BigDecimal(value, UnitOfMeasure.MATH_CONTEXT);
+		return Double.valueOf(value);
 	}
 
 	/**
@@ -184,60 +175,24 @@ public class Quantity extends Symbolic {
 	 *            Value
 	 * @return Amount
 	 */
-	public static BigDecimal createAmount(Number number) {
-		BigDecimal result = null;
+	public static double createAmount(Number number) {
+		double result = 0d;
 
-		if (number instanceof BigDecimal) {
-			result = (BigDecimal) number;
+		if (number instanceof Double) {
+			result = (Double) number;
 		} else if (number instanceof BigInteger) {
-			result = new BigDecimal((BigInteger) number, UnitOfMeasure.MATH_CONTEXT);
-		} else if (number instanceof Double) {
-			result = new BigDecimal((Double) number, UnitOfMeasure.MATH_CONTEXT);
+			result = new Double(((BigInteger) number).doubleValue());
 		} else if (number instanceof Float) {
-			result = new BigDecimal((Float) number, UnitOfMeasure.MATH_CONTEXT);
+			result = new Double((Float) number);
 		} else if (number instanceof Long) {
-			result = new BigDecimal((Long) number, UnitOfMeasure.MATH_CONTEXT);
+			result = new Double((Long) number);
 		} else if (number instanceof Integer) {
-			result = new BigDecimal((Integer) number, UnitOfMeasure.MATH_CONTEXT);
+			result = new Double((Integer) number);
 		} else if (number instanceof Short) {
-			result = new BigDecimal((Short) number, UnitOfMeasure.MATH_CONTEXT);
+			result = new Double((Short) number);
 		}
 
 		return result;
-	}
-
-	/**
-	 * Create an amount by dividing two amounts represented by strings
-	 * 
-	 * @param dividendAmount
-	 *            Dividend
-	 * @param divisorAmount
-	 *            Divisor
-	 * @return Ratio of two amounts
-	 * @throws Exception
-	 *             Exception
-	 */
-	static public BigDecimal divideAmounts(String dividendAmount, String divisorAmount) throws Exception {
-		BigDecimal dividend = Quantity.createAmount(dividendAmount);
-		BigDecimal divisor = Quantity.createAmount(divisorAmount);
-		return UnitOfMeasure.decimalDivide(dividend, divisor);
-	}
-
-	/**
-	 * Create an amount by multiplying two amounts represented by strings
-	 * 
-	 * @param multiplierAmount
-	 *            Multiplier
-	 * @param multiplicandAmount
-	 *            Multiplicand
-	 * @return Product of two amounts
-	 * @throws Exception
-	 *             Exception
-	 */
-	static public BigDecimal multiplyAmounts(String multiplierAmount, String multiplicandAmount) throws Exception {
-		BigDecimal multiplier = Quantity.createAmount(multiplierAmount);
-		BigDecimal multiplicand = Quantity.createAmount(multiplicandAmount);
-		return UnitOfMeasure.decimalMultiply(multiplier, multiplicand);
 	}
 
 	/**
@@ -245,7 +200,7 @@ public class Quantity extends Symbolic {
 	 * 
 	 * @return amount
 	 */
-	public BigDecimal getAmount() {
+	public double getAmount() {
 		return amount;
 	}
 
@@ -269,7 +224,7 @@ public class Quantity extends Symbolic {
 	 */
 	public Quantity subtract(Quantity other) throws Exception {
 		Quantity toSubtract = other.convert(getUOM());
-		BigDecimal amount = UnitOfMeasure.decimalSubtract(getAmount(), toSubtract.getAmount());
+		double amount = getAmount() - toSubtract.getAmount();
 		Quantity quantity = new Quantity(amount, this.getUOM());
 		return quantity;
 	}
@@ -285,7 +240,7 @@ public class Quantity extends Symbolic {
 	 */
 	public Quantity add(Quantity other) throws Exception {
 		Quantity toAdd = other.convert(getUOM());
-		BigDecimal amount = UnitOfMeasure.decimalAdd(getAmount(), toAdd.getAmount());
+		double amount = getAmount() + toAdd.getAmount();
 		Quantity quantity = new Quantity(amount, this.getUOM());
 		return quantity;
 	}
@@ -301,8 +256,12 @@ public class Quantity extends Symbolic {
 	 */
 	public Quantity divide(Quantity other) throws Exception {
 		Quantity toDivide = other;
+		
+		if (toDivide.getAmount() == 0.0d) {
+			throw new Exception(MeasurementSystem.getMessage("divisor.cannot.be.zero"));
+		}
 
-		BigDecimal amount = UnitOfMeasure.decimalDivide(getAmount(), toDivide.getAmount());
+		double amount = getAmount() / toDivide.getAmount();
 		UnitOfMeasure newUOM = getUOM().divide(toDivide.getUOM());
 
 		Quantity quantity = new Quantity(amount, newUOM);
@@ -318,8 +277,8 @@ public class Quantity extends Symbolic {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public Quantity divide(BigDecimal divisor) throws Exception {
-		BigDecimal amount = UnitOfMeasure.decimalDivide(getAmount(), divisor);
+	public Quantity divide(double divisor) throws Exception {
+		double amount = getAmount() / divisor;
 		Quantity quantity = new Quantity(amount, getUOM());
 		return quantity;
 	}
@@ -336,7 +295,7 @@ public class Quantity extends Symbolic {
 	public Quantity multiply(Quantity other) throws Exception {
 		Quantity toMultiply = other;
 
-		BigDecimal amount = UnitOfMeasure.decimalMultiply(getAmount(), toMultiply.getAmount());
+		double amount = getAmount() * toMultiply.getAmount();
 		UnitOfMeasure newUOM = getUOM().multiply(toMultiply.getUOM());
 
 		Quantity quantity = new Quantity(amount, newUOM);
@@ -353,7 +312,7 @@ public class Quantity extends Symbolic {
 	 *             Exception
 	 */
 	public Quantity power(int exponent) throws Exception {
-		BigDecimal amount = UnitOfMeasure.decimalPower(getAmount(), exponent);
+		double amount = Math.pow(getAmount(), exponent);
 		UnitOfMeasure newUOM = MeasurementSystem.getSystem().createPowerUOM(getUOM(), exponent);
 
 		Quantity quantity = new Quantity(amount, newUOM);
@@ -369,8 +328,8 @@ public class Quantity extends Symbolic {
 	 * @throws Exception
 	 *             Exception
 	 */
-	public Quantity multiply(BigDecimal multiplier) throws Exception {
-		BigDecimal amount = UnitOfMeasure.decimalMultiply(getAmount(), multiplier);
+	public Quantity multiply(double multiplier) throws Exception {
+		double amount = getAmount() * multiplier;
 		Quantity quantity = new Quantity(amount, getUOM());
 		return quantity;
 	}
@@ -384,7 +343,7 @@ public class Quantity extends Symbolic {
 	 *             Exception
 	 */
 	public Quantity invert() throws Exception {
-		BigDecimal amount = UnitOfMeasure.decimalDivide(BigDecimal.ONE, getAmount());
+		double amount = 1.0d / getAmount();
 		UnitOfMeasure uom = getUOM().invert();
 
 		Quantity quantity = new Quantity(amount, uom);
@@ -402,18 +361,18 @@ public class Quantity extends Symbolic {
 	 */
 	public Quantity convert(UnitOfMeasure toUOM) throws Exception {
 
-		BigDecimal multiplier = getUOM().getConversionFactor(toUOM);
-		BigDecimal thisOffset = getUOM().getOffset();
-		BigDecimal targetOffset = toUOM.getOffset();
+		double multiplier = getUOM().getConversionFactor(toUOM);
+		double thisOffset = getUOM().getOffset();
+		double targetOffset = toUOM.getOffset();
 
 		// adjust for a non-zero "this" offset
-		BigDecimal offsetAmount = UnitOfMeasure.decimalAdd(getAmount(), thisOffset);
+		double offsetAmount = getAmount() + thisOffset;
 
 		// new path amount
-		BigDecimal newAmount = UnitOfMeasure.decimalMultiply(offsetAmount, multiplier);
+		double newAmount = offsetAmount * multiplier;
 
 		// adjust for non-zero target offset
-		newAmount = UnitOfMeasure.decimalSubtract(newAmount, targetOffset);
+		newAmount = newAmount - targetOffset;
 
 		// create the quantity now
 		return new Quantity(newAmount, toUOM);
@@ -509,6 +468,6 @@ public class Quantity extends Symbolic {
 			toCompare = other.convert(this.getUOM());
 		}
 
-		return getAmount().compareTo(toCompare.getAmount());
+		return Double.valueOf(getAmount()).compareTo(Double.valueOf(toCompare.getAmount()));
 	}
 }

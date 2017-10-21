@@ -24,75 +24,91 @@ SOFTWARE.
 
 package org.point85.uom;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * The Prefix enumeration defines SI unit of measure prefixes as well as those
- * found in computer science.
+ * The Prefix class defines SI unit of measure prefixes as well as those found
+ * in computer science.
  */
-public enum Prefix {
+public class Prefix {
+	// list of pre-defined prefixes
+	private static List<Prefix> prefixes = new ArrayList<>();
+
 	// SI prefix 10^24
-	YOTTA("yotta", "Y", "1.0E+24"),
+	public static final Prefix YOTTA = new Prefix("yotta", "Y", 1.0E+24);
 	// SI prefix 10^21
-	ZETTA("zetta", "Z", "1.0E+21"),
+	public static final Prefix ZETTA = new Prefix("zetta", "Z", 1.0E+21);
 	// SI prefix 10^18
-	EXA("exa", "E", "1.0E+18"),
+	public static final Prefix EXA = new Prefix("exa", "E", 1.0E+18);
 	// SI prefix 10^15
-	PETA("petta", "P", "1.0E+15"),
+	public static final Prefix PETA = new Prefix("petta", "P", 1.0E+15);
 	// SI prefix 10^12
-	TERA("tera", "T", "1.0E+12"),
+	public static final Prefix TERA = new Prefix("tera", "T", 1.0E+12);
 	// SI prefix 10^9
-	GIGA("giga", "G", "1.0E+09"),
+	public static final Prefix GIGA = new Prefix("giga", "G", 1.0E+09);
 	// SI prefix 10^6
-	MEGA("mega", "M", "1.0E+06"),
+	public static final Prefix MEGA = new Prefix("mega", "M", 1.0E+06);
 	// SI prefix 10^3
-	KILO("kilo", "k", "1.0E+03"),
+	public static final Prefix KILO = new Prefix("kilo", "k", 1.0E+03);
 	// SI prefix 10^2
-	HECTO("hecto", "h", "1.0E+02"),
+	public static final Prefix HECTO = new Prefix("hecto", "h", 1.0E+02);
 	// SI prefix 10
-	DEKA("deka", "da", "1.0E+01"),
+	public static final Prefix DEKA = new Prefix("deka", "da", 1.0E+01);
 	// SI prefix 10^-1
-	DECI("deci", "d", "1.0E-01"),
+	public static final Prefix DECI = new Prefix("deci", "d", 1.0E-01);
 	// SI prefix 10^-2
-	CENTI("centi", "c", "1.0E-02"),
+	public static final Prefix CENTI = new Prefix("centi", "c", 1.0E-02);
 	// SI prefix 10^-3
-	MILLI("milli", "m", "1.0E-03"),
+	public static final Prefix MILLI = new Prefix("milli", "m", 1.0E-03);
 	// SI prefix 10^-6
-	MICRO("micro", "\u03BC", "1.0E-06"),
+	public static final Prefix MICRO = new Prefix("micro", "\u03BC", 1.0E-06);
 	// SI prefix 10^-9
-	NANO("nano", "n", "1.0E-09"),
+	public static final Prefix NANO = new Prefix("nano", "n", 1.0E-09);
 	// SI prefix 10^-12
-	PICO("pico", "p", "1.0E-12"),
+	public static final Prefix PICO = new Prefix("pico", "p", 1.0E-12);
 	// SI prefix 10^-15
-	FEMTO("femto", "f", "1.0E-15"),
+	public static final Prefix FEMTO = new Prefix("femto", "f", 1.0E-15);
 	// SI prefix 10^-18
-	ATTO("atto", "a", "1.0E-18"),
+	public static final Prefix ATTO = new Prefix("atto", "a", 1.0E-18);
 	// SI prefix 10^-21
-	ZEPTO("zepto", "z", "1.0E-21"),
+	public static final Prefix ZEPTO = new Prefix("zepto", "z", 1.0E-21);
 	// SI prefix 10^-24
-	YOCTO("yocto", "y", "1.0E-24"),
+	public static final Prefix YOCTO = new Prefix("yocto", "y", 1.0E-24);
 
 	// Digital information prefixes for bytes established by the International
 	// Electrotechnical Commission (IEC) in 1998
-	KIBI("kibi", "Ki", "1024"),
+	public static final Prefix KIBI = new Prefix("kibi", "Ki", 1024);
 	//
-	MEBI("mebi", "Mi", "1.048576E+06"),
+	public static final Prefix MEBI = new Prefix("mebi", "Mi", 1.048576E+06);
 	//
-	GIBI("gibi", "Gi", "1.073741824E+09");
+	public static final Prefix GIBI = new Prefix("gibi", "Gi", 1.073741824E+09);
 
 	// name
-	private String prefixName;
+	private String name;
 
 	// symbol
 	private String symbol;
 
-	// BigDecimal factor
-	private BigDecimal decimalFactor;
+	// factor
+	private double factor;
 
-	private Prefix(String prefixName, String symbol, String factor) {
-		this.prefixName = prefixName;
+	/**
+	 * Construct a prefix
+	 * 
+	 * @param name
+	 *            Name
+	 * @param symbol
+	 *            Symbol
+	 * @param factor
+	 *            Numerical factor
+	 */
+	public Prefix(String name, String symbol, double factor) {
+		this.name = name;
 		this.symbol = symbol;
-		this.decimalFactor = new BigDecimal(factor);
+		this.factor = factor;
+
+		prefixes.add(this);
 	}
 
 	/**
@@ -100,8 +116,8 @@ public enum Prefix {
 	 * 
 	 * @return prefix name
 	 */
-	public String getPrefixName() {
-		return this.prefixName;
+	public String getName() {
+		return this.name;
 	}
 
 	/**
@@ -118,8 +134,8 @@ public enum Prefix {
 	 * 
 	 * @return Scaling factor
 	 */
-	public BigDecimal getScalingFactor() {
-		return decimalFactor;
+	public double getFactor() {
+		return factor;
 	}
 
 	/**
@@ -132,8 +148,8 @@ public enum Prefix {
 	public static Prefix fromName(String name) {
 		Prefix prefix = null;
 
-		for (Prefix p : values()) {
-			if (p.getPrefixName().equals(name)) {
+		for (Prefix p : prefixes) {
+			if (p.getName().equals(name)) {
 				prefix = p;
 				break;
 			}
@@ -149,11 +165,11 @@ public enum Prefix {
 	 *            Scaling factor
 	 * @return {@link Prefix}
 	 */
-	public static Prefix fromFactor(BigDecimal factor) {
+	public static Prefix fromFactor(double factor) {
 		Prefix prefix = null;
 
-		for (Prefix p : values()) {
-			if (p.getScalingFactor().compareTo(factor) == 0) {
+		for (Prefix p : prefixes) {
+			if (p.getFactor() == factor) {
 				prefix = p;
 				break;
 			}
@@ -163,10 +179,19 @@ public enum Prefix {
 	}
 
 	/**
+	 * Get the list of pre-defined prefixes
+	 * 
+	 * @return Prefix list
+	 */
+	public static List<Prefix> getDefinedPrefixes() {
+		return prefixes;
+	}
+
+	/**
 	 * Create a String representation of this Prefix
 	 */
 	@Override
 	public String toString() {
-		return prefixName + ", " + symbol + ", " + decimalFactor;
+		return name + ", " + symbol + ", " + factor;
 	}
 }

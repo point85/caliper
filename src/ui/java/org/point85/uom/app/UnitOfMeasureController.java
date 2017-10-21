@@ -24,7 +24,6 @@ SOFTWARE.
 
 package org.point85.uom.app;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.point85.uom.Prefix;
@@ -268,20 +267,20 @@ public class UnitOfMeasureController extends BaseController {
 		this.cbUnitTypes.getSelectionModel().select(uom.getUnitType().toString());
 
 		// regular conversion
-		BigDecimal scalingFactor = uom.getScalingFactor();
+		double scalingFactor = uom.getScalingFactor();
 		UnitOfMeasure abscissaUnit = uom.getAbscissaUnit();
-		BigDecimal offset = uom.getOffset();
+		double offset = uom.getOffset();
 
 		// regular conversion
-		String factorText = scalingFactor.toString();
+		String factorText = String.valueOf(scalingFactor);
 		UnitOfMeasure displayAbscissa = abscissaUnit;
-		String offsetText = formatBigDecimal(offset);
+		String offsetText = formatDouble(offset);
 
 		// scaling
 		Prefix prefix = Prefix.fromFactor(scalingFactor);
 
 		if (prefix != null) {
-			cbScalingFactor.setValue(prefix.getPrefixName());
+			cbScalingFactor.setValue(prefix.getName());
 		} else {
 			cbScalingFactor.setValue(factorText);
 		}
@@ -338,7 +337,9 @@ public class UnitOfMeasureController extends BaseController {
 			selectSymbol(base, cbPowerUnits);
 
 			// exponent
-			tfExponent.setText(uom.getPowerExponent().toString());
+			if (UnitOfMeasure.isValidExponent(uom.getPowerExponent())) {
+				tfExponent.setText(String.valueOf(uom.getPowerExponent()));
+			}
 
 			tpProductPower.getSelectionModel().select(tPower);
 			break;
@@ -567,17 +568,17 @@ public class UnitOfMeasureController extends BaseController {
 			uom.setCategory(category);
 
 			// conversion scaling factor
-			BigDecimal scalingFactor = BigDecimal.ONE;
+			double scalingFactor = 1.0d;
 			Prefix prefix = Prefix.fromName(cbScalingFactor.getValue());
 
 			if (prefix != null) {
-				scalingFactor = prefix.getScalingFactor();
+				scalingFactor = prefix.getFactor();
 			} else {
 				String factor = removeThousandsSeparator(cbScalingFactor.getValue());
 
 				if (factor != null && factor.length() > 0) {
 					try {
-						scalingFactor = new BigDecimal(factor);
+						scalingFactor = Double.valueOf(factor);
 					} catch (NumberFormatException e) {
 						throw new Exception(factor + " is not a valid number");
 					}
@@ -593,11 +594,11 @@ public class UnitOfMeasureController extends BaseController {
 
 			// conversion offset
 			String offsetValue = removeThousandsSeparator(tfOffset.getText());
-			BigDecimal offset = BigDecimal.ZERO;
+			double offset = 0.0d;
 
 			if (offsetValue != null && offsetValue.length() > 0) {
 				try {
-					offset = new BigDecimal(offsetValue);
+					offset = Double.valueOf(offsetValue);
 				} catch (NumberFormatException e) {
 					throw new Exception(offsetValue + " is not a valid number");
 				}

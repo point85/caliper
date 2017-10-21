@@ -1,6 +1,5 @@
 package org.point85.uom.test;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,20 +43,19 @@ public class TestPerformance {
 			for (UnitOfMeasure rowUOM : entry.getValue()) {
 
 				// row quantity
-				Quantity rowQty = new Quantity(BigDecimal.TEN, rowUOM);
+				Quantity rowQty = new Quantity(10.0d, rowUOM);
 
 				for (UnitOfMeasure colUOM : entry.getValue()) {
 
 					// column qty
-					Quantity colQty = new Quantity(BigDecimal.TEN, colUOM);
+					Quantity colQty = new Quantity(10.0d, colUOM);
 
 					// arithmetic operations
 					rowQty.add(colQty);
 					rowQty.subtract(colQty);
 
 					// offsets are not supported
-					if (rowUOM.getOffset().compareTo(BigDecimal.ZERO) == 0
-							&& colUOM.getOffset().compareTo(BigDecimal.ZERO) == 0) {
+					if (rowUOM.getOffset() == 0.0d && colUOM.getOffset() == 0.0d) {
 						rowQty.multiply(colQty);
 						rowQty.divide(colQty);
 						rowQty.invert();

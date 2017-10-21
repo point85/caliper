@@ -48,5 +48,5 @@ public enum UnitType {
 	CURRENCY,
 	
 	// unclassified.  Reserved for use when creating custom units of measure.
-	UNCLASSIFIED;
+	UNCLASSIFIED
 }

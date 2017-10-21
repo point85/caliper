@@ -24,6 +24,12 @@ repositories {
 
 // dependent jars
 dependencies {
+	// https://mvnrepository.com/artifact/org.eclipse.persistence/eclipselink
+	compile group: 'org.eclipse.persistence', name: 'eclipselink', version: '2.6.5'
+	
+	// https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc
+	testCompile group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '6.2.1.jre8'
+	
     // gson for testing
     // see: https://github.com/google/gson
     testCompile 'com.google.code.gson:gson:2.8.0'
@@ -31,12 +37,7 @@ dependencies {
 	// jUnit for testing
 	// see: http://junit.org/junit4/
 	testCompile('junit:junit:4.12'){
-		exclude group: 'org.hamcrest', module: 'org.hamcrest'
 	}
-	
-    // hamcrest	for testing
-    // see:  http://hamcrest.org/
-	testCompile 'org.hamcrest:hamcrest-library:1.3'
 	
 	// HTTP client for testing UCUM
 	// see:  https://github.com/kevinsawicki/http-request

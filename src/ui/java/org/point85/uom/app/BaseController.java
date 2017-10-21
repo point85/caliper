@@ -24,7 +24,6 @@ SOFTWARE.
 
 package org.point85.uom.app;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -111,8 +110,8 @@ abstract class BaseController {
 	// get the display strings for all prefixes
 	protected ObservableList<String> getPrefixes() {
 		if (prefixes.size() == 0) {
-			for (Prefix prefix : Prefix.values()) {
-				prefixes.add(prefix.getPrefixName());
+			for (Prefix prefix : Prefix.getDefinedPrefixes()) {
+				prefixes.add(prefix.getName());
 			}
 			prefixes.add(EMPTY_STRING);
 			Collections.sort(prefixes);
@@ -287,8 +286,8 @@ abstract class BaseController {
 		return sb.toString();
 	}
 
-	// format a BigDecimal nicely
-	protected String formatBigDecimal(BigDecimal decimal) {
+	// format a double nicely
+	protected String formatDouble(double decimal) {
 		NumberFormat numberFormat = NumberFormat.getNumberInstance(Locale.getDefault());
 		numberFormat.setGroupingUsed(true);
 		numberFormat.setMaximumFractionDigits(MAX_DIGITS);

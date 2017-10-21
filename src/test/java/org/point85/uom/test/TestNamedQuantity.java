@@ -15,7 +15,6 @@ public class TestNamedQuantity extends BaseTest {
 			assertTrue(q.getName() != null);
 			assertTrue(q.getSymbol() != null);
 			assertTrue(q.getDescription() != null);
-			assertTrue(q.getAmount() != null);
 			assertTrue(q.getUOM() != null);
 			assertTrue(q.toString() != null);
 		}

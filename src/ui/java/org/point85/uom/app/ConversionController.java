@@ -24,8 +24,6 @@ SOFTWARE.
 
 package org.point85.uom.app;
 
-import java.math.BigDecimal;
-
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.UnitOfMeasure;
@@ -86,7 +84,7 @@ public class ConversionController extends BaseController {
 		ObservableList<String> prefixes = getPrefixes();
 		cbFromPrefixes.getItems().addAll(prefixes);
 		cbToPrefixes.getItems().addAll(prefixes);
-		
+
 		// button images
 		setButtonImages();
 	}
@@ -150,11 +148,7 @@ public class ConversionController extends BaseController {
 			}
 
 			// from amount
-			BigDecimal fromAmount = Quantity.createAmount(amount);
-
-			if (fromAmount == null) {
-				return;
-			}
+			double fromAmount = Quantity.createAmount(amount);
 
 			// from prefix
 			Prefix fromPrefix = getPrefix(cbFromPrefixes.getSelectionModel().getSelectedItem());
@@ -187,10 +181,10 @@ public class ConversionController extends BaseController {
 			Quantity toQuantity = fromQuantity.convert(toUOM);
 
 			// converted amount
-			BigDecimal toAmount = toQuantity.getAmount();
-			String toShow = formatBigDecimal(toAmount);
+			double toAmount = toQuantity.getAmount();
+			String toShow = formatDouble(toAmount);
 			tfToAmount.setText(toShow);
-		} catch (Exception e) { 
+		} catch (Exception e) {
 			showErrorDialog(getApp().getPrimaryStage(), e);
 		}
 	}
@@ -210,14 +204,14 @@ public class ConversionController extends BaseController {
 			showErrorDialog(getApp().getPrimaryStage(), e);
 		}
 	}
-	
+
 	// images for buttons
 	private void setButtonImages() {
 		// editor
 		ImageView editorView = new ImageView(new Image("images/UOMs.png", 16, 16, true, true));
 		btEditor.setGraphic(editorView);
 		btEditor.setContentDisplay(ContentDisplay.LEFT);
-		
+
 		// converter
 		ImageView convertView = new ImageView(new Image("images/Convert.png", 16, 16, true, true));
 		btConvert.setGraphic(convertView);

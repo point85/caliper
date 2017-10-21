@@ -1,7 +1,6 @@
 package org.point85.uom.test;
 
-import static org.hamcrest.number.BigDecimalCloseTo.closeTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.point85.uom.Quantity;
@@ -18,14 +17,14 @@ public class TestFinancial extends BaseTest {
 		// dollar is worth 0.94 euros?
 		UnitOfMeasure euro = sys.getUOM(Unit.EURO);
 		UnitOfMeasure usd = sys.getUOM(Unit.US_DOLLAR);
-		usd.setConversion("0.94", euro);
+		usd.setConversion(0.94, euro);
 
 		UnitOfMeasure googl = sys.createScalarUOM(UnitType.CURRENCY, "Alphabet A", "GOOGL",
 				"Alphabet (formerly Google) Class A shares");
-		googl.setConversion("838.96", usd);
-		Quantity portfolio = new Quantity("100", googl);
+		googl.setConversion(838.96, usd);
+		Quantity portfolio = new Quantity(100d, googl);
 		Quantity value = portfolio.convert(euro);
-		assertThat(value.getAmount(), closeTo(Quantity.createAmount("78862.24"), DELTA6));
+		assertTrue(isCloseTo(value.getAmount(), 78862.24, DELTA6));
 	}
 
 }

@@ -23,16 +23,14 @@ SOFTWARE.
 */
 package org.point85.uom.test;
 
-import java.math.BigDecimal;
-
 import com.google.gson.annotations.SerializedName;
 
 public class ConversionResponse {
 	@SerializedName("SourceQuantity")
-	private BigDecimal sourceQuantity;
+	private double sourceQuantity;
 
 	@SerializedName("ResultQuantity")
-	private BigDecimal resultQuantity;
+	private double resultQuantity;
 
 	@SerializedName("SourceUnit")
 	private String sourceUnit;
@@ -40,19 +38,19 @@ public class ConversionResponse {
 	@SerializedName("TargetUnit")
 	private String targetUnit;
 
-	public BigDecimal getSourceQuantity() {
+	public double getSourceQuantity() {
 		return sourceQuantity;
 	}
 
-	public void setSourceQuantity(BigDecimal sourceQuantity) {
+	public void setSourceQuantity(double sourceQuantity) {
 		this.sourceQuantity = sourceQuantity;
 	}
 
-	public BigDecimal getResultQuantity() {
+	public double getResultQuantity() {
 		return resultQuantity;
 	}
 
-	public void setResultQuantity(BigDecimal resultQuantity) {
+	public void setResultQuantity(double resultQuantity) {
 		this.resultQuantity = resultQuantity;
 	}
 

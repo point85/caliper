@@ -1,5 +1,5 @@
 # Caliper
-The Caliper library project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined. 
+The Caliper library project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined.  The Caliper library is also available in C# at https://github.com/point85/CaliperSharp.
 
 A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
  
@@ -69,7 +69,7 @@ UnitOfMeasure uom = createPowerUOM(UnitType.AREA, Unit.SQUARE_METRE, symbols.get
 
 The metre per second quotient UOM is created by the MeasurementSystem as follows: 
 ```java
-UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SECOND, 
+UnitOfMeasure uom = createQuotientUOM(UnitType.VELOCITY, Unit.METRE_PER_SEC, 
 	symbols.getString("mps.name"), symbols.getString("mps.symbol"), symbols.getString("mps.desc"),  
 	getUOM(Unit.METRE), getSecond());
 ```
@@ -92,7 +92,7 @@ For a second example, a US gallon = 231 cubic inches:
 ```java			
 UnitOfMeasure uom = createScalarUOM(UnitType.VOLUME, Unit.US_GALLON, symbols.getString("us_gallon.name"),
 	symbols.getString("us_gallon.symbol"), symbols.getString("us_gallon.desc"));
-uom.setConversion("231", getUOM(Unit.CUBIC_INCH));
+uom.setConversion(231d, getUOM(Unit.CUBIC_INCH));
 ```
 
 When creating the foot unit of measure in the unified measurement system, a bridge conversion to metre is defined (1 foot = 0.3048m):
@@ -101,7 +101,7 @@ UnitOfMeasure uom = createScalarUOM(UnitType.LENGTH, Unit.FOOT, symbols.getStrin
 	symbols.getString("foot.symbol"), symbols.getString("foot.desc"));
 
 // bridge to SI
-uom.setBridgeConversion(Quantity.createAmount("0.3048"), getUOM(Unit.METRE));
+uom.setBridgeConversion(0.3048, getUOM(Unit.METRE), 0);
 ```
 
 Custom units and conversions can also be created:
@@ -112,27 +112,27 @@ UnitOfMeasure gph = sys.createQuotientUOM(UnitType.VOLUMETRIC_FLOW, "gph", "gal/
 
 // 1 16 oz can = 16 fl. oz.
 UnitOfMeasure one16ozCan = sys.createScalarUOM(UnitType.VOLUME, "16 oz can", "16ozCan", "16 oz can");
-one16ozCan.setConversion("16", sys.getUOM(Unit.US_FLUID_OUNCE));
+one16ozCan.setConversion(16d, sys.getUOM(Unit.US_FLUID_OUNCE));
 
 // 400 cans = 50 US gallons
-Quantity q400 = new Quantity("400", one16ozCan);
+Quantity q400 = new Quantity(400d, one16ozCan);
 Quantity q50 = q400.convert(sys.getUOM(Unit.US_GALLON));
 
 // 1 12 oz can = 12 fl.oz.
 UnitOfMeasure one12ozCan = sys.createScalarUOM(UnitType.VOLUME, "12 oz can", "12ozCan", "12 oz can");
-one12ozCan.setConversion("12", sys.getUOM(Unit.US_FLUID_OUNCE));
+one12ozCan.setConversion(12d, sys.getUOM(Unit.US_FLUID_OUNCE));
 
 // 48 12 oz cans = 36 16 oz cans
-Quantity q48 = new Quantity("48", one12ozCan);
+Quantity q48 = new Quantity(48d, one12ozCan);
 Quantity q36 = q48.convert(one16ozCan);
 
 // 6 12 oz cans = 1 6-pack of 12 oz cans
 UnitOfMeasure sixPackCan = sys.createScalarUOM(UnitType.VOLUME, "6-pack", "6PCan", "6-pack of 12 oz cans");
-sixPackCan.setConversion("6", one12ozCan);	
+sixPackCan.setConversion(6d, one12ozCan);	
 
 // 1 case = 4 6-packs
 UnitOfMeasure fourPackCase = sys.createScalarUOM(UnitType.VOLUME, "6-pack case", "4PCase", "four 6-packs");
-fourPackCase.setConversion("4", sixPackCan);
+fourPackCase.setConversion(4d, sixPackCan);
 		
 // A beer bottling line is rated at 2000 12 ounce cans/hour (US) at the
 // filler. The case packer packs four 6-packs of cans into a case.
@@ -144,7 +144,7 @@ UnitOfMeasure caseph = sys.createQuotientUOM(fourPackCase, sys.getHour());
 UnitOfMeasure gpm = sys.createQuotientUOM(sys.getUOM(Unit.US_GALLON), sys.getMinute());
 		
 // filler production rate
-Quantity filler = new Quantity("2000", canph);
+Quantity filler = new Quantity(2000d, canph);
 
 // tank draw-down
 Quantity draw = filler.convert(gpm);
@@ -158,8 +158,8 @@ Quantities can be added, subtracted and converted:
 UnitOfMeasure m = sys.getUOM(Unit.METRE);
 UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
 		
-Quantity q1 = new Quantity("2", m);
-Quantity q2 = new Quantity("2", cm);
+Quantity q1 = new Quantity(2d, m);
+Quantity q2 = new Quantity(2d, cm);
 		
 // add two quantities.  q3 is 2.02 metre
 Quantity q3 = q1.add(q2);
@@ -167,15 +167,14 @@ Quantity q3 = q1.add(q2);
 // q4 is 202 cm
 Quantity q4 = q3.convert(cm);
 		
-// subtract q1 from q3 to get 0.02m
+// subtract q1 from q3 to get 0.02 metre
 q3 = q3.subtract(q1);
 ```
 
 as well as multiplied and divided:
 ```java
-BigDecimal bd = Quantity.createAmount("50");
-Quantity q1 = new Quantity(bd, cm);
-Quantity q2 = new Quantity(bd, cm);
+Quantity q1 = new Quantity(50d, cm);
+Quantity q2 = new Quantity(50d, cm);
 		
 // q3 = 2500 cm^2
 Quantity q3 = q1.multiply(q2);
@@ -187,7 +186,7 @@ Quantity q4 = q3.divide(q1);
 and inverted:
 ```java
 UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SECOND); 
-Quantity q1 = new Quantity(BigDecimal.TEN, mps);
+Quantity q1 = new Quantity(10d, mps);
 		
 // q2 = 0.1 sec/m
 Quantity q2 = q1.invert();
@@ -209,7 +208,7 @@ A quantity can be converted to another unit of measure without requiring the tar
 
 ```java
 // convert 1 newton-metre to pound force-inches
-Quantity nmQ = new Quantity("1", sys.getUOM(Unit.NEWTON_METRE));
+Quantity nmQ = new Quantity(1.0, sys.getUOM(Unit.NEWTON_METRE));
 Quantity lbfinQ = nmQ.convertToPowerProduct(sys.getUOM(Unit.POUND_FORCE), sys.getUOM(Unit.INCH));
 ```
 
@@ -217,7 +216,7 @@ If the quantity has power UOM, use the convertToPower() method.  For example:
 
 ```java
 // convert 1 square metre to square inches
-Quantity m2Q = new Quantity("1", sys.getUOM(Unit.SQUARE_METRE));
+Quantity m2Q = new Quantity(1.0, sys.getUOM(Unit.SQUARE_METRE));
 Quantity in2Q = m2Q.convertToPower(sys.getUOM(Unit.INCH));
 ```
 
@@ -225,41 +224,47 @@ Other UOMs can be converted using the convert() method.
 
 ## Physical Unit Equation Examples
 
+Water boils at 100 degrees Celcius.  What is this temperature in Fahrenheit?
+```java
+Quantity qC = new Quantity(100.0, Unit.CELSIUS);
+Quantity qF = qC.convert(Unit.FAHRENHEIT);
+```
+
 One's Body Mass Index (BMI) can be calculated as:
 ```java
-Quantity height = new Quantity("2", Unit.METRE);
-Quantity mass = new Quantity("100", Unit.KILOGRAM);
+Quantity height = new Quantity(2d, Unit.METRE);
+Quantity mass = new Quantity(100d, Unit.KILOGRAM);
 Quantity bmi = mass.divide(height.multiply(height));
 ```
 
 Einstein's famous E = mc^2:
 ```java
-NamedQuantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
-Quantity m = new Quantity(BigDecimal.ONE, Unit.KILOGRAM);
+Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+Quantity m = new Quantity(1.0, Unit.KILOGRAM);
 Quantity e = m.multiply(c).multiply(c);
 ```
 
 Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.  How many moles of argon are in the cylinder?
 ```java
-Quantity p = new Quantity("18.4", Unit.ATMOSPHERE).convert(Unit.PASCAL);
-Quantity v = new Quantity("50", Unit.LITRE).convert(Unit.CUBIC_METRE);
-Quantity t = new Quantity("127", Unit.CELSIUS).convert(Unit.KELVIN);
+Quantity p = new Quantity(18.4, Unit.ATMOSPHERE).convert(Unit.PASCAL);
+Quantity v = new Quantity(50d, Unit.LITRE).convert(Unit.CUBIC_METRE);
+Quantity t = new Quantity(127d, Unit.CELSIUS).convert(Unit.KELVIN);
 Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
 ```
 
 Photon energy using Planck's constant:
 ```java
 // energy of red light photon = Planck's constant times the frequency
-Quantity frequency = new Quantity("400", sys.getUOM(Prefix.TERA, Unit.HERTZ));
+Quantity frequency = new Quantity(400d, sys.getUOM(Prefix.TERA, Unit.HERTZ));
 Quantity ev = sys.getQuantity(Constant.PLANCK_CONSTANT).multiply(frequency).convert(Unit.ELECTRON_VOLT);
 
-// wavelength of red light in nanometres (approx 749.48)
+// and wavelength of red light in nanometres (approx 749.48)
 Quantity wavelength = sys.getQuantity(Constant.LIGHT_VELOCITY).divide(frequency).convert(sys.getUOM(Prefix.NANO, Unit.METRE));
 ```
 
 Newton's second law of motion (F = ma). Weight of 1 kg in lbf:
 ```java
-Quantity mkg = new Quantity(BigDecimal.ONE, Unit.KILOGRAM);
+Quantity mkg = new Quantity(1d, Unit.KILOGRAM);
 Quantity f = mkg.multiply(sys.getQuantity(Constant.GRAVITY)).convert(Unit.POUND_FORCE);
 ```
 Units per volume of solution, C = A x (m/V)
@@ -269,11 +274,11 @@ UnitOfMeasure activityUnit = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "activ
 	"activity of material", sys.getUOM(Unit.UNIT), sys.getUOM(Prefix.MILLI, Unit.GRAM));
 
 // calculate concentration
-Quantity activity = new Quantity(BigDecimal.ONE, activityUnit);
-Quantity grams = new Quantity(BigDecimal.ONE, Unit.GRAM).convert(Prefix.MILLI, Unit.GRAM);
-Quantity volume = new Quantity(BigDecimal.ONE, sys.getUOM(Prefix.MILLI, Unit.LITRE));
+Quantity activity = new Quantity(1d, activityUnit);
+Quantity grams = new Quantity(1d, Unit.GRAM).convert(Prefix.MILLI, Unit.GRAM);
+Quantity volume = new Quantity(1d, sys.getUOM(Prefix.MILLI, Unit.LITRE));
 Quantity concentration = activity.multiply(grams.divide(volume));
-Quantity katals = concentration.multiply(new Quantity(BigDecimal.ONE, Unit.LITRE)).convert(Unit.KATAL);
+Quantity katals = concentration.multiply(new Quantity(1d, Unit.LITRE)).convert(Unit.KATAL);
 ```
 Black body radiation:
 
@@ -282,7 +287,7 @@ Black body radiation:
 // of the surface of a black body is directly proportional to the fourth
 // power of its absolute temperature: sigma * T^4
 // calculate at 1000 Kelvin
-Quantity temp = new Quantity("1000", Unit.KELVIN);
+Quantity temp = new Quantity(1000.0, Unit.KELVIN);
 Quantity intensity = sys.getQuantity(Constant.STEFAN_BOLTZMANN).multiply(temp.power(4));
 ```
 
@@ -290,7 +295,7 @@ Expansion of the universe:
 
 ```java
 // Hubble's law, v = H0 x D. Let D = 10 Mpc
-Quantity d = new Quantity(BigDecimal.TEN, sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC)));
+Quantity d = new Quantity(10d, sys.getUOM(Prefix.MEGA, sys.getUOM(Unit.PARSEC)));
 Quantity h0 = sys.getQuantity(Constant.HUBBLE_CONSTANT);
 Quantity velocity = h0.multiply(d);
 ```
@@ -304,22 +309,22 @@ Device Characteristic Life
 // 85 degrees Celsius.
 
 // Convert the Boltzman constant from J/K to eV/K for the Arrhenius equation
-Quantity j = new Quantity(BigDecimal.ONE, Unit.JOULE);
+Quantity j = new Quantity(1d, Unit.JOULE);
 Quantity eV = j.convert(Unit.ELECTRON_VOLT);
 // Boltzmann constant
 Quantity Kb = sys.getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(eV.getAmount());
 // accelerated temperature
-Quantity Ta = new Quantity("150", Unit.CELSIUS);
+Quantity Ta = new Quantity(150d, Unit.CELSIUS);
 // expected use temperature
-Quantity Tu = new Quantity("85", Unit.CELSIUS);
+Quantity Tu = new Quantity(85d, Unit.CELSIUS);
 // calculate the acceleration factor
 Quantity factor1 = Tu.convert(Unit.KELVIN).invert().subtract(Ta.convert(Unit.KELVIN).invert());
-Quantity factor2 = Kb.invert().multiply(Quantity.createAmount("0.5"));
+Quantity factor2 = Kb.invert().multiply(0.5);
 Quantity factor3 = factor1.multiply(factor2);
-double AF = Math.exp(factor3.getAmount().doubleValue());
+double AF = Math.exp(factor3.getAmount());
 // calculate longer life at expected use temperature
-Quantity life85 = new Quantity("2750", Unit.HOUR);
-Quantity life150 = life85.multiply(new BigDecimal(AF));
+Quantity life85 = new Quantity(2750d, Unit.HOUR);
+Quantity life150 = life85.multiply(AF);
 ```
 
 ## Financial Examples
@@ -332,12 +337,12 @@ Value of a stock portfolio:
 // dollar is worth 0.94 euros?
 UnitOfMeasure euro = sys.getUOM(Unit.EURO);
 UnitOfMeasure usd = sys.getUOM(Unit.US_DOLLAR);
-usd.setConversion("0.94", euro);
+usd.setConversion(0.94, euro);
 
-UnitOfMeasure googl = sys.createScalarUOM(UnitType.FINANCIAL, "Alphabet A", "GOOGL",
-		"Alphabet (formerly Google) Class A shares");
-googl.setConversion("838.96", usd);
-Quantity portfolio = new Quantity("100", googl);
+UnitOfMeasure googl = sys.createScalarUOM(UnitType.CURRENCY, "Alphabet A", "GOOGL",
+	"Alphabet (formerly Google) Class A shares");
+googl.setConversion(838.96, usd);
+Quantity portfolio = new Quantity(100, googl);
 Quantity value = portfolio.convert(euro);
 ```
 
@@ -347,7 +352,7 @@ Quantity value = portfolio.convert(euro);
 // convert Unit to nanokatal
 UnitOfMeasure u = sys.getUOM(Unit.UNIT);
 UnitOfMeasure katal = sys.getUOM(Unit.KATAL);
-Quantity q1 = new Quantity(BigDecimal.ONE, u);
+Quantity q1 = new Quantity(1.0, u);
 Quantity q2 = q1.convert(sys.getUOM(Prefix.NANO, katal));
 
 // test result Equivalent
@@ -355,30 +360,30 @@ UnitOfMeasure eq = sys.getUOM(Unit.EQUIVALENT);
 UnitOfMeasure litre = sys.getUOM(Unit.LITRE);
 UnitOfMeasure mEqPerL = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "milliNormal", "mEq/L",
 	"solute per litre of solvent ", sys.getUOM(Prefix.MILLI, eq), litre);
-Quantity testResult = new Quantity("5.0", mEqPerL);
+Quantity testResult = new Quantity(5.0, mEqPerL);
 
 // blood cell count test results
 UnitOfMeasure k = sys.getUOM(Prefix.KILO, sys.getOne());
 UnitOfMeasure uL = sys.getUOM(Prefix.MICRO, Unit.LITRE);
 UnitOfMeasure kul = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "K/uL", "K/uL",
 	"thousands per microlitre", k, uL);
-testResult = new Quantity("7.0", kul);
+testResult = new Quantity(7.0, kul);
 
 UnitOfMeasure fL = sys.getUOM(Prefix.FEMTO, Unit.LITRE);
-testResult = new Quantity("90", fL);
+testResult = new Quantity(90d, fL);
 
 // TSH test result
 UnitOfMeasure uIU = sys.getUOM(Prefix.MICRO, Unit.INTERNATIONAL_UNIT);
 UnitOfMeasure mL = sys.getUOM(Prefix.MILLI, Unit.LITRE);
 UnitOfMeasure uiuPerml = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "uIU/mL", "uIU/mL",
 	"micro IU per millilitre", uIU, mL);
-testResult = new Quantity("2.0", uiuPerml);
+testResult = new Quantity(2.0, uiuPerml);
 ```
 
 ### Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
 
-The BigDecimal value of a unit of measure conversion is also cached.  This performance optimization eliminates the need to calculate the conversion multiple times if many quantities are being converted at once; for example, operations upon a vector or matrix of quantities all with the same unit of measure.
+The double value of a unit of measure conversion is also cached.  This performance optimization eliminates the need to calculate the conversion multiple times if many quantities are being converted at once; for example, operations upon a vector or matrix of quantities all with the same unit of measure.
 
 ## Localization
 All externally visible text is defined in two resource bundle .properties files.  The Unit.properties file has the name (.name), symbol (.symbol) and description (.desc) for a unit of measure as well as toString() method text.  The Message.properties file has the text for an exception.  A default English file for each is included in the project.  The files can be translated to another language by following the Java locale naming conventions for the properties file, or the English version can be edited, e.g. to change "metre" to "meter".  For example, a metre's text is:
