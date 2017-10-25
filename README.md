@@ -450,8 +450,6 @@ The Caliper library and application, when built with Gradle, has the following s
  * `/src/ui/java` - java source files for JPA persistency and JavaFX 8 user interface for the application
  * `/src/ui/resources` - images and XML files for for JPA persistency
  * `/database` - SQL script files for table and index generation
- 
-When Caliper is built with Maven, the javadoc and jar files for the base library are in the 'target' folder.
 
 ## JSR 363
 JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular:
