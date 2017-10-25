@@ -193,7 +193,7 @@ public class MeasurementSystem {
 
 		case PLANCK_CONSTANT:
 			UnitOfMeasure js = createProductUOM(getUOM(Unit.JOULE), getSecond());
-			named = new Quantity(6.62607004081E-34, js);
+			named = new Quantity(6.62607015E-34, js);
 			named.setName(units.getString("planck.name"));
 			named.setSymbol(units.getString("planck.symbol"));
 			named.setDescription(units.getString("planck.desc"));
@@ -201,7 +201,7 @@ public class MeasurementSystem {
 
 		case BOLTZMANN_CONSTANT:
 			UnitOfMeasure jk = createQuotientUOM(getUOM(Unit.JOULE), getUOM(Unit.KELVIN));
-			named = new Quantity(1.3806485279E-23, jk);
+			named = new Quantity(1.380649E-23, jk);
 			named.setName(units.getString("boltzmann.name"));
 			named.setSymbol(units.getString("boltzmann.symbol"));
 			named.setDescription(units.getString("boltzmann.desc"));
@@ -209,7 +209,7 @@ public class MeasurementSystem {
 
 		case AVAGADRO_CONSTANT:
 			// NA
-			named = new Quantity(6.02214085774E+23, getOne());
+			named = new Quantity(6.02214076E+23, getOne());
 			named.setName(units.getString("avo.name"));
 			named.setSymbol(units.getString("avo.symbol"));
 			named.setDescription(units.getString("avo.desc"));
@@ -225,7 +225,7 @@ public class MeasurementSystem {
 
 		case ELEMENTARY_CHARGE:
 			// e
-			named = new Quantity(1.602176620898E-19, getUOM(Unit.COULOMB));
+			named = new Quantity(1.602176634E-19, getUOM(Unit.COULOMB));
 			named.setName(units.getString("e.name"));
 			named.setSymbol(units.getString("e.symbol"));
 			named.setDescription(units.getString("e.desc"));
@@ -292,6 +292,21 @@ public class MeasurementSystem {
 			named.setName(units.getString("hubble.name"));
 			named.setSymbol(units.getString("hubble.symbol"));
 			named.setDescription(units.getString("hubble.desc"));
+			break;
+			
+		case CAESIUM_FREQUENCY:
+			named = new Quantity(9192631770d, getUOM(Unit.HERTZ));
+			named.setName(units.getString("caesium.name"));
+			named.setSymbol(units.getString("caesium.symbol"));
+			named.setDescription(units.getString("caesium.desc"));
+			break;
+			
+		case LUMINOUS_EFFICACY:
+			UnitOfMeasure kcd = createQuotientUOM(getUOM(Unit.LUMEN), getUOM(Unit.WATT));
+			named = new Quantity(683d, kcd);
+			named.setName(units.getString("kcd.name"));
+			named.setSymbol(units.getString("kcd.symbol"));
+			named.setDescription(units.getString("kcd.desc"));
 			break;
 
 		default:

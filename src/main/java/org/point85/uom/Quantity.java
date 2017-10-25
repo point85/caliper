@@ -24,6 +24,7 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.math.BigInteger;
+import java.util.Objects;
 
 /**
  * The Quantity class represents an amount and {@link UnitOfMeasure}. A constant
@@ -126,7 +127,7 @@ public class Quantity extends Symbolic {
 	 */
 	@Override
 	public int hashCode() {
-		return Double.valueOf(getAmount()).hashCode() ^ getUOM().hashCode();
+		return Objects.hash(getAmount(), getUOM());
 	}
 
 	/**

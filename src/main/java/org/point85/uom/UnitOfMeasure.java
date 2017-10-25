@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -477,8 +478,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * @return hash code
 	 */
 	public int hashCode() {
-		return MeasurementSystem.getSystem().hashCode() ^ (getEnumeration() == null ? 17 : getEnumeration().hashCode())
-				^ getSymbol().hashCode();
+		return Objects.hash(MeasurementSystem.getSystem(), getEnumeration(), getSymbol());
 	}
 
 	/**

@@ -49,7 +49,7 @@ public class TestQuantity extends BaseTest {
 		Quantity na = sys.getQuantity(Constant.AVAGADRO_CONSTANT);
 		Quantity eNA = qe.multiply(na);
 		assertTrue(isCloseTo(f.getAmount(), eNA.getAmount(), DELTA6));
-		assertTrue(isCloseTo(f.getAmount(), 96485.3328959, DELTA5));
+		assertTrue(isCloseTo(f.getAmount(), 96485.332123, DELTA5));
 
 		// epsilon 0
 		UnitOfMeasure fm = sys.createQuotientUOM(UnitType.UNCLASSIFIED, "Farad per metre", "F/m", "Farad per metre",
@@ -67,6 +67,16 @@ public class TestQuantity extends BaseTest {
 		Quantity mp = sys.getQuantity(Constant.PROTON_MASS);
 		bd = mp.divide(u).getAmount();
 		assertTrue(isCloseTo(bd, 1.00727646687991, DELTA6));
+		
+		// caesium
+		Quantity cs = sys.getQuantity(Constant.CAESIUM_FREQUENCY);
+		Quantity periods = cs.multiply(new Quantity(1, Unit.SECOND));
+		assertTrue(isCloseTo(periods.getAmount(), 9192631770d, DELTA0));
+		
+		// luminous efficacy
+		Quantity kcd = sys.getQuantity(Constant.LUMINOUS_EFFICACY);
+		Quantity lum = kcd.multiply(new Quantity(1, Unit.WATT));
+		assertTrue(isCloseTo(lum.getAmount(), 683d, DELTA0));		
 	}
 
 	@Test
@@ -675,7 +685,7 @@ public class TestQuantity extends BaseTest {
 		Quantity v = new Quantity(50.0, Unit.LITRE).convert(Unit.CUBIC_METRE);
 		Quantity t = new Quantity(127.0, Unit.CELSIUS).convert(Unit.KELVIN);
 		Quantity n = p.multiply(v).divide(sys.getQuantity(Constant.GAS_CONSTANT).multiply(t));
-		assertTrue(isCloseTo(n.getAmount(), 28.018673, DELTA6));
+		assertTrue(isCloseTo(n.getAmount(), 28.018664, DELTA6));
 
 		// energy of red light photon = Planck's constant times the frequency
 		Quantity frequency = new Quantity(400d, sys.getUOM(Prefix.TERA, Unit.HERTZ));
