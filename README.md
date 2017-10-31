@@ -230,7 +230,7 @@ Quantity qC = new Quantity(100.0, Unit.CELSIUS);
 Quantity qF = qC.convert(Unit.FAHRENHEIT);
 ```
 
-// A nutrition label states the energy content is 1718 KJ.  What is this amount in kilo-calories?
+A nutrition label states the energy content is 1718 KJ.  What is this amount in kilo-calories?
 ```java
 Quantity kcal = new Quantity(1718, Prefix.KILO, Unit.JOULE).convert(Prefix.KILO, Unit.CALORIE);
 ```
