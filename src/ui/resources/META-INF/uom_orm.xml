@@ -1,17 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<entity-mappings version="2.1"
-	xmlns="http://www.eclipse.org/eclipselink/xsds/persistence/orm"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<entity-mappings 
+	xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+    http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+    version="2.1">
 
 	<package>org.point85.uom</package>
+	
+	<mapped-superclass class="Symbolic" access="FIELD">
+        <attributes>			
+			<!-- name -->
+			<basic name="name">
+				<column name="NAME"/>
+			</basic>
+			
+			<!-- symbol -->
+			<basic name="symbol">
+				<column name="SYMBOL" />
+			</basic>
+			
+			<!-- description -->
+			<basic name="description">
+				<column name="DESCRIPTION"/>
+			</basic>
+        </attributes>
+    </mapped-superclass>
 
 	<!-- UnitOfMeasure table -->
 	<entity class="UnitOfMeasure" access="FIELD">
 	<table name="UOM" />
 		<attributes>
 			<!-- primary key -->
-			<id name="primaryKey" attribute-type="Integer">
+			<id name="primaryKey">
 				<column name="UOM_KEY" />
 				<generated-value strategy="IDENTITY"/>
 			</id>
@@ -20,24 +42,9 @@
 			<version name="version" >
 				<column name="VERSION"/> 
 			</version>
-			
-			<!-- name -->
-			<basic name="name" attribute-type="String">
-				<column name="NAME" />
-			</basic>
-		
-			<!-- symbol -->
-			<basic name="symbol" attribute-type="String">
-				<column name="SYMBOL" />
-			</basic>
-			
-			<!-- description -->
-			<basic name="description" attribute-type="String">
-				<column name="DESCRIPTION" />
-			</basic>
 
 			<!-- category -->
-			<basic name="category" attribute-type="String">
+			<basic name="category">
 				<column name="CATEGORY" />
 			</basic>	
 			
@@ -53,32 +60,36 @@
 				<column name="UNIT" />
 			</basic>
 			
-			<!-- conversion -->
+			<!-- conversion scaling factor -->
 			<basic name="scalingFactor">
-				<column name="CONV_FACTOR" precision="16" scale="9" />
+				<column name="CONV_FACTOR"/>
 			</basic>
 		
+			<!-- offset -->
 			<basic name="offset">
-				<column name="CONV_OFFSET" precision="16" scale="9" />
+				<column name="CONV_OFFSET"/>
 			</basic>
-						
-			<one-to-one name="abscissaUnit" fetch="EAGER" target-entity="UnitOfMeasure">
+				
+			<!-- abscissa UOM -->		
+			<one-to-one name="abscissaUnit" target-entity="UnitOfMeasure">
 				<join-column name="CONV_UOM_KEY" />
 				<cascade>
-					<cascade-persist />
+					<cascade-persist/>
 				</cascade>	
 			</one-to-one>	
 			
-			<!-- bridge conversion -->
+			<!-- bridge conversion scaling factor -->
 			<basic name="bridgeScalingFactor">
-				<column name="BRIDGE_FACTOR" precision="16" scale="9" />
+				<column name="BRIDGE_FACTOR"/>
 			</basic>
 		
+			<!-- bridge conversion offset -->
 			<basic name="bridgeOffset">
-				<column name="BRIDGE_OFFSET" precision="16" scale="9" />
+				<column name="BRIDGE_OFFSET"/>
 			</basic>
 			
-			<one-to-one name="bridgeAbscissaUnit" fetch="EAGER" target-entity="UnitOfMeasure">
+			<!-- bridge conversion abscissa UOM -->
+			<one-to-one name="bridgeAbscissaUnit" target-entity="UnitOfMeasure">
 				<join-column name="BRIDGE_UOM_KEY" />
 				<cascade>
 					<cascade-persist />
@@ -86,7 +97,7 @@
 			</one-to-one>	
 				
 			<!-- UOM1 -->
-			<one-to-one name="uom1" fetch="EAGER" target-entity="UnitOfMeasure"> -->
+			<one-to-one name="uom1" target-entity="UnitOfMeasure"> -->
 				<join-column name="UOM1_KEY" />
 				<cascade>
 					<cascade-persist />
@@ -94,12 +105,12 @@
 			</one-to-one>
 			
 			<!-- exponent1 -->
-			<basic name="exponent1" attribute-type="Integer">
+			<basic name="exponent1">
 				<column name="EXP1" />
 			</basic>
 			
 			<!-- UOM2 -->
-			<one-to-one name="uom2" fetch="EAGER" target-entity="UnitOfMeasure">
+			<one-to-one name="uom2" target-entity="UnitOfMeasure">
 				<join-column name="UOM2_KEY" />
 				<cascade>
 					<cascade-persist />
@@ -107,14 +118,9 @@
 			</one-to-one>
 			
 			<!-- exponent2 -->
-			<basic name="exponent2" attribute-type="Integer">
+			<basic name="exponent2">
 				<column name="EXP2" />
-			</basic>
-			
-			<!-- transient attributes -->
-			<transient name="conversionRegistry"/>
-			<transient name="baseSymbol"/>
-					
+			</basic>					
 		</attributes>
 	</entity>
 	

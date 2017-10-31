@@ -222,12 +222,17 @@ Quantity in2Q = m2Q.convertToPower(sys.getUOM(Unit.INCH));
 
 Other UOMs can be converted using the convert() method.
 
-## Physical Unit Equation Examples
+## Physical Unit Examples
 
 Water boils at 100 degrees Celcius.  What is this temperature in Fahrenheit?
 ```java
 Quantity qC = new Quantity(100.0, Unit.CELSIUS);
 Quantity qF = qC.convert(Unit.FAHRENHEIT);
+```
+
+// A nutrition label states the energy content is 1718 KJ.  What is this amount in kilo-calories?
+```java
+Quantity kcal = new Quantity(1718, Prefix.KILO, Unit.JOULE).convert(Prefix.KILO, Unit.CALORIE);
 ```
 
 One's Body Mass Index (BMI) can be calculated as:

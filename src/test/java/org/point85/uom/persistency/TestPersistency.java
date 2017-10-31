@@ -5,18 +5,12 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.app.PersistentMeasurementSystem;
 
 public class TestPersistency {
-	
+
 	// persistent measurement system
 	private PersistentMeasurementSystem sys = PersistentMeasurementSystem.getSystem();
 
 	public void saveUOMs() throws Exception {
 		for (Unit unit : Unit.values()) {
-
-			// too big
-			if (unit.equals(Unit.PARSEC) || unit.equals(Unit.ASTRONOMICAL_UNIT)) {
-				continue;
-			}
-
 			saveUnit(unit);
 		}
 	}
@@ -27,10 +21,11 @@ public class TestPersistency {
 		if (uom == null) {
 			uom = sys.getUOM(unit);
 		}
-		
+
 		if (uom.getCategory() == null) {
 			uom.setCategory(uom.getUnitType().name());
 		}
+		
 		sys.saveUOM(uom);
 	}
 
@@ -42,5 +37,6 @@ public class TestPersistency {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Test finished!");
 	}
 }

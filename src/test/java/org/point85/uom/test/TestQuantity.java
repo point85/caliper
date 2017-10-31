@@ -1170,4 +1170,11 @@ public class TestQuantity extends BaseTest {
 		q1 = one1.convertToPower(sys.getOne());
 		assertTrue(isCloseTo(q1.getAmount(), 1d, DELTA6));
 	}
+	
+	@Test
+	public void testEnergy() throws Exception {
+		// A nutrition label says the energy content is 1718 KJ.  What is this amount in kilo-calories?
+		Quantity kcal = new Quantity(1718, Prefix.KILO, Unit.JOULE).convert(Prefix.KILO, Unit.CALORIE);
+		assertTrue(isCloseTo(kcal.getAmount(), 410.6, DELTA1));
+	}
 }

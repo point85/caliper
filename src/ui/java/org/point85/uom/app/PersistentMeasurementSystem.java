@@ -289,7 +289,7 @@ public class PersistentMeasurementSystem extends MeasurementSystem {
 			getEntityManager().getTransaction().begin();
 
 			// merge this entity into the PU
-			getEntityManager().merge(entity);
+			getEntityManager().persist(entity);
 
 			// commit transaction
 			getEntityManager().getTransaction().commit();

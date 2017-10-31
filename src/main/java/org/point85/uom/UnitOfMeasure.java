@@ -103,11 +103,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private static final char RP = ')';
 	private static final char ONE_CHAR = '1';
 
-	// represents a null int
-	private static final int NULL_INT = Integer.MIN_VALUE;
-
 	// registry of unit conversion factor
-	private Map<UnitOfMeasure, Double> conversionRegistry = new ConcurrentHashMap<UnitOfMeasure, Double>();
+	private transient Map<UnitOfMeasure, Double> conversionRegistry = new ConcurrentHashMap<UnitOfMeasure, Double>();
 
 	// conversion to another Unit of Measure in the same recognized measurement
 	// system (y = ax + b)
@@ -136,7 +133,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private UnitOfMeasure bridgeAbscissaUnit;
 
 	// cached base symbol
-	private String baseSymbol;
+	private transient String baseSymbol;
 
 	// user-defined category
 	private String category = MeasurementSystem.getUnitString("default.category.text");
@@ -149,10 +146,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private UnitOfMeasure uom2;
 
 	// exponent
-	private int exponent1 = NULL_INT;
+	private Integer exponent1;
 
 	// second exponent
-	private int exponent2 = NULL_INT;
+	private Integer exponent2;
 
 	// database primary key
 	private Integer primaryKey;
@@ -179,8 +176,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 *            Power exponent
 	 * @return True if it is a valid exponent
 	 */
-	public static boolean isValidExponent(int exponent) {
-		return exponent == NULL_INT ? false : true;
+	public static boolean isValidExponent(Integer exponent) {
+		return (exponent == null) ? false : true;
 	}
 
 	/**
@@ -221,23 +218,23 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		this.version = version;
 	}
 
-	private void setPowerProduct(UnitOfMeasure uom1, int exponent1) {
+	private void setPowerProduct(UnitOfMeasure uom1, Integer exponent1) {
 		this.uom1 = uom1;
 		this.exponent1 = exponent1;
 	}
 
-	private void setPowerProduct(UnitOfMeasure uom1, int exponent1, UnitOfMeasure uom2, int exponent2) {
+	private void setPowerProduct(UnitOfMeasure uom1, Integer exponent1, UnitOfMeasure uom2, Integer exponent2) {
 		this.uom1 = uom1;
 		this.exponent1 = exponent1;
 		this.uom2 = uom2;
 		this.exponent2 = exponent2;
 	}
 
-	private int getExponent1() {
+	private Integer getExponent1() {
 		return exponent1;
 	}
 
-	private int getExponent2() {
+	private Integer getExponent2() {
 		return exponent2;
 	}
 
@@ -1069,7 +1066,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * 
 	 * @return Exponent
 	 */
-	public int getPowerExponent() {
+	public Integer getPowerExponent() {
 		return getExponent1();
 	}
 
@@ -1278,8 +1275,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			UnitOfMeasure uom1 = abscissaUnit.getUOM1();
 			UnitOfMeasure uom2 = abscissaUnit.getUOM2();
 
-			int exp1 = abscissaUnit.getExponent1();
-			int exp2 = abscissaUnit.getExponent2();
+			Integer exp1 = abscissaUnit.getExponent1();
+			Integer exp2 = abscissaUnit.getExponent2();
 
 			// scaling
 			if (pathExponents.size() > 0) {
