@@ -119,7 +119,7 @@ public class CaliperApp extends Application {
 	/**
 	 * Main entry point
 	 * 
-	 * @param args
+	 * @param args Arguments
 	 */
 	public static void main(String[] args) {
 		launch(args);

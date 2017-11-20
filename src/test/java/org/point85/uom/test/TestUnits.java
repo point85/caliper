@@ -1664,12 +1664,6 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		m.setCategory(category);
 		assertTrue(m.getCategory().equals(category));
-
-		m.setKey(100);
-		assertTrue(m.getKey() == 100);
-
-		m.setVersion(101);
-		assertTrue(m.getVersion() == 101);
 	}
 
 	@Test

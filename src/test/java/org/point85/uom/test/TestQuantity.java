@@ -473,6 +473,16 @@ public class TestQuantity extends BaseTest {
 		q2 = new Quantity(24d, sys.getHour());
 		q3 = q1.multiply(q2);
 		assertTrue(isCloseTo(q3.getAmount(), 480, DELTA6));
+		
+		// If the concentration of a sulfuric acid solution is c(H2SO4) = 1 mol/L and the equivalence factor is 0.5, what is the normality?
+		UnitOfMeasure mol = sys.getUOM(Unit.MOLE);
+		UnitOfMeasure molPerL = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "moler conc", "mol/L",
+				"mole per litre", mol, litre);
+		
+		Quantity feq = new Quantity(0.5, molPerL);
+		
+		Quantity N = new Quantity(1, molPerL).divide(feq);
+		assertTrue(isCloseTo(N.getAmount(), 2.0, DELTA6));
 	}
 
 	@Test
@@ -1176,5 +1186,14 @@ public class TestQuantity extends BaseTest {
 		// A nutrition label says the energy content is 1718 KJ.  What is this amount in kilo-calories?
 		Quantity kcal = new Quantity(1718, Prefix.KILO, Unit.JOULE).convert(Prefix.KILO, Unit.CALORIE);
 		assertTrue(isCloseTo(kcal.getAmount(), 410.6, DELTA1));
+		
+		// A Tesla Model S battery has a capacity of 100 KwH.  
+		// When fully charged, how many electrons are in the battery?
+		Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+		Quantity me = sys.getQuantity(Constant.ELECTRON_MASS);	
+		Quantity kwh = new Quantity(100, Prefix.KILO, Unit.WATT_HOUR);
+		Quantity electrons = kwh.divide(c).divide(c).divide(me);
+		double d = electrons.getAmount() / 1.221E15;
+		assertTrue(isCloseTo(d, 1.0, DELTA1));
 	}
 }

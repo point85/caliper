@@ -234,7 +234,7 @@ public class PersistentMeasurementSystem extends MeasurementSystem {
 	}
 
 	// fetch UOM by its primary key
-	UnitOfMeasure fetchUOMByKey(Integer key) throws Exception {
+	UnitOfMeasure fetchUOMByKey(Long key) throws Exception {
 
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("key", key);
@@ -342,18 +342,18 @@ public class PersistentMeasurementSystem extends MeasurementSystem {
 
 	// get any foreign UOM references
 	List<UnitOfMeasure> getCrossReferences(UnitOfMeasure uom) throws Exception {
-		Integer key = uom.getKey();
+		Long key = uom.getKey();
 
 		Query query = getEntityManager().createNamedQuery(NQ_UOM_CROSS_REF);
 		query.setParameter(1, key);
 
 		@SuppressWarnings("unchecked")
-		List<Integer> keys = (List<Integer>) query.getResultList();
+		List<Long> keys = (List<Long>) query.getResultList();
 
 		List<UnitOfMeasure> referencedUOMs = new ArrayList<>(keys.size());
 
 		// get the referenced UOMs
-		for (Integer primaryKey : keys) {
+		for (Long primaryKey : keys) {
 			UnitOfMeasure referenced = fetchUOMByKey(primaryKey);
 			referencedUOMs.add(referenced);
 		}

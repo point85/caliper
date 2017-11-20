@@ -77,7 +77,7 @@ public enum Unit {
 	// electrical
 	AMPERE, AMPERE_PER_METRE, COULOMB, VOLT, OHM, FARAD, FARAD_PER_METRE, WEBER, TESLA, HENRY, SIEMENS,
 	// concentration
-	PH,
+	PH, NORMALITY,
 	// luminosity
 	CANDELA, LUMEN, LUX,
 	// radioactivity

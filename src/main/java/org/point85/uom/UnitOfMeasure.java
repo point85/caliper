@@ -152,7 +152,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private Integer exponent2;
 
 	// database primary key
-	private Integer primaryKey;
+	private Long primaryKey;
 
 	// optimistic locking version
 	private Integer version;
@@ -185,7 +185,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * 
 	 * @return Key
 	 */
-	public Integer getKey() {
+	public Long getKey() {
 		return primaryKey;
 	}
 
@@ -195,7 +195,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * @param key
 	 *            Key
 	 */
-	public void setKey(Integer key) {
+	public void setKey(Long key) {
 		this.primaryKey = key;
 	}
 

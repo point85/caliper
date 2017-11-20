@@ -249,6 +249,15 @@ Quantity m = new Quantity(1.0, Unit.KILOGRAM);
 Quantity e = m.multiply(c).multiply(c);
 ```
 
+```java
+// A Tesla Model S battery has a capacity of 100 KwH.  
+// When fully charged, how many electrons are in the battery?
+Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+Quantity me = sys.getQuantity(Constant.ELECTRON_MASS);	
+Quantity kwh = new Quantity(100, Prefix.KILO, Unit.WATT_HOUR);
+Quantity electrons = kwh.divide(c).divide(c).divide(me);
+```
+
 Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.  How many moles of argon are in the cylinder?
 ```java
 Quantity p = new Quantity(18.4, Unit.ATMOSPHERE).convert(Unit.PASCAL);

@@ -819,6 +819,12 @@ public class MeasurementSystem {
 					units.getString("au.symbol"), units.getString("au.desc"));
 			uom.setConversion(1.49597870700E+11, getUOM(Unit.METRE));
 			break;
+			
+		case NORMALITY:
+			// equivalent concentration
+			uom = createScalarUOM(UnitType.MOLAR_CONCENTRATION, Unit.NORMALITY, units.getString("normal.name"),
+					units.getString("normal.symbol"), units.getString("normal.desc"));
+			break;
 
 		default:
 			break;

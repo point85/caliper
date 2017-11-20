@@ -35,7 +35,8 @@
 			<!-- primary key -->
 			<id name="primaryKey">
 				<column name="UOM_KEY" />
-				<generated-value strategy="IDENTITY"/>
+            	<generated-value strategy="SEQUENCE" generator="SEQ_GEN"/>
+            	<sequence-generator name="SEQ_GEN" sequence-name="JPA_SEQ" allocation-size="10"/>
 			</id>
 			
 			<!-- version -->
@@ -74,7 +75,7 @@
 			<one-to-one name="abscissaUnit" target-entity="UnitOfMeasure">
 				<join-column name="CONV_UOM_KEY" />
 				<cascade>
-					<cascade-persist/>
+					<cascade-persist/> <cascade-merge/>  <cascade-refresh/> 
 				</cascade>	
 			</one-to-one>	
 			
@@ -92,7 +93,7 @@
 			<one-to-one name="bridgeAbscissaUnit" target-entity="UnitOfMeasure">
 				<join-column name="BRIDGE_UOM_KEY" />
 				<cascade>
-					<cascade-persist />
+					<cascade-persist/> <cascade-merge/>  <cascade-refresh/> 
 				</cascade>	
 			</one-to-one>	
 				
@@ -100,7 +101,7 @@
 			<one-to-one name="uom1" target-entity="UnitOfMeasure"> -->
 				<join-column name="UOM1_KEY" />
 				<cascade>
-					<cascade-persist />
+					<cascade-persist/> <cascade-merge/>  <cascade-refresh/> 
 				</cascade>
 			</one-to-one>
 			
@@ -113,7 +114,7 @@
 			<one-to-one name="uom2" target-entity="UnitOfMeasure">
 				<join-column name="UOM2_KEY" />
 				<cascade>
-					<cascade-persist />
+					<cascade-persist/> <cascade-merge/>  <cascade-refresh/> 
 				</cascade>
 			</one-to-one>
 			
