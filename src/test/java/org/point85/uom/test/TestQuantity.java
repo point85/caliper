@@ -1192,8 +1192,12 @@ public class TestQuantity extends BaseTest {
 		Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
 		Quantity me = sys.getQuantity(Constant.ELECTRON_MASS);	
 		Quantity kwh = new Quantity(100, Prefix.KILO, Unit.WATT_HOUR);
+		
+		Quantity wh = kwh.convert(Unit.WATT_HOUR);
+		assertTrue(wh.getAmount() == 1.0E+05);
+		
 		Quantity electrons = kwh.divide(c).divide(c).divide(me);
-		double d = electrons.getAmount() / 1.221E15;
+		double d = electrons.getAmount() / 1.221E12;
 		assertTrue(isCloseTo(d, 1.0, DELTA1));
 	}
 }

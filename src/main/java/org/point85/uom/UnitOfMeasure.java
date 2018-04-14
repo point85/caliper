@@ -165,8 +165,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	UnitOfMeasure(UnitType type, String name, String symbol, String description) {
-		super(name, symbol, description);
+		super(name, symbol.trim(), description);
 		this.unitType = type;
+		this.category = MeasurementSystem.getUnitString("default.category.text");
 	}
 
 	/**
