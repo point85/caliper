@@ -488,8 +488,17 @@ The Caliper library and application, when built with Gradle, has the following s
 
 ## JSR 363
 JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using double amounts whereas JSR 363 uses Numbers.
+
 The tables below compare the JSR 363 specification in the first column to Point85 in the second column.
 
 ![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/jsr363_type.png)
+
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/jsr363_uom.png)
+
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/jsr363_quantity.png)
+
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/jsr363_rest.png)
+
+
 
 
