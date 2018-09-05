@@ -257,7 +257,7 @@ public class Quantity extends Symbolic {
 	 */
 	public Quantity divide(Quantity other) throws Exception {
 		Quantity toDivide = other;
-		
+
 		if (toDivide.getAmount() == 0.0d) {
 			throw new Exception(MeasurementSystem.getMessage("divisor.cannot.be.zero"));
 		}
@@ -470,5 +470,17 @@ public class Quantity extends Symbolic {
 		}
 
 		return Double.valueOf(getAmount()).compareTo(Double.valueOf(toCompare.getAmount()));
+	}
+
+	/**
+	 * Find a matching unit type for the quantity's unit of measure.
+	 * 
+	 * @return {@link Quantity}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Quantity classify() throws Exception {
+		getUOM().classify();
+		return this;
 	}
 }

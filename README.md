@@ -223,6 +223,7 @@ Quantity in2Q = m2Q.convertToPower(sys.getUOM(Unit.INCH));
 Other UOMs can be converted using the convert() method.
 
 *Classification*
+
 During arithmetic operations, the final type of the unit may not be known.  In this case, invoking the classify() method will attempt to find a matching unit type.  For example, the calculated unit of measure below has a type of UnitType.ELECTRIC_CAPACITANCE:
 
 ```java
@@ -231,7 +232,15 @@ UnitOfMeasure m = sys.getUOM(Unit.METRE);
 UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
 UnitOfMeasure amp = sys.getUOM(Unit.AMPERE);
 		
-UnitType ut = s.power(-3).multiply(amp.power(-2)).multiply(m.power(2)).divide(kg).classify();
+UnitOfMeasure cap = s.power(-3).multiply(amp.power(-2)).multiply(m.power(2)).divide(kg).classify();
+```
+
+A quantity resulting from an arithmetic operation can also be classified.  For example, the "density" quantity has UnitType.DENSITY:
+
+```java
+Quantity mass = new Quantity(1035, Unit.KILOGRAM);
+Quantity volume = new Quantity(1000, Unit.LITRE);
+Quantity density = mass.divide(volume).classify();
 ```
 
 ## Physical Unit Examples
@@ -478,10 +487,9 @@ The Caliper library and application, when built with Gradle, has the following s
  * `/database` - SQL script files for table and index generation
 
 ## JSR 363
-JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  In particular:
-* UnitOfMeasure class is similar to Unit interface
-* Quantity class is similar to Quantity interface
-* UnitType enum is similar to Dimension interface
-* MeasurementSystem class is similar to SystemOfUnits interface, and also incorporates aspects of ServiceProvider
+JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using double amounts whereas JSR 363 uses Numbers.
+The tables below compare the JSR 363 specification in the first column to Point85 in the second column.
 
-Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using double amounts whereas JSR 363 uses Numbers.
+![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/jsr363_type.png)
+
+

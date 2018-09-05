@@ -1200,4 +1200,12 @@ public class TestQuantity extends BaseTest {
 		double d = electrons.getAmount() / 1.221E12;
 		assertTrue(isCloseTo(d, 1.0, DELTA1));
 	}
+	
+	@Test
+	public void testClassification() throws Exception {
+		Quantity mass = new Quantity(1035, Unit.KILOGRAM) ;
+		Quantity volume = new Quantity(1000, Unit.LITRE) ;
+		Quantity density = mass.divide(volume).classify();
+		assertTrue(density.getUOM().getUnitType().equals(UnitType.DENSITY));
+	}
 }

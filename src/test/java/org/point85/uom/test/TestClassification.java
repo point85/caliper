@@ -32,7 +32,7 @@ import org.point85.uom.UnitType;
 
 public class TestClassification extends BaseTest {
 	@Test
-	public void testClassifications() throws Exception {
+	public void testClassifications() throws Exception {	
 		UnitType ut = null;
 		
 		UnitOfMeasure one = sys.getOne();
@@ -46,113 +46,113 @@ public class TestClassification extends BaseTest {
 		
 		
 		// base types
-		assertTrue(one.classify().equals(UnitType.UNITY));
-		assertTrue(s.classify().equals(UnitType.TIME));
-		assertTrue(m.classify().equals(UnitType.LENGTH));
-		assertTrue(kg.classify().equals(UnitType.MASS));
-		assertTrue(degC.classify().equals(UnitType.TEMPERATURE));
-		assertTrue(amp.classify().equals(UnitType.ELECTRIC_CURRENT));
-		assertTrue(mol.classify().equals(UnitType.SUBSTANCE_AMOUNT));
-		assertTrue(cd.classify().equals(UnitType.LUMINOSITY));
-		assertTrue(sys.getUOM(Unit.US_DOLLAR).classify().equals(UnitType.CURRENCY));
-		assertTrue(sys.getUOM(Unit.BIT).classify().equals(UnitType.COMPUTER_SCIENCE));
+		assertTrue(one.classify().getUnitType().equals(UnitType.UNITY));
+		assertTrue(s.classify().getUnitType().equals(UnitType.TIME));
+		assertTrue(m.classify().getUnitType().equals(UnitType.LENGTH));
+		assertTrue(kg.classify().getUnitType().equals(UnitType.MASS));
+		assertTrue(degC.classify().getUnitType().equals(UnitType.TEMPERATURE));
+		assertTrue(amp.classify().getUnitType().equals(UnitType.ELECTRIC_CURRENT));
+		assertTrue(mol.classify().getUnitType().equals(UnitType.SUBSTANCE_AMOUNT));
+		assertTrue(cd.classify().getUnitType().equals(UnitType.LUMINOSITY));
+		assertTrue(sys.getUOM(Unit.US_DOLLAR).classify().getUnitType().equals(UnitType.CURRENCY));
+		assertTrue(sys.getUOM(Unit.BIT).classify().getUnitType().equals(UnitType.COMPUTER_SCIENCE));
 		
 		// area
 		UnitOfMeasure uom = sys.getUOM(Unit.FOOT).power(2);
-		assertTrue(uom.classify().equals(UnitType.AREA));
+		assertTrue(uom.classify().getUnitType().equals(UnitType.AREA));
 		
 		// volume
-		assertTrue(m.multiply(m).multiply(m).classify().equals(UnitType.VOLUME));
+		assertTrue(m.multiply(m).multiply(m).classify().getUnitType().equals(UnitType.VOLUME));
 		
 		// density
-		assertTrue(kg.divide(m.power(3)).classify().equals(UnitType.DENSITY));
+		assertTrue(kg.divide(m.power(3)).classify().getUnitType().equals(UnitType.DENSITY));
 		
 		// speed
-		assertTrue(m.divide(s).classify().equals(UnitType.VELOCITY));
+		assertTrue(m.divide(s).classify().getUnitType().equals(UnitType.VELOCITY));
 		
 		// volumetric flow
-		assertTrue(m.power(3).divide(s).classify().equals(UnitType.VOLUMETRIC_FLOW));
+		assertTrue(m.power(3).divide(s).classify().getUnitType().equals(UnitType.VOLUMETRIC_FLOW));
 		
 		// mass flow
-		assertTrue(kg.divide(s).classify().equals(UnitType.MASS_FLOW));
+		assertTrue(kg.divide(s).classify().getUnitType().equals(UnitType.MASS_FLOW));
 		
 		// frequency
-		assertTrue(one.divide(s).classify().equals(UnitType.FREQUENCY));
+		assertTrue(one.divide(s).classify().getUnitType().equals(UnitType.FREQUENCY));
 		
 		// acceleration
-		assertTrue(m.divide(s.power(2)).classify().equals(UnitType.ACCELERATION));
+		assertTrue(m.divide(s.power(2)).classify().getUnitType().equals(UnitType.ACCELERATION));
 		
 		// force
-		assertTrue(m.multiply(kg).divide(s.power(2)).classify().equals(UnitType.FORCE));
+		assertTrue(m.multiply(kg).divide(s.power(2)).classify().getUnitType().equals(UnitType.FORCE));
 		
 		// pressure
-		assertTrue(kg.divide(m).divide(s.power(2)).classify().equals(UnitType.PRESSURE));
+		assertTrue(kg.divide(m).divide(s.power(2)).classify().getUnitType().equals(UnitType.PRESSURE));
 		
 		// energy
-		assertTrue(kg.multiply(m).multiply(m).divide(s.power(2)).classify().equals(UnitType.ENERGY));
+		assertTrue(kg.multiply(m).multiply(m).divide(s.power(2)).classify().getUnitType().equals(UnitType.ENERGY));
 		
 		// power
-		assertTrue(kg.multiply(m).multiply(m).divide(s.power(3)).classify().equals(UnitType.POWER));
+		assertTrue(kg.multiply(m).multiply(m).divide(s.power(3)).classify().getUnitType().equals(UnitType.POWER));
 		
 		// electric charge
-		assertTrue(s.multiply(amp).classify().equals(UnitType.ELECTRIC_CHARGE));
+		assertTrue(s.multiply(amp).classify().getUnitType().equals(UnitType.ELECTRIC_CHARGE));
 		
 		// electromotive force
-		assertTrue(kg.multiply(m.power(2)).divide(amp).divide(s.power(3)).classify().equals(UnitType.ELECTROMOTIVE_FORCE));
+		assertTrue(kg.multiply(m.power(2)).divide(amp).divide(s.power(3)).classify().getUnitType().equals(UnitType.ELECTROMOTIVE_FORCE));
 		
 		// electric resistance
-		assertTrue(kg.multiply(m.power(-3)).multiply(amp.power(2)).multiply(s.power(4)).classify().equals(UnitType.ELECTRIC_RESISTANCE));
+		assertTrue(kg.multiply(m.power(-3)).multiply(amp.power(2)).multiply(s.power(4)).classify().getUnitType().equals(UnitType.ELECTRIC_RESISTANCE));
 		
 		// electric capacitance
-		assertTrue(s.power(-3).multiply(amp.power(-2)).multiply(m.power(2)).divide(kg).classify().equals(UnitType.ELECTRIC_CAPACITANCE));
+		assertTrue(s.power(-3).multiply(amp.power(-2)).multiply(m.power(2)).divide(kg).classify().getUnitType().equals(UnitType.ELECTRIC_CAPACITANCE));
 		
 		// electric permittivity				
-		assertTrue(s.power(4).multiply(amp.power(2)).multiply(m.power(-3)).divide(kg).classify().equals(UnitType.ELECTRIC_PERMITTIVITY));
+		assertTrue(s.power(4).multiply(amp.power(2)).multiply(m.power(-3)).divide(kg).classify().getUnitType().equals(UnitType.ELECTRIC_PERMITTIVITY));
 		
 		// electric field strength
-		assertTrue(amp.divide(m).classify().equals(UnitType.ELECTRIC_FIELD_STRENGTH));
+		assertTrue(amp.divide(m).classify().getUnitType().equals(UnitType.ELECTRIC_FIELD_STRENGTH));
 		
 		// magnetic flux
-		assertTrue(kg.divide(amp).divide(s.power(2)).multiply(m.power(2)).classify().equals(UnitType.MAGNETIC_FLUX));		
+		assertTrue(kg.divide(amp).divide(s.power(2)).multiply(m.power(2)).classify().getUnitType().equals(UnitType.MAGNETIC_FLUX));		
 		
 		// magnetic flux density
-		assertTrue(kg.divide(amp).divide(s.power(2)).classify().equals(UnitType.MAGNETIC_FLUX_DENSITY));
+		assertTrue(kg.divide(amp).divide(s.power(2)).classify().getUnitType().equals(UnitType.MAGNETIC_FLUX_DENSITY));
 		
 		// inductance
-		assertTrue(kg.multiply(amp.power(-2)).divide(s.power(2)).multiply(m.power(2)).classify().equals(UnitType.ELECTRIC_INDUCTANCE));
+		assertTrue(kg.multiply(amp.power(-2)).divide(s.power(2)).multiply(m.power(2)).classify().getUnitType().equals(UnitType.ELECTRIC_INDUCTANCE));
 		
 		// conductance
-		assertTrue(kg.power(-1).multiply(amp.power(2)).multiply(s.power(3)).multiply(m.power(-2)).classify().equals(UnitType.ELECTRIC_CONDUCTANCE));
+		assertTrue(kg.power(-1).multiply(amp.power(2)).multiply(s.power(3)).multiply(m.power(-2)).classify().getUnitType().equals(UnitType.ELECTRIC_CONDUCTANCE));
 		
 		// luminous flux
-		ut = cd.multiply(one).classify();
+		ut = cd.multiply(one).classify().getUnitType();
 		assertTrue(ut.equals(UnitType.LUMINOUS_FLUX) || ut.equals(UnitType.LUMINOSITY));
 		
 		// illuminance
-		assertTrue(cd.divide(m.power(2)).classify().equals(UnitType.ILLUMINANCE));
+		assertTrue(cd.divide(m.power(2)).classify().getUnitType().equals(UnitType.ILLUMINANCE));
 		
 		// radiation dose absorbed and effective
-		ut = m.power(2).divide(s.power(2)).classify();
+		ut = m.power(2).divide(s.power(2)).classify().getUnitType();
 		assertTrue(ut.equals(UnitType.RADIATION_DOSE_ABSORBED) || ut.equals(UnitType.RADIATION_DOSE_EFFECTIVE));
 		
 		// radiation dose rate
-		assertTrue(m.power(2).divide(s.power(3)).classify().equals(UnitType.RADIATION_DOSE_RATE));
+		assertTrue(m.power(2).divide(s.power(3)).classify().getUnitType().equals(UnitType.RADIATION_DOSE_RATE));
 		
 		// radioactivity
-		ut = s.power(-1).classify();
+		ut = s.power(-1).classify().getUnitType();
 		assertTrue(ut.equals(UnitType.RADIOACTIVITY) || ut.equals(UnitType.FREQUENCY));
 		
 		// catalytic activity
-		assertTrue(mol.divide(s).classify().equals(UnitType.CATALYTIC_ACTIVITY));
+		assertTrue(mol.divide(s).classify().getUnitType().equals(UnitType.CATALYTIC_ACTIVITY));
 		
 		// dynamic viscosity
-		assertTrue(kg.divide(s).multiply(m).classify().equals(UnitType.DYNAMIC_VISCOSITY));
+		assertTrue(kg.divide(s).multiply(m).classify().getUnitType().equals(UnitType.DYNAMIC_VISCOSITY));
 		
 		// kinematic viscosity
-		assertTrue(m.power(2).divide(s).classify().equals(UnitType.KINEMATIC_VISCOSITY));
+		assertTrue(m.power(2).divide(s).classify().getUnitType().equals(UnitType.KINEMATIC_VISCOSITY));
 		
 		// reciprocal length
-		assertTrue(one.divide(m).classify().equals(UnitType.RECIPROCAL_LENGTH));
+		assertTrue(one.divide(m).classify().getUnitType().equals(UnitType.RECIPROCAL_LENGTH));
 		
 		// plane angle
 		assertTrue(UnitType.PLANE_ANGLE.getTypeMap().isEmpty());
@@ -163,13 +163,13 @@ public class TestClassification extends BaseTest {
 		assertTrue(sys.getUOM(Unit.STERADIAN).getBaseUnitsOfMeasure().isEmpty());
 		
 		// time squared
-		assertTrue(s.power(2).classify().equals(UnitType.TIME_SQUARED));
+		assertTrue(s.power(2).classify().getUnitType().equals(UnitType.TIME_SQUARED));
 		
 		// molar concentration
-		assertTrue(mol.divide(m.power(3)).classify().equals(UnitType.MOLAR_CONCENTRATION));
+		assertTrue(mol.divide(m.power(3)).classify().getUnitType().equals(UnitType.MOLAR_CONCENTRATION));
 		
 		// irradiance
-		assertTrue(kg.divide(s.power(3)).classify().equals(UnitType.IRRADIANCE));
+		assertTrue(kg.divide(s.power(3)).classify().getUnitType().equals(UnitType.IRRADIANCE));
 		
 	}
 

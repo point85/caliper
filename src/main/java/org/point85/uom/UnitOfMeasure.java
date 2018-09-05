@@ -1218,15 +1218,15 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * If the unit of measure is unclassified, from its base unit map find a
 	 * matching unit type.
 	 * 
-	 * @return {@link UnitType}
+	 * @return {@link UnitOfMeasure}
 	 * @throws Exception
 	 *             Exception
 	 */
-	public UnitType classify() throws Exception {
+	public UnitOfMeasure classify() throws Exception {
 
 		if (!getUnitType().equals(UnitType.UNCLASSIFIED)) {
 			// already classified
-			return getUnitType();
+			return this;
 		}
 
 		// base unit map
@@ -1263,7 +1263,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			}
 		}
 
-		return matchedType;
+		if (!matchedType.equals(UnitType.UNCLASSIFIED)) {
+			setUnitType(matchedType);
+		}
+
+		return this;
 	}
 
 	// UOM, scaling factor and power cumulative along a conversion path
