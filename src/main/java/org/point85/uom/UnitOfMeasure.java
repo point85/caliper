@@ -1214,6 +1214,58 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		return MeasurementSystem.getSystem().createPowerUOM(this, exponent);
 	}
 
+	/**
+	 * If the unit of measure is unclassified, from its base unit map find a
+	 * matching unit type.
+	 * 
+	 * @return {@link UnitType}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public UnitType classify() throws Exception {
+
+		if (!getUnitType().equals(UnitType.UNCLASSIFIED)) {
+			// already classified
+			return getUnitType();
+		}
+
+		// base unit map
+		Map<UnitOfMeasure, Integer> uomBaseMap = getReducer().getTerms();
+
+		// try to find this map in the unit types
+		UnitType matchedType = UnitType.UNCLASSIFIED;
+
+		for (UnitType unitType : UnitType.values()) {
+			Map<UnitType, Integer> unitTypeMap = unitType.getTypeMap();
+
+			if (unitTypeMap.entrySet().size() != uomBaseMap.size()) {
+				// not a match
+				continue;
+			}
+
+			boolean match = true;
+
+			// same size, now check base unit types and exponents
+			for (Entry<UnitOfMeasure, Integer> uomBaseEntry : uomBaseMap.entrySet()) {
+				UnitType uomBaseType = uomBaseEntry.getKey().getUnitType();
+				Integer unitValue = unitTypeMap.get(uomBaseType);
+
+				if (unitValue == null || !unitValue.equals(uomBaseEntry.getValue())) {
+					// not a match
+					match = false;
+					break;
+				}
+			}
+
+			if (match) {
+				matchedType = unitType;
+				break;
+			}
+		}
+
+		return matchedType;
+	}
+
 	// UOM, scaling factor and power cumulative along a conversion path
 	private class PathParameters {
 		private UnitOfMeasure pathUOM;

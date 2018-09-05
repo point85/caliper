@@ -1,7 +1,7 @@
 /*
 MIT License
 
-Copyright (c) 2016 Kent Randall
+Copyright (c) 2018 Kent Randall
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,10 @@ SOFTWARE.
 */
 package org.point85.uom;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.AbstractMap.SimpleImmutableEntry;
+
 /**
  * UnitType is an enumeration of unit of measure types. Only units of measure
  * with the same type can be converted.
@@ -32,21 +36,76 @@ package org.point85.uom;
  */
 public enum UnitType {
 	// dimension-less "1"
-	UNITY,
-
+	UNITY(),
+	
 	// fundamental
-	LENGTH, MASS, TIME, ELECTRIC_CURRENT, TEMPERATURE, SUBSTANCE_AMOUNT, LUMINOSITY,
-
-	// other physical
-	AREA, VOLUME, DENSITY, VELOCITY, VOLUMETRIC_FLOW, MASS_FLOW, FREQUENCY, ACCELERATION, FORCE, PRESSURE, ENERGY, POWER, ELECTRIC_CHARGE, 
-	ELECTROMOTIVE_FORCE, ELECTRIC_RESISTANCE, ELECTRIC_CAPACITANCE, ELECTRIC_PERMITTIVITY, ELECTRIC_FIELD_STRENGTH,
-	MAGNETIC_FLUX, MAGNETIC_FLUX_DENSITY, ELECTRIC_INDUCTANCE, ELECTRIC_CONDUCTANCE, 
-	LUMINOUS_FLUX, ILLUMINANCE, RADIATION_DOSE_ABSORBED, RADIATION_DOSE_EFFECTIVE, RADIATION_DOSE_RATE, RADIOACTIVITY, CATALYTIC_ACTIVITY, DYNAMIC_VISCOSITY, 
-	KINEMATIC_VISCOSITY, RECIPROCAL_LENGTH, PLANE_ANGLE, SOLID_ANGLE, INTENSITY, COMPUTER_SCIENCE, TIME_SQUARED, MOLAR_CONCENTRATION, IRRADIANCE,
+	LENGTH(),
+	MASS(),
+	TIME(), 
+	ELECTRIC_CURRENT(), 
+	TEMPERATURE(), 
+	SUBSTANCE_AMOUNT(),  
+	LUMINOSITY(), 
 	
 	// currency
-	CURRENCY,
+	CURRENCY(),
 	
-	// unclassified.  Reserved for use when creating custom units of measure.
-	UNCLASSIFIED
+	// computer science
+	COMPUTER_SCIENCE(),
+
+	// other physical
+	AREA(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2)), 
+	VOLUME(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 3)),
+	DENSITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -3)),  
+	VELOCITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)), 
+	VOLUMETRIC_FLOW(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 3), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)), 
+	MASS_FLOW(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)), 
+	FREQUENCY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)),  
+	ACCELERATION(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)),
+	FORCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)), 
+	PRESSURE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)), 
+	ENERGY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)),  
+	POWER(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -3)),  
+	ELECTRIC_CHARGE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, 1)),
+	ELECTROMOTIVE_FORCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -3)),
+	ELECTRIC_RESISTANCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -3), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, 4)), 
+	ELECTRIC_CAPACITANCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, -2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -3)), 
+	ELECTRIC_PERMITTIVITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -3), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, 4)),
+	ELECTRIC_FIELD_STRENGTH(new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -1)),
+	MAGNETIC_FLUX(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)),
+	MAGNETIC_FLUX_DENSITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)), 
+	ELECTRIC_INDUCTANCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, -2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)), 
+	ELECTRIC_CONDUCTANCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, -1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.ELECTRIC_CURRENT, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, 3)), 
+	LUMINOUS_FLUX(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LUMINOSITY, 1)),
+	ILLUMINANCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LUMINOSITY, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -2)),
+	RADIATION_DOSE_ABSORBED(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)),
+	RADIATION_DOSE_EFFECTIVE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -2)), 
+	RADIATION_DOSE_RATE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -3)),  
+	RADIOACTIVITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)),  
+	CATALYTIC_ACTIVITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.SUBSTANCE_AMOUNT, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)), 
+	DYNAMIC_VISCOSITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)),
+	KINEMATIC_VISCOSITY(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, 2), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -1)),
+	RECIPROCAL_LENGTH(new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -1)),
+	PLANE_ANGLE(), 
+	SOLID_ANGLE(),
+	INTENSITY(), 
+	TIME_SQUARED(new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, 2)), 
+	MOLAR_CONCENTRATION(new SimpleImmutableEntry<UnitType, Integer>(UnitType.SUBSTANCE_AMOUNT, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.LENGTH, -3)), 
+	IRRADIANCE(new SimpleImmutableEntry<UnitType, Integer>(UnitType.MASS, 1), new SimpleImmutableEntry<UnitType, Integer>(UnitType.TIME, -3)),
+	
+	// unclassified.  Reserved for use when creating custom units of measure.	
+	UNCLASSIFIED();
+
+	private Map<UnitType, Integer> typeMap = new HashMap<>();
+
+	@SafeVarargs
+	private UnitType(SimpleImmutableEntry<UnitType, Integer>... entries) {
+		for (SimpleImmutableEntry<UnitType, Integer> entry : entries) {
+			typeMap.put(entry.getKey(), entry.getValue());
+		}
+	}
+
+	public Map<UnitType, Integer> getTypeMap() {
+		return this.typeMap;
+	}
 }

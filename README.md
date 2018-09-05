@@ -222,6 +222,18 @@ Quantity in2Q = m2Q.convertToPower(sys.getUOM(Unit.INCH));
 
 Other UOMs can be converted using the convert() method.
 
+*Classification*
+During arithmetic operations, the final type of the unit may not be known.  In this case, invoking the classify() method will attempt to find a matching unit type.  For example, the calculated unit of measure below has a type of UnitType.ELECTRIC_CAPACITANCE:
+
+```java
+UnitOfMeasure s = sys.getSecond();
+UnitOfMeasure m = sys.getUOM(Unit.METRE);
+UnitOfMeasure kg = sys.getUOM(Unit.KILOGRAM);
+UnitOfMeasure amp = sys.getUOM(Unit.AMPERE);
+		
+UnitType ut = s.power(-3).multiply(amp.power(-2)).multiply(m.power(2)).divide(kg).classify();
+```
+
 ## Physical Unit Examples
 
 Water boils at 100 degrees Celcius.  What is this temperature in Fahrenheit?
