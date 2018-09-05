@@ -76,8 +76,8 @@ public enum Unit {
 	PASCAL, BAR, ATMOSPHERE,
 	// electrical
 	AMPERE, AMPERE_PER_METRE, COULOMB, VOLT, OHM, FARAD, FARAD_PER_METRE, WEBER, TESLA, HENRY, SIEMENS,
-	// concentration
-	PH, NORMALITY,
+	// molar concentration
+	MOLARITY,
 	// luminosity
 	CANDELA, LUMEN, LUX,
 	// radioactivity

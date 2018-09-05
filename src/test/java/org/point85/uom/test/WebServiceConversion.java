@@ -26,7 +26,7 @@ package org.point85.uom.test;
 import com.google.gson.annotations.SerializedName;
 
 public class WebServiceConversion {
-	@SerializedName("XML4PharmaServerWebServiceResponse")
+	@SerializedName("UCUMWebServiceResponse")
 	private WebServiceResponse webServiceResponse;
 
 	public WebServiceResponse getWebServiceResponse() {

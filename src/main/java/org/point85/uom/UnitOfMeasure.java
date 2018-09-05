@@ -677,8 +677,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	/**
-	 * Get the unit of measure's symbol in the fundamental units for that
-	 * system. For example a Newton is a kg.m/s2.
+	 * Get the unit of measure's symbol in the fundamental units for that system.
+	 * For example a Newton is a kg.m/s2.
 	 * 
 	 * @return Base symbol
 	 * @throws Exception
@@ -749,8 +749,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	/**
-	 * Define a conversion with an offset of 0 for the specified scaling factor
-	 * and abscissa unit of measure.
+	 * Define a conversion with an offset of 0 for the specified scaling factor and
+	 * abscissa unit of measure.
 	 * 
 	 * @param scalingFactor
 	 *            Factor
@@ -764,8 +764,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	/**
-	 * Get the unit of measure's 'b' offset (intercept) for the relation y = ax
-	 * + b.
+	 * Get the unit of measure's 'b' offset (intercept) for the relation y = ax + b.
 	 * 
 	 * @return Offset
 	 */
@@ -774,8 +773,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	/**
-	 * Set the unit of measure's 'b' offset (intercept) for the relation y = ax
-	 * + b.
+	 * Set the unit of measure's 'b' offset (intercept) for the relation y = ax + b.
 	 * 
 	 * @param offset
 	 *            Offset
@@ -804,8 +802,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	/**
-	 * Get the unit of measure's x-axis unit of measure for the relation y = ax
-	 * + b.
+	 * Get the unit of measure's x-axis unit of measure for the relation y = ax + b.
 	 * 
 	 * @return {@link UnitOfMeasure}
 	 */
@@ -814,8 +811,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	}
 
 	/**
-	 * Set the unit of measure's x-axis unit of measure for the relation y = ax
-	 * + b.
+	 * Set the unit of measure's x-axis unit of measure for the relation y = ax + b.
 	 * 
 	 * @param abscissaUnit
 	 *            {@link UnitOfMeasure}
@@ -1192,6 +1188,30 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 */
 	public UnitOfMeasure getDivisor() {
 		return getUOM2();
+	}
+
+	/**
+	 * Get the most reduced units of measure
+	 * 
+	 * @return Map of {@link UnitOfMeasure} and exponent
+	 * @throws Exception
+	 *             Exception
+	 */
+	public Map<UnitOfMeasure, Integer> getBaseUnitsOfMeasure() throws Exception {
+		return getReducer().getTerms();
+	}
+
+	/**
+	 * Create a power unit of measure from this unit of measure
+	 * 
+	 * @param exponent
+	 *            Power
+	 * @return {@link UnitOfMeasure}
+	 * @throws Exception
+	 *             Exception
+	 */
+	public UnitOfMeasure power(int exponent) throws Exception {
+		return MeasurementSystem.getSystem().createPowerUOM(this, exponent);
 	}
 
 	// UOM, scaling factor and power cumulative along a conversion path

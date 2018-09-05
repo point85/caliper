@@ -474,10 +474,11 @@ public class MeasurementSystem {
 					units.getString("cd.symbol"), units.getString("cd.desc"));
 			break;
 
-		case PH:
+		case MOLARITY:
 			// molar concentration
-			uom = createScalarUOM(UnitType.MOLAR_CONCENTRATION, Unit.PH, units.getString("ph.name"),
-					units.getString("ph.symbol"), units.getString("ph.desc"));
+			uom = createQuotientUOM(UnitType.MOLAR_CONCENTRATION, Unit.MOLARITY, units.getString("molarity.name"),
+					units.getString("molarity.symbol"), units.getString("molarity.desc"), getUOM(Unit.MOLE),
+					getUOM(Unit.LITRE));
 			break;
 
 		case GRAM: // gram
@@ -740,9 +741,9 @@ public class MeasurementSystem {
 			break;
 
 		case BECQUEREL:
-			// radioactivity (becquerel). Same base symbol as Hertz
-			uom = createScalarUOM(UnitType.RADIOACTIVITY, Unit.BECQUEREL, units.getString("becquerel.name"),
-					units.getString("becquerel.symbol"), units.getString("becquerel.desc"));
+			// radioactivity (becquerel). Same definition as Hertz 1/s)
+			uom = createQuotientUOM(UnitType.RADIOACTIVITY, Unit.BECQUEREL, units.getString("becquerel.name"),
+					units.getString("becquerel.symbol"), units.getString("becquerel.desc"), getOne(), getSecond());
 			break;
 
 		case GRAY:
@@ -818,12 +819,6 @@ public class MeasurementSystem {
 			uom = createScalarUOM(UnitType.LENGTH, Unit.ASTRONOMICAL_UNIT, units.getString("au.name"),
 					units.getString("au.symbol"), units.getString("au.desc"));
 			uom.setConversion(1.49597870700E+11, getUOM(Unit.METRE));
-			break;
-			
-		case NORMALITY:
-			// equivalent concentration
-			uom = createScalarUOM(UnitType.MOLAR_CONCENTRATION, Unit.NORMALITY, units.getString("normal.name"),
-					units.getString("normal.symbol"), units.getString("normal.desc"));
 			break;
 
 		default:
@@ -2005,7 +2000,7 @@ public class MeasurementSystem {
 			break;
 
 		case MOLAR_CONCENTRATION:
-			units.add(getUOM(Unit.PH));
+			units.add(getUOM(Unit.MOLARITY));
 			break;
 
 		case PLANE_ANGLE:

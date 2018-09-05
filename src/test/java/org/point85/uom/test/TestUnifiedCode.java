@@ -39,10 +39,9 @@ import com.github.kevinsawicki.http.HttpRequest.HttpRequestException;
 import com.google.gson.Gson;
 
 public class TestUnifiedCode extends BaseTest {
-	// http://www.xml4pharmaserver.com:8080/CDISCCTService/rest/ucumtransform/{source_quantity}/from/{source_unit}/to/{target_unit}
 	private static final String FROM = "from/";
 	private static final String TO = "to/";
-	private static final String BASE_URL = "http://www.xml4pharmaserver.com:8080/CDISCCTService/rest/ucumtransform/";
+	private static final String BASE_URL = "https://ucum.nlm.nih.gov/ucum-service/v1/ucumtransform/";
 
 	private Gson gson = new Gson();
 

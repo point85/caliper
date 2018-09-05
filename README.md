@@ -36,7 +36,7 @@ All units have a base symbol that is the most reduced form of the unit.  For exa
 
 *Quantity*
 
-A quantity is an amount (implemented as a BigDecimal for control of precision and scaling) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units can be transformed.  For example, multiplying a length quantity in metres by a force quantity in Newtons results in a quantity of energy in Joules (or Newton-metres).
+A quantity is an amount (implemented as a double precision number) together with a unit of measure.  When arithmetic operations are performed on quantities, the original units can be transformed.  For example, multiplying a length quantity in metres by a force quantity in Newtons results in a quantity of energy in Joules (or Newton-metres).
 
 *Product of Powers*
 
@@ -472,4 +472,4 @@ JSR 363 "proposes to establish safe and useful methods for modeling physical qua
 * UnitType enum is similar to Dimension interface
 * MeasurementSystem class is similar to SystemOfUnits interface, and also incorporates aspects of ServiceProvider
 
-Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using BigDecimal amounts whereas JSR 363 uses Numbers.
+Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using double amounts whereas JSR 363 uses Numbers.

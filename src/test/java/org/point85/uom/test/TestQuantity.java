@@ -1033,9 +1033,9 @@ public class TestQuantity extends BaseTest {
 		} catch (Exception e) {
 		}
 
-		Quantity acidpH = new Quantity(4.5, sys.getUOM(Unit.PH));
-		Quantity neutralpH = new Quantity(7.0, sys.getUOM(Unit.PH));
-		assertTrue(acidpH.compare(neutralpH) == -1);
+		Quantity conc = new Quantity(0.0025, sys.getUOM(Unit.MOLARITY));
+		double pH = -Math.log10(conc.getAmount());
+		assertTrue(isCloseTo(pH, 2.60, DELTA2));
 	}
 
 	@Test

@@ -27,6 +27,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.junit.Test;
 import org.point85.uom.Constant;
 import org.point85.uom.Prefix;
@@ -36,6 +39,26 @@ import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
 public class TestUnits extends BaseTest {
+	@Test
+	public void testBaseUnits() throws Exception {
+		Map<UnitOfMeasure, Integer> terms = sys.getUOM(Unit.NEWTON).getBaseUnitsOfMeasure();
+		assertTrue(terms.size() == 3);
+
+		for (Entry<UnitOfMeasure, Integer> entry : terms.entrySet()) {
+			if (entry.getKey().getUnitType().equals(UnitType.MASS)) {
+				assertTrue(entry.getValue().equals(1));
+			} else if (entry.getKey().getUnitType().equals(UnitType.TIME)) {
+				assertTrue(entry.getValue().equals(-2));
+			} else if (entry.getKey().getUnitType().equals(UnitType.LENGTH)) {
+				assertTrue(entry.getValue().equals(1));
+			}
+		}
+
+		UnitOfMeasure m = sys.getUOM(Unit.METRE);
+		UnitOfMeasure m2 = m.power(2);
+
+		assertTrue(m2.getPowerExponent() == 2);
+	}
 
 	@Test
 	public void testPrefixes() {
@@ -407,8 +430,8 @@ public class TestUnits extends BaseTest {
 		UnitOfMeasure alpha = aOverb.divide(cOverx);
 		UnitOfMeasure beta = alpha.multiply(cOverx);
 		assertTrue(beta.getBaseSymbol().equals(aOverb.getBaseSymbol()));
-		
-		u = aOverb.multiply(cOverx).divide(cOverx);	
+
+		u = aOverb.multiply(cOverx).divide(cOverx);
 		assertTrue(u.getAbscissaUnit().getBaseSymbol().equals(aOverb.getBaseSymbol()));
 
 		UnitOfMeasure axb = sys.createProductUOM(UnitType.UNCLASSIFIED, "", "a.b", "", a, b);
@@ -542,7 +565,7 @@ public class TestUnits extends BaseTest {
 	@Test
 	public void testOperations() throws Exception {
 		sys.clearCache();
-		
+
 		UnitOfMeasure u = null;
 		UnitOfMeasure hour = sys.getHour();
 		UnitOfMeasure metre = sys.getUOM(Unit.METRE);
@@ -825,9 +848,12 @@ public class TestUnits extends BaseTest {
 		sb = new StringBuffer();
 		sb.append("cd/m").append((char) 0xB2);
 		assertTrue(symbol.equals(sb.toString()));
+		
+		symbol = sys.getUOM(Unit.HERTZ).getBaseSymbol();
+		assertTrue(symbol.equals("1/s"));
 
 		symbol = sys.getUOM(Unit.BECQUEREL).getBaseSymbol();
-		assertTrue(symbol.equals("Bq"));
+		assertTrue(symbol.equals("1/s"));
 
 		symbol = sys.getUOM(Unit.BECQUEREL).getSymbol();
 		assertTrue(symbol.equals("Bq"));
@@ -836,9 +862,6 @@ public class TestUnits extends BaseTest {
 		sb = new StringBuffer();
 		sb.append("m").append((char) 0xB2).append("/s").append((char) 0xB2);
 		assertTrue(symbol.equals(sb.toString()));
-
-		symbol = sys.getUOM(Unit.HERTZ).getBaseSymbol();
-		assertTrue(symbol.equals("1/s"));
 
 		assertTrue(sys.getUOM(Unit.KATAL).getBaseSymbol().equals("mol/s"));
 	}
@@ -1448,7 +1471,7 @@ public class TestUnits extends BaseTest {
 
 		u = sys.getOne().divide(min);
 		bd = u.getScalingFactor();
-		assertTrue(isCloseTo(bd, 1d/60d, DELTA6));
+		assertTrue(isCloseTo(bd, 1d / 60d, DELTA6));
 		bd = u.getConversionFactor(sm1);
 		assertTrue(isCloseTo(bd, 0.0166666666666667, DELTA6));
 
@@ -1474,10 +1497,10 @@ public class TestUnits extends BaseTest {
 		assertTrue(isCloseTo(u.getScalingFactor(), 0.0166666666666667, DELTA6));
 
 		u = ftm1.multiply(in);
-		assertTrue(isCloseTo(u.getScalingFactor(), 1d/12d, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1d / 12d, DELTA6));
 
 		u = in.multiply(ftm1);
-		assertTrue(isCloseTo(u.getScalingFactor(), 1d/12d, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1d / 12d, DELTA6));
 
 		u = newtonm1.multiply(newton);
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
@@ -1486,7 +1509,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(u.getBaseSymbol().equals(sys.getOne().getBaseSymbol()));
 
 		u = minminus1.multiply(s);
-		assertTrue(isCloseTo(u.getScalingFactor(), 1d/60d, DELTA6));
+		assertTrue(isCloseTo(u.getScalingFactor(), 1d / 60d, DELTA6));
 
 		sys.unregisterUnit(sys.getUOM(Unit.HERTZ));
 		UnitOfMeasure min1 = min.invert();
@@ -1554,7 +1577,7 @@ public class TestUnits extends BaseTest {
 
 		q2 = q1.convert(s2);
 		assertTrue(q2.getUOM().equals(s2));
-		assertTrue(isCloseTo(q2.getAmount(), 10*3600, DELTA6));
+		assertTrue(isCloseTo(q2.getAmount(), 10 * 3600, DELTA6));
 
 		bd = min.getConversionFactor(sys.getSecond());
 		assertTrue(isCloseTo(bd, 60, DELTA6));
@@ -1678,7 +1701,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(n.getMeasurementType().equals(UnitOfMeasure.MeasurementType.PRODUCT));
 		assertTrue(a.getMeasurementType().equals(UnitOfMeasure.MeasurementType.POWER));
 	}
-	
+
 	@Test
 	public void testScaling() throws Exception {
 		// test scaling factors
@@ -1712,30 +1735,30 @@ public class TestUnits extends BaseTest {
 		sf = min.getScalingFactor();
 		assertTrue(sf == 60d);
 
-		// inversions		
+		// inversions
 		UnitOfMeasure mininv = min.invert();
 		sf = mininv.getScalingFactor();
-		assertTrue(sf == 1d/60d);
+		assertTrue(sf == 1d / 60d);
 		sf = mininv.getConversionFactor(sys.getUOM(Unit.HERTZ));
-		assertTrue(sf == 1d/60d);
-		
+		assertTrue(sf == 1d / 60d);
+
 		// quotient UOM
 		UnitOfMeasure q = sys.createQuotientUOM(sys.getOne(), min);
 		sf = q.getScalingFactor();
 		assertTrue(sf == 1d);
-		
+
 		// power UOM
 		UnitOfMeasure p = sys.createPowerUOM(min, -1);
 		sf = p.getScalingFactor();
 		assertTrue(sf == 1d);
-		
+
 		sf = p.getConversionFactor(sys.getUOM(Unit.HERTZ));
 		assertTrue(sf == 1d / 60d);
 
 		UnitOfMeasure u = p.invert();
 		sf = u.getScalingFactor();
 		assertTrue(sf == 60d);
-		
+
 		sf = min.getConversionFactor(u);
 		assertTrue(isCloseTo(sf, 1.0d, DELTA6));
 
@@ -1756,7 +1779,7 @@ public class TestUnits extends BaseTest {
 		assertTrue(sf == 60d);
 
 		sf = perMin.getScalingFactor();
-		assertTrue(sf == 1d/60d);
+		assertTrue(sf == 1d / 60d);
 
 		UnitOfMeasure perMin1 = perMin.divide(sys.getOne());
 		assertTrue(perMin1.equals(perMin));
@@ -1776,41 +1799,41 @@ public class TestUnits extends BaseTest {
 		inversions[0] = min;
 		divides[0] = min;
 		for (int i = 0; i < count; i++) {
-			inversions[i+1] = inversions[i].invert();
-			divides[i+1] = sys.getOne().divide(divides[i]);
+			inversions[i + 1] = inversions[i].invert();
+			divides[i + 1] = sys.getOne().divide(divides[i]);
 		}
 		sf = inversions[count].getScalingFactor();
 		assertTrue(sf == 60d);
-		
+
 		UnitOfMeasure last = null;
 		for (int i = count; i > 0; i--) {
 			last = divides[i].invert();
-		} 
-		assertTrue(last.equals(min));	
-		
+		}
+		assertTrue(last.equals(min));
+
 		// multiply
 		UnitOfMeasure minsq = min.multiply(min);
 		sf = minsq.getScalingFactor();
 		assertTrue(sf == 3600d);
-		
+
 		sf = minsq.getConversionFactor(s2);
 		assertTrue(isCloseTo(sf, 3600d, DELTA6));
-		
+
 		sf = s2.getConversionFactor(minsq);
-		assertTrue(isCloseTo(sf, 1d/3600d, DELTA6));
-		
+		assertTrue(isCloseTo(sf, 1d / 3600d, DELTA6));
+
 		// power of 2
 		UnitOfMeasure p2 = sys.createPowerUOM(min, 2);
 		sf = p2.getScalingFactor();
 		assertTrue(sf == 1d);
-		
+
 		sf = p2.getConversionFactor(s2);
 		assertTrue(sf == 3600d);
-		
+
 		sf = p2.getConversionFactor(minsq);
 		assertTrue(sf == 1d);
-		
+
 		sf = minsq.getConversionFactor(p2);
-		assertTrue(sf == 1d);	
+		assertTrue(sf == 1d);
 	}
 }
