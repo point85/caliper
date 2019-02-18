@@ -1,5 +1,6 @@
 # Caliper
-The Caliper library project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined.  The Caliper library is also available in C# at https://github.com/point85/CaliperSharp.
+The Caliper library project manages units of measure and conversions between them.  Caliper is designed to be lightweight and simple to use, yet comprehensive.  It includes a large number of pre-defined units of measure commonly found in science, engineering, technology, finance and the household.  These recognized systems of measurement include the International System of Units (SI), International Customary, United States and British Imperial.  Custom units of measure can also be created in the Caliper unified measurement system.  Custom units are specific to a trade or industry such as industrial packaging where units of can, bottle, case and pallet are typical.  Custom units can be added to the unified system for units that are not pre-defined.  This java library is used in an OEE project that can be found at https://github.com/point85/OEE-Designer.
+The Caliper library is also available in C# at https://github.com/point85/CaliperSharp.
 
 A Caliper measurement system is a collection of units of measure where each pair has a linear relationship, i.e. y = ax + b where 'x' is the abscissa unit to be converted, 'y' (the ordinate) is the converted unit, 'a' is the scaling factor and 'b' is the offset.  In the absence of a defined conversion, a unit will always have a conversion to itself.  A bridge unit conversion is defined to convert between the fundamental SI and International customary units of mass (i.e. kilogram to pound mass), length (i.e. metre to foot) and temperature (i.e. Kelvin to Rankine).  These three bridge conversions permit unit of measure conversions between the two systems.  A custom unit can define any bridge conversion such as a bottle to US fluid ounces or litres.
  
@@ -476,15 +477,14 @@ To delete a unit of measure, select it in the tree view then click the "Delete" 
 The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+ and a JPA implementation (e.g. EclipseLink http://www.eclipse.org/eclipselink/#jpa).
 
 The Caliper library and application, when built with Gradle, has the following structure:
- * `/build/docs/javadoc` - javadoc files for the library
- * `/build/libs` - compiled caliper.jar library
+ * `/database` - SQL script files for table and index generation
  * `/doc` - documentation
  * `/src/main/java` - java library source files
  * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol and description.
- * `/src/test/java` - JUnit test java source files for the library
- * `/src/ui/java` - java source files for JPA persistency and JavaFX 8 user interface for the application
- * `/src/ui/resources` - images and XML files for for JPA persistency
- * `/database` - SQL script files for table and index generation
+ * `/src/test/java` - JUnit test java source files for the library and java source files for JPA persistency and JavaFX 8 user interface for the application
+ * `/src/test/resources` - images and XML files for for JPA persistency
+ 
+ The binary jar file can be accessed by clicking on the "releases" link.
 
 ## JSR 363
 JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using double amounts whereas JSR 363 uses Numbers.

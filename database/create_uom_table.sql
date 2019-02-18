@@ -12,27 +12,28 @@ GO
 SET ANSI_PADDING ON
 GO
 
+/****** Unit of Measure table ******/
 IF OBJECT_ID('dbo.UOM', 'U') IS NOT NULL 
-  DROP TABLE dbo.UOM; 
+  DROP TABLE dbo.UOM
 GO
 
 CREATE TABLE [dbo].[UOM](
-	[UOM_KEY] [int] IDENTITY(1,1) NOT NULL,
+	[UOM_KEY] [bigint] IDENTITY(1,1) NOT NULL,
 	[NAME] [nvarchar](50) NULL,
 	[SYMBOL] [nvarchar](16) NOT NULL,
 	[DESCRIPTION] [nvarchar](512) NULL,
 	[CATEGORY] [nvarchar](50) NULL,
 	[UNIT_TYPE] [nvarchar](32) NULL,
 	[UNIT] [nvarchar](32) NULL,
-	[CONV_FACTOR] [numeric](19, 9) NULL,
-	[CONV_UOM_KEY] [int] NULL,
-	[CONV_OFFSET] [numeric](19, 9) NULL,
-	[BRIDGE_FACTOR] [numeric](19, 9) NULL,
-	[BRIDGE_UOM_KEY] [int] NULL,
-	[BRIDGE_OFFSET] [numeric](19, 9) NULL,
-	[UOM1_KEY] [int] NULL,
+	[CONV_FACTOR] float NULL,
+	[CONV_UOM_KEY] [bigint] NULL,
+	[CONV_OFFSET] float NULL,
+	[BRIDGE_FACTOR] float NULL,
+	[BRIDGE_UOM_KEY] [bigint] NULL,
+	[BRIDGE_OFFSET] float NULL,
+	[UOM1_KEY] [bigint] NULL,
 	[EXP1] [int] NULL,
-	[UOM2_KEY] [int] NULL,
+	[UOM2_KEY] [bigint] NULL,
 	[EXP2] [int] NULL,
 	[VERSION] [int] NOT NULL,
  CONSTRAINT [PK_UOM] PRIMARY KEY CLUSTERED 
