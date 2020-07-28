@@ -63,8 +63,7 @@ abstract class Symbolic {
 	/**
 	 * Set the symbol
 	 * 
-	 * @param symbol
-	 *            Symbol
+	 * @param symbol Symbol
 	 */
 	public void setSymbol(String symbol) {
 		this.symbol = symbol;
@@ -100,8 +99,7 @@ abstract class Symbolic {
 	/**
 	 * Set the description
 	 * 
-	 * @param description
-	 *            Description
+	 * @param description Description
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -112,24 +110,24 @@ abstract class Symbolic {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// symbol
-		String symbol = getSymbol();
-		if (symbol != null) {
-			sb.append(" (").append(symbol);
+		String uomSymbol = getSymbol();
+		if (uomSymbol != null) {
+			sb.append(" (").append(uomSymbol);
 		}
 
 		// name
-		String name = getName();
-		if (name != null) {
-			sb.append(", ").append(name);
+		String uomName = getName();
+		if (uomName != null) {
+			sb.append(", ").append(uomName);
 		}
 
 		// description
-		String description = getDescription();
-		if (description != null) {
-			sb.append(", ").append(description).append(')');
+		String uomDescription = getDescription();
+		if (uomDescription != null) {
+			sb.append(", ").append(uomDescription).append(')');
 		}
 
 		return sb.toString();

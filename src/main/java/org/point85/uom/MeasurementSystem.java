@@ -73,7 +73,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * </ul>
  *
  */
-
 public class MeasurementSystem {
 	// name of resource bundle with translatable strings for exception messages
 	private static final String MESSAGE_BUNDLE_NAME = "Message";
@@ -93,7 +92,7 @@ public class MeasurementSystem {
 	// UOM cache manager
 	private CacheManager cacheManager = new CacheManager();
 
-	protected MeasurementSystem() {
+	static {
 		// common unit strings
 		units = ResourceBundle.getBundle(UNIT_BUNDLE_NAME, Locale.getDefault());
 		messages = ResourceBundle.getBundle(MESSAGE_BUNDLE_NAME, Locale.getDefault());
@@ -109,9 +108,13 @@ public class MeasurementSystem {
 		return units.getString(key);
 	}
 
+	protected MeasurementSystem() {
+		// Singleton
+	}
+
 	/**
-	 * Get the unified system of units of measure for International Customary,
-	 * SI, US, British Imperial as well as custom systems
+	 * Get the unified system of units of measure for International Customary, SI,
+	 * US, British Imperial as well as custom systems
 	 * 
 	 * @return {@link MeasurementSystem}
 	 */
@@ -159,11 +162,9 @@ public class MeasurementSystem {
 	/**
 	 * Get the quantity defined as a contant value
 	 * 
-	 * @param constant
-	 *            {@link Constant}
+	 * @param constant {@link Constant}
 	 * @return {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public final Quantity getQuantity(Constant constant) throws Exception {
 		Quantity named = null;
@@ -293,14 +294,14 @@ public class MeasurementSystem {
 			named.setSymbol(units.getString("hubble.symbol"));
 			named.setDescription(units.getString("hubble.desc"));
 			break;
-			
+
 		case CAESIUM_FREQUENCY:
 			named = new Quantity(9192631770d, getUOM(Unit.HERTZ));
 			named.setName(units.getString("caesium.name"));
 			named.setSymbol(units.getString("caesium.symbol"));
 			named.setDescription(units.getString("caesium.desc"));
 			break;
-			
+
 		case LUMINOUS_EFFICACY:
 			UnitOfMeasure kcd = createQuotientUOM(getUOM(Unit.LUMEN), getUOM(Unit.WATT));
 			named = new Quantity(683d, kcd);
@@ -576,7 +577,7 @@ public class MeasurementSystem {
 			break;
 
 		case NEWTON:
-			// force F = m·A (newton)
+			// force F = mA (newton)
 			uom = createProductUOM(UnitType.FORCE, Unit.NEWTON, units.getString("newton.name"),
 					units.getString("newton.symbol"), units.getString("newton.desc"), getUOM(Unit.KILOGRAM),
 					getUOM(Unit.METRE_PER_SEC_SQUARED));
@@ -720,7 +721,7 @@ public class MeasurementSystem {
 			break;
 
 		case CELSIUS:
-			// °C = °K - 273.15
+			// C = K - 273.15
 			uom = createScalarUOM(UnitType.TEMPERATURE, Unit.CELSIUS, units.getString("celsius.name"),
 					units.getString("celsius.symbol"), units.getString("celsius.desc"));
 			uom.setConversion(1.0, getUOM(Unit.KELVIN), 273.15);
@@ -1054,7 +1055,7 @@ public class MeasurementSystem {
 			break;
 
 		case POUND_FORCE:
-			// force F = m·A (lbf)
+			// force F = mA (lbf)
 			uom = createProductUOM(UnitType.FORCE, Unit.POUND_FORCE, units.getString("lbf.name"),
 					units.getString("lbf.symbol"), units.getString("lbf.desc"), getUOM(Unit.POUND_MASS),
 					getUOM(Unit.FEET_PER_SEC_SQUARED));
@@ -1278,11 +1279,9 @@ public class MeasurementSystem {
 	/**
 	 * Get the unit of measure with this unique enumerated type
 	 * 
-	 * @param unit
-	 *            {@link Unit}
+	 * @param unit {@link Unit}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception Exception
+	 * @throws Exception Exception Exception
 	 */
 	public UnitOfMeasure getUOM(Unit unit) throws Exception {
 		UnitOfMeasure uom = cacheManager.getUOM(unit);
@@ -1297,8 +1296,7 @@ public class MeasurementSystem {
 	 * Get the fundamental unit of measure of time
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception Exception
+	 * @throws Exception Exception Exception
 	 */
 	public UnitOfMeasure getSecond() throws Exception {
 		return getUOM(Unit.SECOND);
@@ -1308,8 +1306,7 @@ public class MeasurementSystem {
 	 * Get the unit of measure for a minute (60 seconds)
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getMinute() throws Exception {
 		return getUOM(Unit.MINUTE);
@@ -1319,8 +1316,7 @@ public class MeasurementSystem {
 	 * Get the unit of measure for an hour (60 minutes)
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getHour() throws Exception {
 		return getUOM(Unit.HOUR);
@@ -1330,8 +1326,7 @@ public class MeasurementSystem {
 	 * Get the unit of measure for one day (24 hours)
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getDay() throws Exception {
 		return getUOM(Unit.DAY);
@@ -1341,8 +1336,7 @@ public class MeasurementSystem {
 	 * Get the unit of measure for unity 'one'
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getOne() throws Exception {
 		return getUOM(Unit.ONE);
@@ -1351,8 +1345,7 @@ public class MeasurementSystem {
 	/**
 	 * Get the unit of measure with this unique symbol
 	 * 
-	 * @param symbol
-	 *            Symbol
+	 * @param symbol Symbol
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getUOM(String symbol) {
@@ -1362,8 +1355,7 @@ public class MeasurementSystem {
 	/**
 	 * Get the unit of measure with this base symbol
 	 * 
-	 * @param symbol
-	 *            Base symbol
+	 * @param symbol Base symbol
 	 * @return {@link UnitOfMeasure}
 	 */
 	public UnitOfMeasure getBaseUOM(String symbol) {
@@ -1383,8 +1375,8 @@ public class MeasurementSystem {
 	 * @return List of {@link UnitOfMeasure}
 	 */
 	public List<UnitOfMeasure> getRegisteredUnits() {
-		Collection<UnitOfMeasure> units = cacheManager.getCachedUnits();
-		List<UnitOfMeasure> list = new ArrayList<UnitOfMeasure>(units);
+		Collection<UnitOfMeasure> registeredUnits = cacheManager.getCachedUnits();
+		List<UnitOfMeasure> list = new ArrayList<>(registeredUnits);
 
 		Collections.sort(list, new Comparator<UnitOfMeasure>() {
 			public int compare(UnitOfMeasure unit1, UnitOfMeasure unit2) {
@@ -1426,10 +1418,8 @@ public class MeasurementSystem {
 	/**
 	 * Remove a unit from the cache
 	 * 
-	 * @param uom
-	 *            {@link UnitOfMeasure} to remove
-	 * @throws Exception
-	 *             Exception
+	 * @param uom {@link UnitOfMeasure} to remove
+	 * @throws Exception Exception
 	 */
 	public synchronized void unregisterUnit(UnitOfMeasure uom) throws Exception {
 		if (uom == null) {
@@ -1445,17 +1435,14 @@ public class MeasurementSystem {
 	/**
 	 * Cache this unit of measure
 	 * 
-	 * @param uom
-	 *            {@link UnitOfMeasure} to cache
-	 * @throws Exception
-	 *             Exception
+	 * @param uom {@link UnitOfMeasure} to cache
+	 * @throws Exception Exception
 	 */
 	public void registerUnit(UnitOfMeasure uom) throws Exception {
 		cacheManager.registerUnit(uom);
 	}
 
-	private UnitOfMeasure createUOM(UnitType type, Unit id, String name, String symbol, String description)
-			throws Exception {
+	private UnitOfMeasure createUOM(UnitType type, String name, String symbol, String description) throws Exception {
 
 		if (symbol == null || symbol.length() == 0) {
 			throw new Exception(MeasurementSystem.getMessage("symbol.cannot.be.null"));
@@ -1478,7 +1465,7 @@ public class MeasurementSystem {
 	private UnitOfMeasure createScalarUOM(UnitType type, Unit id, String name, String symbol, String description)
 			throws Exception {
 
-		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		UnitOfMeasure uom = createUOM(type, name, symbol, description);
 		uom.setEnumeration(id);
 		registerUnit(uom);
 
@@ -1488,17 +1475,12 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure that is not a power, product or quotient
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
+	 * @param type        {@link UnitType}
+	 * @param name        Name of unit of measure
+	 * @param symbol      Symbol (must be unique)
+	 * @param description Description of unit of measure
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createScalarUOM(UnitType type, String name, String symbol, String description)
 			throws Exception {
@@ -1508,28 +1490,20 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure that is a unit divided by another unit
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param id
-	 *            {@link Unit}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @param dividend
-	 *            {@link UnitOfMeasure}
-	 * @param divisor
-	 *            {@link UnitOfMeasure}
+	 * @param type        {@link UnitType}
+	 * @param id          {@link Unit}
+	 * @param name        Name of unit of measure
+	 * @param symbol      Symbol (must be unique)
+	 * @param description Description of unit of measure
+	 * @param dividend    {@link UnitOfMeasure}
+	 * @param divisor     {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createQuotientUOM(UnitType type, Unit id, String name, String symbol, String description,
 			UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 
-		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		UnitOfMeasure uom = createUOM(type, name, symbol, description);
 		uom.setQuotientUnits(dividend, divisor);
 		uom.setEnumeration(id);
 		registerUnit(uom);
@@ -1539,21 +1513,14 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure that is a unit divided by another unit
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @param dividend
-	 *            {@link UnitOfMeasure}
-	 * @param divisor
-	 *            {@link UnitOfMeasure}
+	 * @param type        {@link UnitType}
+	 * @param name        Name of unit of measure
+	 * @param symbol      Symbol (must be unique)
+	 * @param description Description of unit of measure
+	 * @param dividend    {@link UnitOfMeasure}
+	 * @param divisor     {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createQuotientUOM(UnitType type, String name, String symbol, String description,
 			UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
@@ -1563,13 +1530,10 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure that is a unit divided by another unit
 	 * 
-	 * @param dividend
-	 *            {@link UnitOfMeasure}
-	 * @param divisor
-	 *            {@link UnitOfMeasure}
+	 * @param dividend {@link UnitOfMeasure}
+	 * @param divisor  {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createQuotientUOM(UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 		if (dividend == null) {
@@ -1587,31 +1551,22 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * Create a unit of measure that is the product of two other units of
-	 * measure
+	 * Create a unit of measure that is the product of two other units of measure
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param id
-	 *            {@link Unit}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @param multiplier
-	 *            {@link UnitOfMeasure} multiplier
-	 * @param multiplicand
-	 *            {@link UnitOfMeasure} multiplicand
+	 * @param type         {@link UnitType}
+	 * @param id           {@link Unit}
+	 * @param name         Name of unit of measure
+	 * @param symbol       Symbol (must be unique)
+	 * @param description  Description of unit of measure
+	 * @param multiplier   {@link UnitOfMeasure} multiplier
+	 * @param multiplicand {@link UnitOfMeasure} multiplicand
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createProductUOM(UnitType type, Unit id, String name, String symbol, String description,
 			UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 
-		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		UnitOfMeasure uom = createUOM(type, name, symbol, description);
 		uom.setProductUnits(multiplier, multiplicand);
 		uom.setEnumeration(id);
 		registerUnit(uom);
@@ -1619,24 +1574,16 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * Create a unit of measure that is the product of two other units of
-	 * measure
+	 * Create a unit of measure that is the product of two other units of measure
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @param multiplier
-	 *            {@link UnitOfMeasure} multiplier
-	 * @param multiplicand
-	 *            {@link UnitOfMeasure} multiplicand
+	 * @param type         {@link UnitType}
+	 * @param name         Name of unit of measure
+	 * @param symbol       Symbol (must be unique)
+	 * @param description  Description of unit of measure
+	 * @param multiplier   {@link UnitOfMeasure} multiplier
+	 * @param multiplicand {@link UnitOfMeasure} multiplicand
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createProductUOM(UnitType type, String name, String symbol, String description,
 			UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
@@ -1644,16 +1591,12 @@ public class MeasurementSystem {
 	}
 
 	/**
-	 * Create a unit of measure that is the product of two other units of
-	 * measure
+	 * Create a unit of measure that is the product of two other units of measure
 	 * 
-	 * @param multiplier
-	 *            {@link UnitOfMeasure} multiplier
-	 * @param multiplicand
-	 *            {@link UnitOfMeasure} multiplicand
+	 * @param multiplier   {@link UnitOfMeasure} multiplier
+	 * @param multiplicand {@link UnitOfMeasure} multiplicand
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createProductUOM(UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 		if (multiplier == null) {
@@ -1673,28 +1616,20 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure with a base raised to an integral power
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param id
-	 *            {@link Unit}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @param base
-	 *            {@link UnitOfMeasure}
-	 * @param exponent
-	 *            Exponent
+	 * @param type        {@link UnitType}
+	 * @param id          {@link Unit}
+	 * @param name        Name of unit of measure
+	 * @param symbol      Symbol (must be unique)
+	 * @param description Description of unit of measure
+	 * @param base        {@link UnitOfMeasure}
+	 * @param exponent    Exponent
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createPowerUOM(UnitType type, Unit id, String name, String symbol, String description,
 			UnitOfMeasure base, int exponent) throws Exception {
 
-		UnitOfMeasure uom = createUOM(type, id, name, symbol, description);
+		UnitOfMeasure uom = createUOM(type, name, symbol, description);
 		uom.setPowerUnit(base, exponent);
 		uom.setEnumeration(id);
 		registerUnit(uom);
@@ -1704,21 +1639,14 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure with a base raised to an integral exponent
 	 * 
-	 * @param type
-	 *            {@link UnitType}
-	 * @param name
-	 *            Name of unit of measure
-	 * @param symbol
-	 *            Symbol (must be unique)
-	 * @param description
-	 *            Description of unit of measure
-	 * @param base
-	 *            {@link UnitOfMeasure}
-	 * @param exponent
-	 *            Exponent
+	 * @param type        {@link UnitType}
+	 * @param name        Name of unit of measure
+	 * @param symbol      Symbol (must be unique)
+	 * @param description Description of unit of measure
+	 * @param base        {@link UnitOfMeasure}
+	 * @param exponent    Exponent
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createPowerUOM(UnitType type, String name, String symbol, String description,
 			UnitOfMeasure base, int exponent) throws Exception {
@@ -1728,13 +1656,10 @@ public class MeasurementSystem {
 	/**
 	 * Create a unit of measure with a base raised to an integral exponent
 	 * 
-	 * @param base
-	 *            {@link UnitOfMeasure}
-	 * @param exponent
-	 *            Exponent
+	 * @param base     {@link UnitOfMeasure}
+	 * @param exponent Exponent
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure createPowerUOM(UnitOfMeasure base, int exponent) throws Exception {
 		if (base == null) {
@@ -1750,14 +1675,11 @@ public class MeasurementSystem {
 	 * Create or fetch a unit of measure linearly scaled by the {@link Prefix}
 	 * against the target unit of measure.
 	 * 
-	 * @param prefix
-	 *            {@link Prefix} Scaling prefix with the scaling factor, e.g.
-	 *            1000
-	 * @param targetUOM
-	 *            abscissa {@link UnitOfMeasure}
+	 * @param prefix    {@link Prefix} Scaling prefix with the scaling factor, e.g.
+	 *                  1000
+	 * @param targetUOM abscissa {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getUOM(Prefix prefix, UnitOfMeasure targetUOM) throws Exception {
 		String symbol = prefix.getSymbol() + targetUOM.getSymbol();
@@ -1784,14 +1706,11 @@ public class MeasurementSystem {
 	 * Create or fetch a unit of measure linearly scaled by the {@link Prefix}
 	 * against the target unit of measure.
 	 * 
-	 * @param prefix
-	 *            {@link Prefix} Scaling prefix with the scaling factor, e.g.
-	 *            1000
-	 * @param unit
-	 *            {@link Unit}
+	 * @param prefix {@link Prefix} Scaling prefix with the scaling factor, e.g.
+	 *               1000
+	 * @param unit   {@link Unit}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getUOM(Prefix prefix, Unit unit) throws Exception {
 		return getUOM(prefix, MeasurementSystem.getSystem().getUOM(unit));
@@ -1800,347 +1719,345 @@ public class MeasurementSystem {
 	/**
 	 * Get all the units of measure of the specified type
 	 * 
-	 * @param type
-	 *            {@link UnitType}
+	 * @param type {@link UnitType}
 	 * @return List of {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public List<UnitOfMeasure> getUnitsOfMeasure(UnitType type) throws Exception {
-		List<UnitOfMeasure> units = new ArrayList<UnitOfMeasure>();
+		List<UnitOfMeasure> uoms = new ArrayList<>();
 
 		switch (type) {
 		case LENGTH:
 			// SI
-			units.add(getUOM(Unit.METRE));
-			units.add(getUOM(Unit.ANGSTROM));
-			units.add(getUOM(Unit.PARSEC));
-			units.add(getUOM(Unit.ASTRONOMICAL_UNIT));
+			uoms.add(getUOM(Unit.METRE));
+			uoms.add(getUOM(Unit.ANGSTROM));
+			uoms.add(getUOM(Unit.PARSEC));
+			uoms.add(getUOM(Unit.ASTRONOMICAL_UNIT));
 
 			// customary
-			units.add(getUOM(Unit.FOOT));
-			units.add(getUOM(Unit.INCH));
-			units.add(getUOM(Unit.MIL));
-			units.add(getUOM(Unit.POINT));
-			units.add(getUOM(Unit.YARD));
-			units.add(getUOM(Unit.MILE));
-			units.add(getUOM(Unit.NAUTICAL_MILE));
-			units.add(getUOM(Unit.FATHOM));
+			uoms.add(getUOM(Unit.FOOT));
+			uoms.add(getUOM(Unit.INCH));
+			uoms.add(getUOM(Unit.MIL));
+			uoms.add(getUOM(Unit.POINT));
+			uoms.add(getUOM(Unit.YARD));
+			uoms.add(getUOM(Unit.MILE));
+			uoms.add(getUOM(Unit.NAUTICAL_MILE));
+			uoms.add(getUOM(Unit.FATHOM));
 			break;
 
 		case MASS:
 			// SI
-			units.add(getUOM(Unit.KILOGRAM));
-			units.add(getUOM(Unit.TONNE));
-			units.add(getUOM(Unit.CARAT));
+			uoms.add(getUOM(Unit.KILOGRAM));
+			uoms.add(getUOM(Unit.TONNE));
+			uoms.add(getUOM(Unit.CARAT));
 
 			// customary
-			units.add(getUOM(Unit.POUND_MASS));
-			units.add(getUOM(Unit.OUNCE));
-			units.add(getUOM(Unit.TROY_OUNCE));
-			units.add(getUOM(Unit.SLUG));
-			units.add(getUOM(Unit.GRAIN));
+			uoms.add(getUOM(Unit.POUND_MASS));
+			uoms.add(getUOM(Unit.OUNCE));
+			uoms.add(getUOM(Unit.TROY_OUNCE));
+			uoms.add(getUOM(Unit.SLUG));
+			uoms.add(getUOM(Unit.GRAIN));
 
 			// US
-			units.add(getUOM(Unit.US_TON));
+			uoms.add(getUOM(Unit.US_TON));
 
 			// British
-			units.add(getUOM(Unit.BR_TON));
+			uoms.add(getUOM(Unit.BR_TON));
 			break;
 
 		case TIME:
-			units.add(getUOM(Unit.SECOND));
-			units.add(getUOM(Unit.MINUTE));
-			units.add(getUOM(Unit.HOUR));
-			units.add(getUOM(Unit.DAY));
-			units.add(getUOM(Unit.WEEK));
-			units.add(getUOM(Unit.JULIAN_YEAR));
+			uoms.add(getUOM(Unit.SECOND));
+			uoms.add(getUOM(Unit.MINUTE));
+			uoms.add(getUOM(Unit.HOUR));
+			uoms.add(getUOM(Unit.DAY));
+			uoms.add(getUOM(Unit.WEEK));
+			uoms.add(getUOM(Unit.JULIAN_YEAR));
 
 			break;
 
 		case ACCELERATION:
-			units.add(getUOM(Unit.METRE_PER_SEC_SQUARED));
-			units.add(getUOM(Unit.FEET_PER_SEC_SQUARED));
+			uoms.add(getUOM(Unit.METRE_PER_SEC_SQUARED));
+			uoms.add(getUOM(Unit.FEET_PER_SEC_SQUARED));
 			break;
 
 		case AREA:
 			// customary
-			units.add(getUOM(Unit.SQUARE_INCH));
-			units.add(getUOM(Unit.SQUARE_FOOT));
-			units.add(getUOM(Unit.SQUARE_YARD));
-			units.add(getUOM(Unit.ACRE));
+			uoms.add(getUOM(Unit.SQUARE_INCH));
+			uoms.add(getUOM(Unit.SQUARE_FOOT));
+			uoms.add(getUOM(Unit.SQUARE_YARD));
+			uoms.add(getUOM(Unit.ACRE));
 
 			// SI
-			units.add(getUOM(Unit.SQUARE_METRE));
-			units.add(getUOM(Unit.HECTARE));
+			uoms.add(getUOM(Unit.SQUARE_METRE));
+			uoms.add(getUOM(Unit.HECTARE));
 
 			break;
 
 		case CATALYTIC_ACTIVITY:
-			units.add(getUOM(Unit.KATAL));
-			units.add(getUOM(Unit.UNIT));
+			uoms.add(getUOM(Unit.KATAL));
+			uoms.add(getUOM(Unit.UNIT));
 			break;
 
 		case COMPUTER_SCIENCE:
-			units.add(getUOM(Unit.BIT));
-			units.add(getUOM(Unit.BYTE));
+			uoms.add(getUOM(Unit.BIT));
+			uoms.add(getUOM(Unit.BYTE));
 			break;
 
 		case DENSITY:
-			units.add(getUOM(Unit.KILOGRAM_PER_CU_METRE));
+			uoms.add(getUOM(Unit.KILOGRAM_PER_CU_METRE));
 			break;
 
 		case DYNAMIC_VISCOSITY:
-			units.add(getUOM(Unit.PASCAL_SECOND));
+			uoms.add(getUOM(Unit.PASCAL_SECOND));
 			break;
 
 		case ELECTRIC_CAPACITANCE:
-			units.add(getUOM(Unit.FARAD));
+			uoms.add(getUOM(Unit.FARAD));
 			break;
 
 		case ELECTRIC_CHARGE:
-			units.add(getUOM(Unit.COULOMB));
+			uoms.add(getUOM(Unit.COULOMB));
 			break;
 
 		case ELECTRIC_CONDUCTANCE:
-			units.add(getUOM(Unit.SIEMENS));
+			uoms.add(getUOM(Unit.SIEMENS));
 			break;
 
 		case ELECTRIC_CURRENT:
-			units.add(getUOM(Unit.AMPERE));
+			uoms.add(getUOM(Unit.AMPERE));
 			break;
 
 		case ELECTRIC_FIELD_STRENGTH:
-			units.add(getUOM(Unit.AMPERE_PER_METRE));
+			uoms.add(getUOM(Unit.AMPERE_PER_METRE));
 			break;
 
 		case ELECTRIC_INDUCTANCE:
-			units.add(getUOM(Unit.HENRY));
+			uoms.add(getUOM(Unit.HENRY));
 			break;
 
 		case ELECTRIC_PERMITTIVITY:
-			units.add(getUOM(Unit.FARAD_PER_METRE));
+			uoms.add(getUOM(Unit.FARAD_PER_METRE));
 			break;
 
 		case ELECTRIC_RESISTANCE:
-			units.add(getUOM(Unit.OHM));
+			uoms.add(getUOM(Unit.OHM));
 			break;
 
 		case ELECTROMOTIVE_FORCE:
-			units.add(getUOM(Unit.VOLT));
+			uoms.add(getUOM(Unit.VOLT));
 			break;
 
 		case ENERGY:
 			// customary
-			units.add(getUOM(Unit.BTU));
-			units.add(getUOM(Unit.FOOT_POUND_FORCE));
+			uoms.add(getUOM(Unit.BTU));
+			uoms.add(getUOM(Unit.FOOT_POUND_FORCE));
 
 			// SI
-			units.add(getUOM(Unit.CALORIE));
-			units.add(getUOM(Unit.NEWTON_METRE));
-			units.add(getUOM(Unit.JOULE));
-			units.add(getUOM(Unit.WATT_HOUR));
-			units.add(getUOM(Unit.ELECTRON_VOLT));
+			uoms.add(getUOM(Unit.CALORIE));
+			uoms.add(getUOM(Unit.NEWTON_METRE));
+			uoms.add(getUOM(Unit.JOULE));
+			uoms.add(getUOM(Unit.WATT_HOUR));
+			uoms.add(getUOM(Unit.ELECTRON_VOLT));
 			break;
 
 		case CURRENCY:
-			units.add(getUOM(Unit.US_DOLLAR));
-			units.add(getUOM(Unit.EURO));
-			units.add(getUOM(Unit.YUAN));
+			uoms.add(getUOM(Unit.US_DOLLAR));
+			uoms.add(getUOM(Unit.EURO));
+			uoms.add(getUOM(Unit.YUAN));
 			break;
 
 		case FORCE:
 			// customary
-			units.add(getUOM(Unit.POUND_FORCE));
+			uoms.add(getUOM(Unit.POUND_FORCE));
 
 			// SI
-			units.add(getUOM(Unit.NEWTON));
+			uoms.add(getUOM(Unit.NEWTON));
 			break;
 
 		case FREQUENCY:
-			units.add(getUOM(Unit.REV_PER_MIN));
-			units.add(getUOM(Unit.HERTZ));
-			units.add(getUOM(Unit.RAD_PER_SEC));
+			uoms.add(getUOM(Unit.REV_PER_MIN));
+			uoms.add(getUOM(Unit.HERTZ));
+			uoms.add(getUOM(Unit.RAD_PER_SEC));
 			break;
 
 		case ILLUMINANCE:
-			units.add(getUOM(Unit.LUX));
+			uoms.add(getUOM(Unit.LUX));
 			break;
 
 		case INTENSITY:
-			units.add(getUOM(Unit.DECIBEL));
+			uoms.add(getUOM(Unit.DECIBEL));
 			break;
 
 		case IRRADIANCE:
-			units.add(getUOM(Unit.WATTS_PER_SQ_METRE));
+			uoms.add(getUOM(Unit.WATTS_PER_SQ_METRE));
 			break;
 
 		case KINEMATIC_VISCOSITY:
-			units.add(getUOM(Unit.SQUARE_METRE_PER_SEC));
+			uoms.add(getUOM(Unit.SQUARE_METRE_PER_SEC));
 			break;
 
 		case LUMINOSITY:
-			units.add(getUOM(Unit.CANDELA));
+			uoms.add(getUOM(Unit.CANDELA));
 			break;
 
 		case LUMINOUS_FLUX:
-			units.add(getUOM(Unit.LUMEN));
+			uoms.add(getUOM(Unit.LUMEN));
 			break;
 
 		case MAGNETIC_FLUX:
-			units.add(getUOM(Unit.WEBER));
+			uoms.add(getUOM(Unit.WEBER));
 			break;
 
 		case MAGNETIC_FLUX_DENSITY:
-			units.add(getUOM(Unit.TESLA));
+			uoms.add(getUOM(Unit.TESLA));
 			break;
 
 		case MASS_FLOW:
-			units.add(getUOM(Unit.KILOGRAM_PER_SEC));
+			uoms.add(getUOM(Unit.KILOGRAM_PER_SEC));
 			break;
 
 		case MOLAR_CONCENTRATION:
-			units.add(getUOM(Unit.MOLARITY));
+			uoms.add(getUOM(Unit.MOLARITY));
 			break;
 
 		case PLANE_ANGLE:
-			units.add(getUOM(Unit.DEGREE));
-			units.add(getUOM(Unit.RADIAN));
-			units.add(getUOM(Unit.ARC_SECOND));
+			uoms.add(getUOM(Unit.DEGREE));
+			uoms.add(getUOM(Unit.RADIAN));
+			uoms.add(getUOM(Unit.ARC_SECOND));
 			break;
 
 		case POWER:
-			units.add(getUOM(Unit.HP));
-			units.add(getUOM(Unit.WATT));
+			uoms.add(getUOM(Unit.HP));
+			uoms.add(getUOM(Unit.WATT));
 			break;
 
 		case PRESSURE:
 			// customary
-			units.add(getUOM(Unit.PSI));
-			units.add(getUOM(Unit.IN_HG));
+			uoms.add(getUOM(Unit.PSI));
+			uoms.add(getUOM(Unit.IN_HG));
 
 			// SI
-			units.add(getUOM(Unit.PASCAL));
-			units.add(getUOM(Unit.ATMOSPHERE));
-			units.add(getUOM(Unit.BAR));
+			uoms.add(getUOM(Unit.PASCAL));
+			uoms.add(getUOM(Unit.ATMOSPHERE));
+			uoms.add(getUOM(Unit.BAR));
 			break;
 
 		case RADIATION_DOSE_ABSORBED:
-			units.add(getUOM(Unit.GRAY));
+			uoms.add(getUOM(Unit.GRAY));
 			break;
 
 		case RADIATION_DOSE_EFFECTIVE:
-			units.add(getUOM(Unit.SIEVERT));
+			uoms.add(getUOM(Unit.SIEVERT));
 			break;
 
 		case RADIATION_DOSE_RATE:
-			units.add(getUOM(Unit.SIEVERTS_PER_HOUR));
+			uoms.add(getUOM(Unit.SIEVERTS_PER_HOUR));
 			break;
 
 		case RADIOACTIVITY:
-			units.add(getUOM(Unit.BECQUEREL));
+			uoms.add(getUOM(Unit.BECQUEREL));
 			break;
 
 		case RECIPROCAL_LENGTH:
-			units.add(getUOM(Unit.DIOPTER));
+			uoms.add(getUOM(Unit.DIOPTER));
 			break;
 
 		case SOLID_ANGLE:
-			units.add(getUOM(Unit.STERADIAN));
+			uoms.add(getUOM(Unit.STERADIAN));
 			break;
 
 		case SUBSTANCE_AMOUNT:
-			units.add(getUOM(Unit.MOLE));
-			units.add(getUOM(Unit.EQUIVALENT));
-			units.add(getUOM(Unit.INTERNATIONAL_UNIT));
+			uoms.add(getUOM(Unit.MOLE));
+			uoms.add(getUOM(Unit.EQUIVALENT));
+			uoms.add(getUOM(Unit.INTERNATIONAL_UNIT));
 			break;
 
 		case TEMPERATURE:
 			// customary
-			units.add(getUOM(Unit.RANKINE));
-			units.add(getUOM(Unit.FAHRENHEIT));
+			uoms.add(getUOM(Unit.RANKINE));
+			uoms.add(getUOM(Unit.FAHRENHEIT));
 
 			// SI
-			units.add(getUOM(Unit.KELVIN));
-			units.add(getUOM(Unit.CELSIUS));
+			uoms.add(getUOM(Unit.KELVIN));
+			uoms.add(getUOM(Unit.CELSIUS));
 			break;
 
 		case TIME_SQUARED:
-			units.add(getUOM(Unit.SQUARE_SECOND));
+			uoms.add(getUOM(Unit.SQUARE_SECOND));
 			break;
 
 		case UNCLASSIFIED:
 			break;
 
 		case UNITY:
-			units.add(getUOM(Unit.ONE));
-			units.add(getUOM(Unit.PERCENT));
+			uoms.add(getUOM(Unit.ONE));
+			uoms.add(getUOM(Unit.PERCENT));
 			break;
 
 		case VELOCITY:
 			// customary
-			units.add(getUOM(Unit.FEET_PER_SEC));
-			units.add(getUOM(Unit.MILES_PER_HOUR));
-			units.add(getUOM(Unit.KNOT));
+			uoms.add(getUOM(Unit.FEET_PER_SEC));
+			uoms.add(getUOM(Unit.MILES_PER_HOUR));
+			uoms.add(getUOM(Unit.KNOT));
 
 			// SI
-			units.add(getUOM(Unit.METRE_PER_SEC));
+			uoms.add(getUOM(Unit.METRE_PER_SEC));
 			break;
 
 		case VOLUME:
 			// British
-			units.add(getUOM(Unit.BR_BUSHEL));
-			units.add(getUOM(Unit.BR_CUP));
-			units.add(getUOM(Unit.BR_FLUID_OUNCE));
-			units.add(getUOM(Unit.BR_GALLON));
-			units.add(getUOM(Unit.BR_PINT));
-			units.add(getUOM(Unit.BR_QUART));
-			units.add(getUOM(Unit.BR_TABLESPOON));
-			units.add(getUOM(Unit.BR_TEASPOON));
+			uoms.add(getUOM(Unit.BR_BUSHEL));
+			uoms.add(getUOM(Unit.BR_CUP));
+			uoms.add(getUOM(Unit.BR_FLUID_OUNCE));
+			uoms.add(getUOM(Unit.BR_GALLON));
+			uoms.add(getUOM(Unit.BR_PINT));
+			uoms.add(getUOM(Unit.BR_QUART));
+			uoms.add(getUOM(Unit.BR_TABLESPOON));
+			uoms.add(getUOM(Unit.BR_TEASPOON));
 
 			// customary
-			units.add(getUOM(Unit.CUBIC_FOOT));
-			units.add(getUOM(Unit.CUBIC_YARD));
-			units.add(getUOM(Unit.CUBIC_INCH));
-			units.add(getUOM(Unit.CORD));
+			uoms.add(getUOM(Unit.CUBIC_FOOT));
+			uoms.add(getUOM(Unit.CUBIC_YARD));
+			uoms.add(getUOM(Unit.CUBIC_INCH));
+			uoms.add(getUOM(Unit.CORD));
 
 			// SI
-			units.add(getUOM(Unit.CUBIC_METRE));
-			units.add(getUOM(Unit.LITRE));
+			uoms.add(getUOM(Unit.CUBIC_METRE));
+			uoms.add(getUOM(Unit.LITRE));
 
 			// US
-			units.add(getUOM(Unit.US_BARREL));
-			units.add(getUOM(Unit.US_BUSHEL));
-			units.add(getUOM(Unit.US_CUP));
-			units.add(getUOM(Unit.US_FLUID_OUNCE));
-			units.add(getUOM(Unit.US_GALLON));
-			units.add(getUOM(Unit.US_PINT));
-			units.add(getUOM(Unit.US_QUART));
-			units.add(getUOM(Unit.US_TABLESPOON));
-			units.add(getUOM(Unit.US_TEASPOON));
+			uoms.add(getUOM(Unit.US_BARREL));
+			uoms.add(getUOM(Unit.US_BUSHEL));
+			uoms.add(getUOM(Unit.US_CUP));
+			uoms.add(getUOM(Unit.US_FLUID_OUNCE));
+			uoms.add(getUOM(Unit.US_GALLON));
+			uoms.add(getUOM(Unit.US_PINT));
+			uoms.add(getUOM(Unit.US_QUART));
+			uoms.add(getUOM(Unit.US_TABLESPOON));
+			uoms.add(getUOM(Unit.US_TEASPOON));
 			break;
 
 		case VOLUMETRIC_FLOW:
-			units.add(getUOM(Unit.CUBIC_METRE_PER_SEC));
-			units.add(getUOM(Unit.CUBIC_FEET_PER_SEC));
+			uoms.add(getUOM(Unit.CUBIC_METRE_PER_SEC));
+			uoms.add(getUOM(Unit.CUBIC_FEET_PER_SEC));
 			break;
 
 		default:
 			break;
 		}
 
-		return units;
+		return uoms;
 	}
 
 	private class CacheManager {
 		// registry by unit symbol
-		private Map<String, UnitOfMeasure> symbolRegistry = new ConcurrentHashMap<String, UnitOfMeasure>();
+		private Map<String, UnitOfMeasure> symbolRegistry = new ConcurrentHashMap<>();
 
 		// registry by base symbol
-		private Map<String, UnitOfMeasure> baseRegistry = new ConcurrentHashMap<String, UnitOfMeasure>();
+		private Map<String, UnitOfMeasure> baseRegistry = new ConcurrentHashMap<>();
 
 		// registry for units by enumeration
-		private Map<Unit, UnitOfMeasure> unitRegistry = new ConcurrentHashMap<Unit, UnitOfMeasure>();
+		private Map<Unit, UnitOfMeasure> unitRegistry = new ConcurrentHashMap<>();
 
 		private UnitOfMeasure getUOM(Unit unit) {
 			return unitRegistry.get(unit);

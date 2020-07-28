@@ -88,7 +88,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	// UOM types
 	public enum MeasurementType {
 		SCALAR, PRODUCT, QUOTIENT, POWER
-	};
+	}
 
 	// maximum length of the symbol
 	private static final int MAX_SYMBOL_LENGTH = 16;
@@ -103,8 +103,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private static final char RP = ')';
 	private static final char ONE_CHAR = '1';
 
-	// registry of unit conversion factor
-	private transient Map<UnitOfMeasure, Double> conversionRegistry = new ConcurrentHashMap<UnitOfMeasure, Double>();
+	// registry of unit conversion factor (not persistent)
+	private transient Map<UnitOfMeasure, Double> conversionRegistry = new ConcurrentHashMap<>();
 
 	// conversion to another Unit of Measure in the same recognized measurement
 	// system (y = ax + b)
@@ -132,7 +132,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	// x-axis unit
 	private UnitOfMeasure bridgeAbscissaUnit;
 
-	// cached base symbol
+	// cached base symbol (not persistent)
 	private transient String baseSymbol;
 
 	// user-defined category
@@ -173,12 +173,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Check to see if the exponent is valid
 	 * 
-	 * @param exponent
-	 *            Power exponent
+	 * @param exponent Power exponent
 	 * @return True if it is a valid exponent
 	 */
 	public static boolean isValidExponent(Integer exponent) {
-		return (exponent == null) ? false : true;
+		return (exponent != null);
 	}
 
 	/**
@@ -193,8 +192,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the database record's primary key
 	 * 
-	 * @param key
-	 *            Key
+	 * @param key Key
 	 */
 	public void setKey(Long key) {
 		this.primaryKey = key;
@@ -212,8 +210,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the optimistic locking version
 	 * 
-	 * @param version
-	 *            Version
+	 * @param version Version
 	 */
 	public void setVersion(Integer version) {
 		this.version = version;
@@ -328,12 +325,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * Get the unit of measure corresponding to the base symbol
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure getBaseUOM() throws Exception {
-		String baseSymbol = getBaseSymbol();
-		return MeasurementSystem.getSystem().getBaseUOM(baseSymbol);
+		String base = getBaseSymbol();
+		return MeasurementSystem.getSystem().getBaseUOM(base);
 	}
 
 	/**
@@ -366,14 +362,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the conversion to another fundamental unit of measure
 	 * 
-	 * @param scalingFactor
-	 *            Scaling factor
-	 * @param abscissaUnit
-	 *            X-axis unit
-	 * @param offset
-	 *            Offset
-	 * @throws Exception
-	 *             Exception
+	 * @param scalingFactor Scaling factor
+	 * @param abscissaUnit  X-axis unit
+	 * @param offset        Offset
+	 * @throws Exception Exception
 	 */
 	public void setBridgeConversion(double scalingFactor, UnitOfMeasure abscissaUnit, double offset) throws Exception {
 		this.bridgeScalingFactor = scalingFactor;
@@ -384,8 +376,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Compare this unit of measure to another one.
 	 * 
-	 * @param other
-	 *            unit of measure
+	 * @param other unit of measure
 	 * @return -1 if less than, 0 if equal and 1 if greater than
 	 */
 	@Override
@@ -405,8 +396,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the unit's enumerated type
 	 * 
-	 * @param unit
-	 *            {@link Unit}
+	 * @param unit {@link Unit}
 	 */
 	public void setEnumeration(Unit unit) {
 		this.unit = unit;
@@ -424,8 +414,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the type of the unit.
 	 * 
-	 * @param unitType
-	 *            {@link UnitType}
+	 * @param unitType {@link UnitType}
 	 */
 	public void setUnitType(UnitType unitType) {
 		this.unitType = unitType;
@@ -443,8 +432,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the category
 	 * 
-	 * @param category
-	 *            Category
+	 * @param category Category
 	 */
 	public void setCategory(String category) {
 		this.category = category;
@@ -487,7 +475,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	@Override
 	public boolean equals(Object other) {
 
-		if (other == null || !(other instanceof UnitOfMeasure)) {
+		if (!(other instanceof UnitOfMeasure)) {
 			return false;
 		}
 		UnitOfMeasure otherUnit = (UnitOfMeasure) other;
@@ -517,7 +505,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		if (Double.valueOf(getOffset()).compareTo(Double.valueOf(otherUnit.getOffset())) != 0) {
 			return false;
 		}
-
 		return true;
 	}
 
@@ -545,7 +532,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		Map<UnitOfMeasure, Integer> otherMap = otherReducer.getTerms();
 
 		// create a map of the unit of measure powers
-		Map<UnitOfMeasure, Integer> resultMap = new HashMap<UnitOfMeasure, Integer>();
+		Map<UnitOfMeasure, Integer> resultMap = new HashMap<>();
 
 		// iterate over the multiplier's unit map
 		for (Entry<UnitOfMeasure, Integer> thisEntry : thisMap.entrySet()) {
@@ -609,8 +596,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			result.setSymbol(generateIntermediateSymbol());
 		}
 
-		String baseSymbol = resultReducer.buildBaseString();
-		UnitOfMeasure baseUOM = MeasurementSystem.getSystem().getBaseUOM(baseSymbol);
+		String base = resultReducer.buildBaseString();
+		UnitOfMeasure baseUOM = MeasurementSystem.getSystem().getBaseUOM(base);
 
 		if (baseUOM != null) {
 			// there is a conversion to the base UOM
@@ -634,11 +621,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Multiply two units of measure to create a third one.
 	 * 
-	 * @param multiplicand
-	 *            {@link UnitOfMeasure}
+	 * @param multiplicand {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure multiply(UnitOfMeasure multiplicand) throws Exception {
 		return multiplyOrDivide(multiplicand, false);
@@ -647,11 +632,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Divide two units of measure to create a third one.
 	 * 
-	 * @param divisor
-	 *            {@link UnitOfMeasure}
+	 * @param divisor {@link UnitOfMeasure}
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure divide(UnitOfMeasure divisor) throws Exception {
 		return multiplyOrDivide(divisor, true);
@@ -661,8 +644,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * Invert a unit of measure to create a new one
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure invert() throws Exception {
 		UnitOfMeasure inverted = null;
@@ -681,8 +663,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * For example a Newton is a kg.m/s2.
 	 * 
 	 * @return Base symbol
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public synchronized String getBaseSymbol() throws Exception {
 		if (baseSymbol == null) {
@@ -702,14 +683,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * Define a conversion with the specified scaling factor, abscissa unit of
 	 * measure and scaling factor.
 	 * 
-	 * @param scalingFactor
-	 *            Factor
-	 * @param abscissaUnit
-	 *            {@link UnitOfMeasure}
-	 * @param offset
-	 *            Offset
-	 * @throws Exception
-	 *             Exception
+	 * @param scalingFactor Factor
+	 * @param abscissaUnit  {@link UnitOfMeasure}
+	 * @param offset        Offset
+	 * @throws Exception Exception
 	 */
 	public void setConversion(double scalingFactor, UnitOfMeasure abscissaUnit, double offset) throws Exception {
 		if (abscissaUnit == null) {
@@ -739,10 +716,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * Define a conversion with a scaling factor of 1 and offset of 0 for the
 	 * specified abscissa unit of measure.
 	 * 
-	 * @param abscissaUnit
-	 *            {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @param abscissaUnit {@link UnitOfMeasure}
+	 * @throws Exception Exception
 	 */
 	public void setConversion(UnitOfMeasure abscissaUnit) throws Exception {
 		this.setConversion(1.0d, abscissaUnit, 0.0d);
@@ -752,12 +727,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * Define a conversion with an offset of 0 for the specified scaling factor and
 	 * abscissa unit of measure.
 	 * 
-	 * @param scalingFactor
-	 *            Factor
-	 * @param abscissaUnit
-	 *            {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @param scalingFactor Factor
+	 * @param abscissaUnit  {@link UnitOfMeasure}
+	 * @throws Exception Exception
 	 */
 	public void setConversion(double scalingFactor, UnitOfMeasure abscissaUnit) throws Exception {
 		this.setConversion(scalingFactor, abscissaUnit, 0.0d);
@@ -775,8 +747,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the unit of measure's 'b' offset (intercept) for the relation y = ax + b.
 	 * 
-	 * @param offset
-	 *            Offset
+	 * @param offset Offset
 	 */
 	public void setOffset(double offset) {
 		this.offset = offset;
@@ -794,8 +765,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the unit of measure's 'a' factor (slope) for the relation y = ax + b.
 	 * 
-	 * @param scalingFactor
-	 *            Scaling factor
+	 * @param scalingFactor Scaling factor
 	 */
 	public void setScalingFactor(double scalingFactor) {
 		this.scalingFactor = scalingFactor;
@@ -813,8 +783,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the unit of measure's x-axis unit of measure for the relation y = ax + b.
 	 * 
-	 * @param abscissaUnit
-	 *            {@link UnitOfMeasure}
+	 * @param abscissaUnit {@link UnitOfMeasure}
 	 */
 	public void setAbscissaUnit(UnitOfMeasure abscissaUnit) {
 		this.abscissaUnit = abscissaUnit;
@@ -824,19 +793,19 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		UnitOfMeasure thisAbscissa = getAbscissaUnit();
 		double thisFactor = getScalingFactor();
 
-		double scalingFactor = 0.0d;
+		double unitFactor;
 
 		if (thisAbscissa.equals(targetUOM)) {
 			// direct conversion
-			scalingFactor = thisFactor;
+			unitFactor = thisFactor;
 		} else {
 			// indirect conversion
-			scalingFactor = convertUnit(targetUOM);
+			unitFactor = convertUnit(targetUOM);
 		}
-		return scalingFactor;
+		return unitFactor;
 	}
 
-	private double convertUnit(UnitOfMeasure targetUOM) throws Exception {
+	private double convertUnit(UnitOfMeasure targetUOM) {
 
 		// get path factors in each system
 		PathParameters thisParameters = traversePath();
@@ -856,9 +825,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		}
 
 		// new path amount
-		double scalingFactor = thisPathFactor / targetPathFactor;
-
-		return scalingFactor;
+		return thisPathFactor / targetPathFactor;
 	}
 
 	private static void checkTypes(UnitOfMeasure uom1, UnitOfMeasure uom2) throws Exception {
@@ -876,11 +843,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Get the factor to convert to the unit of measure
 	 * 
-	 * @param targetUOM
-	 *            Target {@link UnitOfMeasure}
+	 * @param targetUOM Target {@link UnitOfMeasure}
 	 * @return conversion factor
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public double getConversionFactor(UnitOfMeasure targetUOM) throws Exception {
 		if (targetUOM == null) {
@@ -949,15 +914,15 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 	}
 
-	private final PathParameters traversePath() throws Exception {
+	private final PathParameters traversePath() {
 		UnitOfMeasure pathUOM = this;
 		double pathFactor = 1.0d;
 
 		while (true) {
-			double scalingFactor = pathUOM.getScalingFactor();
+			double unitFactor = pathUOM.getScalingFactor();
 			UnitOfMeasure abscissa = pathUOM.getAbscissaUnit();
 
-			pathFactor = pathFactor * scalingFactor;
+			pathFactor = pathFactor * unitFactor;
 
 			if (pathUOM.equals(abscissa)) {
 				break;
@@ -977,7 +942,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * @return True if it does not
 	 */
 	public boolean isTerminal() {
-		return this.equals(getAbscissaUnit()) ? true : false;
+		return this.equals(getAbscissaUnit());
 	}
 
 	/**
@@ -986,7 +951,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * @return String representation
 	 */
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		ResourceBundle symbolBundle = MeasurementSystem.getSystem().getSymbols();
 
 		// type
@@ -1007,7 +972,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		// scaling factor
 		double factor = getScalingFactor();
 		if (Double.valueOf(factor).compareTo(1.0d) != 0) {
-			sb.append(Double.valueOf(factor).toString()).append(MULT);
+			sb.append(Double.toString(factor)).append(MULT);
 		}
 
 		// abscissa unit
@@ -1017,9 +982,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		}
 
 		// offset
-		double offset = getOffset();
-		if (Double.valueOf(offset).compareTo(0.0d) != 0) {
-			sb.append(" + ").append(Double.valueOf(getOffset()).toString());
+		double uomOffset = getOffset();
+		if (Double.valueOf(uomOffset).compareTo(0.0d) != 0) {
+			sb.append(" + ").append(Double.toString(getOffset()));
 		}
 
 		sb.append(", ").append(symbolBundle.getString("base.text")).append(' ');
@@ -1037,12 +1002,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the base unit of measure and exponent
 	 * 
-	 * @param base
-	 *            Base unit of measure
-	 * @param exponent
-	 *            Exponent
-	 * @throws Exception
-	 *             Exception
+	 * @param base     Base unit of measure
+	 * @param exponent Exponent
+	 * @throws Exception Exception
 	 */
 	public void setPowerUnit(UnitOfMeasure base, Integer exponent) throws Exception {
 		if (base == null) {
@@ -1109,12 +1071,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the multiplier and multiplicand
 	 * 
-	 * @param multiplier
-	 *            Multiplier
-	 * @param multiplicand
-	 *            Multiplicand
-	 * @throws Exception
-	 *             Exception
+	 * @param multiplier   Multiplier
+	 * @param multiplicand Multiplicand
+	 * @throws Exception Exception
 	 */
 	public void setProductUnits(UnitOfMeasure multiplier, UnitOfMeasure multiplicand) throws Exception {
 		if (multiplier == null) {
@@ -1151,12 +1110,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Set the dividend and divisor
 	 * 
-	 * @param dividend
-	 *            Dividend
-	 * @param divisor
-	 *            Divisor
-	 * @throws Exception
-	 *             Exception
+	 * @param dividend Dividend
+	 * @param divisor  Divisor
+	 * @throws Exception Exception
 	 */
 	public void setQuotientUnits(UnitOfMeasure dividend, UnitOfMeasure divisor) throws Exception {
 		if (dividend == null) {
@@ -1194,8 +1150,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * Get the most reduced units of measure
 	 * 
 	 * @return Map of {@link UnitOfMeasure} and exponent
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Map<UnitOfMeasure, Integer> getBaseUnitsOfMeasure() throws Exception {
 		return getReducer().getTerms();
@@ -1204,11 +1159,9 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	/**
 	 * Create a power unit of measure from this unit of measure
 	 * 
-	 * @param exponent
-	 *            Power
+	 * @param exponent Power
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure power(int exponent) throws Exception {
 		return MeasurementSystem.getSystem().createPowerUOM(this, exponent);
@@ -1219,8 +1172,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	 * matching unit type.
 	 * 
 	 * @return {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public UnitOfMeasure classify() throws Exception {
 
@@ -1235,8 +1187,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		// try to find this map in the unit types
 		UnitType matchedType = UnitType.UNCLASSIFIED;
 
-		for (UnitType unitType : UnitType.values()) {
-			Map<UnitType, Integer> unitTypeMap = unitType.getTypeMap();
+		for (UnitType uomType : UnitType.values()) {
+			Map<UnitType, Integer> unitTypeMap = uomType.getTypeMap();
 
 			if (unitTypeMap.entrySet().size() != uomBaseMap.size()) {
 				// not a match
@@ -1258,7 +1210,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			}
 
 			if (match) {
-				matchedType = unitType;
+				matchedType = uomType;
 				break;
 			}
 		}
@@ -1297,7 +1249,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		private static final int STARTING_LEVEL = -1;
 
 		// UOMs and their exponents
-		private Map<UnitOfMeasure, Integer> terms = new HashMap<UnitOfMeasure, Integer>();
+		private Map<UnitOfMeasure, Integer> terms = new HashMap<>();
 
 		// the overall scaling factor
 		private double mapScalingFactor = 1.0d;
@@ -1333,7 +1285,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			explodeRecursively(unit, STARTING_LEVEL);
 		}
 
-		private void explodeRecursively(UnitOfMeasure unit, int level) throws Exception {
+		private void explodeRecursively(final UnitOfMeasure unit, int level) throws Exception {
 			if (++counter > MAX_RECURSIONS) {
 				String msg = MessageFormat.format(MeasurementSystem.getMessage("circular.references"),
 						unit.getSymbol());
@@ -1344,25 +1296,25 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			level++;
 
 			// scaling factor to abscissa unit
-			double scalingFactor = unit.getScalingFactor();
+			double unitFactor = unit.getScalingFactor();
 
 			// explode the abscissa unit
-			UnitOfMeasure abscissaUnit = unit.getAbscissaUnit();
+			UnitOfMeasure uomUnit = unit.getAbscissaUnit();
 
-			UnitOfMeasure uom1 = abscissaUnit.getUOM1();
-			UnitOfMeasure uom2 = abscissaUnit.getUOM2();
+			UnitOfMeasure uomOne = uomUnit.getUOM1();
+			UnitOfMeasure uomTwo = uomUnit.getUOM2();
 
-			Integer exp1 = abscissaUnit.getExponent1();
-			Integer exp2 = abscissaUnit.getExponent2();
+			Integer exp1 = uomUnit.getExponent1();
+			Integer exp2 = uomUnit.getExponent2();
 
 			// scaling
-			if (pathExponents.size() > 0) {
+			if (!pathExponents.isEmpty()) {
 				int lastExponent = pathExponents.get(pathExponents.size() - 1);
 
 				// compute the overall scaling factor
 				double factor = 1.0d;
 				for (int i = 0; i < Math.abs(lastExponent); i++) {
-					factor = factor * scalingFactor;
+					factor = factor * unitFactor;
 				}
 
 				if (lastExponent < 0) {
@@ -1371,15 +1323,15 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 					mapScalingFactor = mapScalingFactor * factor;
 				}
 			} else {
-				mapScalingFactor = scalingFactor;
+				mapScalingFactor = unitFactor;
 			}
 
-			if (uom1 == null) {
-				if (!abscissaUnit.isTerminal()) {
+			if (uomOne == null) {
+				if (!uomUnit.isTerminal()) {
 					// keep exploding down the conversion path
 					double currentMapFactor = mapScalingFactor;
 					mapScalingFactor = 1.0d;
-					explodeRecursively(abscissaUnit, STARTING_LEVEL);
+					explodeRecursively(uomUnit, STARTING_LEVEL);
 					mapScalingFactor = mapScalingFactor * currentMapFactor;
 				} else {
 
@@ -1390,23 +1342,23 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 						pathExponent = pathExponent * exp;
 					}
 
-					boolean invert = pathExponent < 0 ? true : false;
+					boolean invert = pathExponent < 0;
 
 					for (int i = 0; i < Math.abs(pathExponent); i++) {
-						addTerm(abscissaUnit, invert);
+						addTerm(uomUnit, invert);
 					}
 				}
 			} else {
 				// explode UOM #1
 				pathExponents.add(exp1);
-				explodeRecursively(uom1, level);
+				explodeRecursively(uomOne, level);
 				pathExponents.remove(level);
 			}
 
-			if (uom2 != null) {
+			if (uomTwo != null) {
 				// explode UOM #2
 				pathExponents.add(exp2);
-				explodeRecursively(uom2, level);
+				explodeRecursively(uomTwo, level);
 				pathExponents.remove(level);
 			}
 
@@ -1461,10 +1413,10 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 			int denominatorCount = 0;
 
 			// sort units by symbol (ascending)
-			SortedSet<UnitOfMeasure> keys = new TreeSet<UnitOfMeasure>(terms.keySet());
+			SortedSet<UnitOfMeasure> keys = new TreeSet<>(terms.keySet());
 
-			for (UnitOfMeasure unit : keys) {
-				int power = terms.get(unit);
+			for (UnitOfMeasure keyUnit : keys) {
+				int power = terms.get(keyUnit);
 
 				if (power < 0) {
 					// negative, put in denominator
@@ -1472,8 +1424,8 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 						denominator.append(MULT);
 					}
 
-					if (!unit.equals(MeasurementSystem.getSystem().getOne())) {
-						denominator.append(unit.getSymbol());
+					if (!keyUnit.equals(MeasurementSystem.getSystem().getOne())) {
+						denominator.append(keyUnit.getSymbol());
 						denominatorCount++;
 					}
 
@@ -1486,13 +1438,13 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 							denominator.append(POW).append(Math.abs(power));
 						}
 					}
-				} else if (power >= 1 && !unit.equals(MeasurementSystem.getSystem().getOne())) {
+				} else if (power >= 1 && !keyUnit.equals(MeasurementSystem.getSystem().getOne())) {
 					// positive, put in numerator
 					if (numerator.length() > 0) {
 						numerator.append(MULT);
 					}
 
-					numerator.append(unit.getSymbol());
+					numerator.append(keyUnit.getSymbol());
 					numeratorCount++;
 
 					if (power > 1) {

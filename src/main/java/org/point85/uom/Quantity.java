@@ -51,10 +51,8 @@ public class Quantity extends Symbolic {
 	/**
 	 * Create a quantity with an amount and unit of measure
 	 * 
-	 * @param amount
-	 *            Amount
-	 * @param uom
-	 *            {@link UnitOfMeasure}
+	 * @param amount Amount
+	 * @param uom    {@link UnitOfMeasure}
 	 */
 	public Quantity(double amount, UnitOfMeasure uom) {
 		this.amount = amount;
@@ -64,14 +62,10 @@ public class Quantity extends Symbolic {
 	/**
 	 * Create a quantity with an amount, prefix and unit
 	 * 
-	 * @param amount
-	 *            Amount
-	 * @param prefix
-	 *            {@link Prefix}
-	 * @param unit
-	 *            {@link Unit}
-	 * @throws Exception
-	 *             Exception
+	 * @param amount Amount
+	 * @param prefix {@link Prefix}
+	 * @param unit   {@link Unit}
+	 * @throws Exception Exception
 	 */
 	public Quantity(double amount, Prefix prefix, Unit unit) throws Exception {
 		this(amount, MeasurementSystem.getSystem().getUOM(prefix, unit));
@@ -80,12 +74,9 @@ public class Quantity extends Symbolic {
 	/**
 	 * Create a quantity with a String amount and unit of measure
 	 * 
-	 * @param amount
-	 *            Amount
-	 * @param uom
-	 *            {@link UnitOfMeasure}
-	 * @throws Exception
-	 *             Exception
+	 * @param amount Amount
+	 * @param uom    {@link UnitOfMeasure}
+	 * @throws Exception Exception
 	 */
 	public Quantity(String amount, UnitOfMeasure uom) throws Exception {
 		this.amount = createAmount(amount);
@@ -95,12 +86,9 @@ public class Quantity extends Symbolic {
 	/**
 	 * Create a quantity with an amount and unit
 	 * 
-	 * @param amount
-	 *            Amount
-	 * @param unit
-	 *            {@link Unit}
-	 * @throws Exception
-	 *             Exception
+	 * @param amount Amount
+	 * @param unit   {@link Unit}
+	 * @throws Exception Exception
 	 */
 	public Quantity(double amount, Unit unit) throws Exception {
 		this(amount, MeasurementSystem.getSystem().getUOM(unit));
@@ -109,15 +97,24 @@ public class Quantity extends Symbolic {
 	/**
 	 * Create a quantity with a String amount and unit
 	 * 
-	 * @param amount
-	 *            Amount
-	 * @param unit
-	 *            {@link Unit}
-	 * @throws Exception
-	 *             Exception
+	 * @param amount Amount
+	 * @param unit   {@link Unit}
+	 * @throws Exception Exception
 	 */
 	public Quantity(String amount, Unit unit) throws Exception {
 		this(createAmount(amount), MeasurementSystem.getSystem().getUOM(unit));
+	}
+
+	/**
+	 * Create a quantity with a prefixed amount and unit of measure
+	 * 
+	 * @param amount Amount
+	 * @param prefix {@link Prefix}
+	 * @param uom    {@link UnitOfMeasure}
+	 * @throws Exception Exception
+	 */
+	public Quantity(double amount, Prefix prefix, UnitOfMeasure uom) throws Exception {
+		this(amount * prefix.getFactor(), uom);
 	}
 
 	/**
@@ -133,15 +130,14 @@ public class Quantity extends Symbolic {
 	/**
 	 * Compare this Quantity to another one
 	 * 
-	 * @param other
-	 *            Quantity
+	 * @param other Quantity
 	 * @return true if equal
 	 */
 	@Override
 	public boolean equals(Object other) {
 		boolean answer = false;
 
-		if (other != null && other instanceof Quantity) {
+		if (other instanceof Quantity) {
 			Quantity otherQuantity = (Quantity) other;
 
 			// same amount and same unit of measure
@@ -155,11 +151,9 @@ public class Quantity extends Symbolic {
 	/**
 	 * Create an amount of a quantity from a String
 	 * 
-	 * @param value
-	 *            Text value of amount
+	 * @param value Text value of amount
 	 * @return Amount
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public static double createAmount(String value) throws Exception {
 		if (value == null) {
@@ -172,8 +166,7 @@ public class Quantity extends Symbolic {
 	 * Create an amount of a quantity that adheres to precision and rounding
 	 * settings from a Number
 	 * 
-	 * @param number
-	 *            Value
+	 * @param number Value
 	 * @return Amount
 	 */
 	public static double createAmount(Number number) {
@@ -182,15 +175,15 @@ public class Quantity extends Symbolic {
 		if (number instanceof Double) {
 			result = (Double) number;
 		} else if (number instanceof BigInteger) {
-			result = new Double(((BigInteger) number).doubleValue());
+			result = ((BigInteger) number).doubleValue();
 		} else if (number instanceof Float) {
-			result = new Double((Float) number);
+			result = (double) ((Float) number);
 		} else if (number instanceof Long) {
-			result = new Double((Long) number);
+			result = (double) ((Long) number);
 		} else if (number instanceof Integer) {
-			result = new Double((Integer) number);
+			result = (double) ((Integer) number);
 		} else if (number instanceof Short) {
-			result = new Double((Short) number);
+			result = (double) ((Short) number);
 		}
 
 		return result;
@@ -217,43 +210,35 @@ public class Quantity extends Symbolic {
 	/**
 	 * Subtract a quantity from this quantity
 	 * 
-	 * @param other
-	 *            quantity
+	 * @param other quantity
 	 * @return New quantity
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity subtract(Quantity other) throws Exception {
 		Quantity toSubtract = other.convert(getUOM());
-		double amount = getAmount() - toSubtract.getAmount();
-		Quantity quantity = new Quantity(amount, this.getUOM());
-		return quantity;
+		double newAmount = getAmount() - toSubtract.getAmount();
+		return new Quantity(newAmount, getUOM());
 	}
 
 	/**
 	 * Add two quantities
 	 * 
-	 * @param other
-	 *            {@link Quantity}
+	 * @param other {@link Quantity}
 	 * @return Sum {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity add(Quantity other) throws Exception {
 		Quantity toAdd = other.convert(getUOM());
-		double amount = getAmount() + toAdd.getAmount();
-		Quantity quantity = new Quantity(amount, this.getUOM());
-		return quantity;
+		double newAmount = getAmount() + toAdd.getAmount();
+		return new Quantity(newAmount, getUOM());
 	}
 
 	/**
 	 * Divide two quantities to create a third quantity
 	 * 
-	 * @param other
-	 *            {@link Quantity}
+	 * @param other {@link Quantity}
 	 * @return Quotient {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity divide(Quantity other) throws Exception {
 		Quantity toDivide = other;
@@ -262,77 +247,64 @@ public class Quantity extends Symbolic {
 			throw new Exception(MeasurementSystem.getMessage("divisor.cannot.be.zero"));
 		}
 
-		double amount = getAmount() / toDivide.getAmount();
+		double newAmount = getAmount() / toDivide.getAmount();
 		UnitOfMeasure newUOM = getUOM().divide(toDivide.getUOM());
 
-		Quantity quantity = new Quantity(amount, newUOM);
-		return quantity;
+		return new Quantity(newAmount, newUOM);
 	}
 
 	/**
 	 * Divide this quantity by the specified amount
 	 * 
-	 * @param divisor
-	 *            Amount
+	 * @param divisor Amount
 	 * @return Quantity {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity divide(double divisor) throws Exception {
-		double amount = getAmount() / divisor;
-		Quantity quantity = new Quantity(amount, getUOM());
-		return quantity;
+		double newAmount = getAmount() / divisor;
+		return new Quantity(newAmount, getUOM());
 	}
 
 	/**
 	 * Multiply this quantity by another quantity to create a third quantity
 	 * 
-	 * @param other
-	 *            Quantity
+	 * @param other Quantity
 	 * @return Multiplied quantity
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity multiply(Quantity other) throws Exception {
 		Quantity toMultiply = other;
 
-		double amount = getAmount() * toMultiply.getAmount();
+		double newAmount = getAmount() * toMultiply.getAmount();
 		UnitOfMeasure newUOM = getUOM().multiply(toMultiply.getUOM());
 
-		Quantity quantity = new Quantity(amount, newUOM);
-		return quantity;
+		return new Quantity(newAmount, newUOM);
 	}
 
 	/**
 	 * Raise this quantity to the specified power
 	 * 
-	 * @param exponent
-	 *            Exponent
+	 * @param exponent Exponent
 	 * @return new Quantity
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity power(int exponent) throws Exception {
-		double amount = Math.pow(getAmount(), exponent);
+		double newAmount = Math.pow(getAmount(), exponent);
 		UnitOfMeasure newUOM = MeasurementSystem.getSystem().createPowerUOM(getUOM(), exponent);
 
-		Quantity quantity = new Quantity(amount, newUOM);
-		return quantity;
+		return new Quantity(newAmount, newUOM);
 	}
 
 	/**
 	 * Multiply this quantity by the specified amount
 	 * 
-	 * @param multiplier
-	 *            Amount
+	 * @param multiplier Amount
 	 * @return new Quantity
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity multiply(double multiplier) throws Exception {
-		double amount = getAmount() * multiplier;
-		Quantity quantity = new Quantity(amount, getUOM());
-		return quantity;
+		double newAmount = getAmount() * multiplier;
+		return new Quantity(newAmount, getUOM());
 	}
 
 	/**
@@ -340,25 +312,20 @@ public class Quantity extends Symbolic {
 	 * quantity
 	 * 
 	 * @return {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity invert() throws Exception {
-		double amount = 1.0d / getAmount();
-		UnitOfMeasure uom = getUOM().invert();
-
-		Quantity quantity = new Quantity(amount, uom);
-		return quantity;
+		double newAmount = 1.0d / getAmount();
+		UnitOfMeasure newUOM = getUOM().invert();
+		return new Quantity(newAmount, newUOM);
 	}
 
 	/**
 	 * Convert this quantity to the target UOM
 	 * 
-	 * @param toUOM
-	 *            {@link UnitOfMeasure}
+	 * @param toUOM {@link UnitOfMeasure}
 	 * @return Converted quantity
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity convert(UnitOfMeasure toUOM) throws Exception {
 
@@ -383,13 +350,10 @@ public class Quantity extends Symbolic {
 	 * Convert this quantity with a product or quotient unit of measure to the
 	 * specified units of measure.
 	 * 
-	 * @param uom1
-	 *            Multiplier or dividend {@link UnitOfMeasure}
-	 * @param uom2
-	 *            Multiplicand or divisor {@link UnitOfMeasure}
+	 * @param uom1 Multiplier or dividend {@link UnitOfMeasure}
+	 * @param uom2 Multiplicand or divisor {@link UnitOfMeasure}
 	 * @return Converted quantity
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity convertToPowerProduct(UnitOfMeasure uom1, UnitOfMeasure uom2) throws Exception {
 		UnitOfMeasure newUOM = getUOM().clonePowerProduct(uom1, uom2);
@@ -401,11 +365,9 @@ public class Quantity extends Symbolic {
 	 * Convert this quantity of a power unit using the specified base unit of
 	 * measure.
 	 * 
-	 * @param uom
-	 *            Base {@link UnitOfMeasure}
+	 * @param uom Base {@link UnitOfMeasure}
 	 * @return Converted quantity
-	 * @throws Exception
-	 *             exception
+	 * @throws Exception exception
 	 */
 	public Quantity convertToPower(UnitOfMeasure uom) throws Exception {
 		UnitOfMeasure newUOM = getUOM().clonePower(uom);
@@ -416,11 +378,9 @@ public class Quantity extends Symbolic {
 	/**
 	 * Convert this quantity to the target unit
 	 * 
-	 * @param unit
-	 *            {@link Unit}
+	 * @param unit {@link Unit}
 	 * @return {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity convert(Unit unit) throws Exception {
 		return convert(MeasurementSystem.getSystem().getUOM(unit));
@@ -429,13 +389,10 @@ public class Quantity extends Symbolic {
 	/**
 	 * Convert this quantity to the target unit with the specified prefix
 	 * 
-	 * @param prefix
-	 *            {@link Prefix}
-	 * @param unit
-	 *            {@link Unit}
+	 * @param prefix {@link Prefix}
+	 * @param unit   {@link Unit}
 	 * @return {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity convert(Prefix prefix, Unit unit) throws Exception {
 		return convert(MeasurementSystem.getSystem().getUOM(prefix, unit));
@@ -446,7 +403,7 @@ public class Quantity extends Symbolic {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(this.getAmount()).append(", [").append(getUOM().toString()).append("] ");
 		sb.append(super.toString());
 		return sb.toString();
@@ -455,11 +412,9 @@ public class Quantity extends Symbolic {
 	/**
 	 * Compare this quantity to the other quantity
 	 * 
-	 * @param other
-	 *            Quantity
+	 * @param other Quantity
 	 * @return -1 if less than, 0 if equal and 1 if greater than
-	 * @throws Exception
-	 *             If the quantities cannot be compared.
+	 * @throws Exception If the quantities cannot be compared.
 	 */
 	public int compare(Quantity other) throws Exception {
 		Quantity toCompare = other;
@@ -476,8 +431,7 @@ public class Quantity extends Symbolic {
 	 * Find a matching unit type for the quantity's unit of measure.
 	 * 
 	 * @return {@link Quantity}
-	 * @throws Exception
-	 *             Exception
+	 * @throws Exception Exception
 	 */
 	public Quantity classify() throws Exception {
 		getUOM().classify();

@@ -727,6 +727,8 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testBaseSymbols() throws Exception {
+		sys.clearCache();
+
 		final char deg = 0xB0;
 		final char times = 0xB7;
 		final char sq = 0xB2;
@@ -848,7 +850,7 @@ public class TestUnits extends BaseTest {
 		sb = new StringBuffer();
 		sb.append("cd/m").append((char) 0xB2);
 		assertTrue(symbol.equals(sb.toString()));
-		
+
 		symbol = sys.getUOM(Unit.HERTZ).getBaseSymbol();
 		assertTrue(symbol.equals("1/s"));
 
@@ -868,6 +870,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testConversions1() throws Exception {
+		sys.clearCache();
 
 		UnitOfMeasure m = sys.getUOM(Unit.METRE);
 		UnitOfMeasure cm = sys.getUOM(Prefix.CENTI, m);
