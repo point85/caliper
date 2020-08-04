@@ -104,7 +104,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private static final char ONE_CHAR = '1';
 
 	// registry of unit conversion factor (not persistent)
-	private transient Map<UnitOfMeasure, Double> conversionRegistry = new ConcurrentHashMap<>();
+	private Map<UnitOfMeasure, Double> conversionRegistry = new ConcurrentHashMap<>();
 
 	// conversion to another Unit of Measure in the same recognized measurement
 	// system (y = ax + b)
@@ -133,7 +133,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 	private UnitOfMeasure bridgeAbscissaUnit;
 
 	// cached base symbol (not persistent)
-	private transient String baseSymbol;
+	private String baseSymbol;
 
 	// user-defined category
 	private String category = MeasurementSystem.getUnitString("default.category.text");
@@ -789,7 +789,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		this.abscissaUnit = abscissaUnit;
 	}
 
-	private double convertScalarToScalar(UnitOfMeasure targetUOM) throws Exception {
+	private double convertScalarToScalar(UnitOfMeasure targetUOM) {
 		UnitOfMeasure thisAbscissa = getAbscissaUnit();
 		double thisFactor = getScalingFactor();
 

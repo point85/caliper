@@ -119,7 +119,11 @@
 			<!-- exponent2 -->
 			<basic name="exponent2">
 				<column name="EXP2" />
-			</basic>					
+			</basic>	
+			
+			<!-- transient attributes -->
+			<transient name="conversionRegistry"/>	
+			<transient name="baseSymbol"/>				
 		</attributes>
 	</entity>
 	

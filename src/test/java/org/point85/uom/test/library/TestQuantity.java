@@ -28,6 +28,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
@@ -1219,5 +1221,33 @@ public class TestQuantity extends BaseTest {
 		Quantity volume = new Quantity(1000, Unit.LITRE);
 		Quantity density = mass.divide(volume).classify();
 		assertTrue(density.getUOM().getUnitType().equals(UnitType.DENSITY));
+	}
+
+	@Test
+	public void testMultiConversion() throws Exception {
+		// convert 74 inches to feet and inches
+		Quantity qHeight = new Quantity(74, Unit.INCH);
+		List<UnitOfMeasure> uoms = new ArrayList<>();
+		uoms.add(sys.getUOM(Unit.FOOT));
+		uoms.add(sys.getUOM(Unit.INCH));
+		List<Quantity> converted = qHeight.convert(uoms);
+		assertTrue(isCloseTo(converted.get(0).getAmount(), 6.0, DELTA0));
+		assertTrue(isCloseTo(converted.get(1).getAmount(), 2.0, DELTA6));
+
+		Quantity qkm = new Quantity(10, Prefix.KILO, Unit.METRE);
+
+		uoms = new ArrayList<>();
+		uoms.add(sys.getUOM(Prefix.KILO, Unit.METRE));
+		converted = qkm.convert(uoms);
+		assertTrue(isCloseTo(converted.get(0).getAmount(), 10.0, DELTA6));
+
+		uoms = new ArrayList<>();
+		uoms.add(sys.getUOM(Unit.MILE));
+		uoms.add(sys.getUOM(Unit.FOOT));
+		uoms.add(sys.getUOM(Unit.INCH));
+		converted = qkm.convert(uoms);
+		assertTrue(isCloseTo(converted.get(0).getAmount(), 6.0, DELTA6));
+		assertTrue(isCloseTo(converted.get(1).getAmount(), 1128.0, DELTA6));
+		assertTrue(isCloseTo(converted.get(2).getAmount(), 4.787, DELTA3));
 	}
 }

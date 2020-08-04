@@ -1,5 +1,8 @@
 package org.point85.uom.test.library;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
@@ -8,7 +11,7 @@ import org.point85.uom.Unit;
 import org.point85.uom.UnitOfMeasure;
 import org.point85.uom.UnitType;
 
-public class TestExample {	
+public class TestExample {
 	@Test
 	public void testExample1() throws Exception {
 		MeasurementSystem sys = MeasurementSystem.getSystem();
@@ -31,20 +34,31 @@ public class TestExample {
 		cob.setConversion(0.25, dollar);
 		Quantity qCob = new Quantity(1, cob);
 		UnitOfMeasure dph = sys.createQuotientUOM(dollar, sys.getHour());
-		Quantity  wage = new Quantity(15, dph);
+		Quantity wage = new Quantity(15, dph);
 		Quantity hours = new Quantity(8, sys.getHour());
 		Quantity qTotal = wage.multiply(hours).divide(qCob).convert(sys.getOne());
-		System.out.println("(3)  " + qTotal); 
-		
+		System.out.println("(3)  " + qTotal);
+
 		// kilofeet
 		Quantity qkm = new Quantity(1, Prefix.KILO, Unit.METRE);
-		System.out.println("(4)  " + qkm.convert(Prefix.KILO, Unit.FOOT));
+		Quantity qkft = qkm.convert(Prefix.KILO, Unit.FOOT);
+		System.out.println("(4)  " + qkft);
+
+		List<UnitOfMeasure> uoms = new ArrayList<>();
+		uoms.add(qkft.getUOM());
+		uoms.add(sys.getUOM(Unit.FOOT));
+		uoms.add(sys.getUOM(Unit.INCH));
+		List<Quantity> converted = qkm.convert(uoms);
 		
+		for (Quantity qty: converted) {
+			System.out.println("  (5)  " + qty);
+		}
+
 		// population density
 		UnitOfMeasure person = sys.createScalarUOM(UnitType.UNCLASSIFIED, "person", "person", "an individual");
 		Quantity qPopulation = new Quantity(2.7, Prefix.MEGA, person);
 		UnitOfMeasure sqmi = sys.createPowerUOM(sys.getUOM(Unit.MILE), 2);
-		Quantity qArea = new Quantity(5, sqmi); 
+		Quantity qArea = new Quantity(5, sqmi);
 		System.out.println("(5)  " + qArea.convert(Unit.SQUARE_FOOT).divide(qPopulation));
 	}
 }

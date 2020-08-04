@@ -23,7 +23,10 @@ SOFTWARE.
 */
 package org.point85.uom;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -344,6 +347,44 @@ public class Quantity extends Symbolic {
 
 		// create the quantity now
 		return new Quantity(newAmount, toUOM);
+	}
+
+	/**
+	 * Convert this quantity to a list of quantities for each target UOM
+	 * 
+	 * @param toMeasures List to UOMs to convert to
+	 * @return List of converted quantities
+	 * @throws Exception Exception
+	 */
+	public List<Quantity> convert(List<UnitOfMeasure> toMeasures) throws Exception {
+		List<Quantity> quantities = new ArrayList<>();
+
+		Quantity quantityLeft = this;
+
+		for (int i = 0; i < toMeasures.size(); i++) {
+			UnitOfMeasure toUOM = toMeasures.get(i);
+			Quantity converted = quantityLeft.convert(toUOM);
+			
+			if (i == toMeasures.size() - 1) {
+				// last conversion
+				quantities.add(converted);
+				break;
+			}
+
+			// perform arithmetic as BigDecimals
+			BigDecimal bigAmount = new BigDecimal(String.valueOf(converted.getAmount()));
+
+			// get integral amount
+			int intValue = bigAmount.intValue();
+			quantities.add(new Quantity(intValue, toUOM));
+
+			// get the fractional amount
+			BigDecimal intDouble = new BigDecimal(String.valueOf(intValue));
+			BigDecimal fractDouble = bigAmount.subtract(intDouble);
+			quantityLeft = new Quantity(fractDouble.doubleValue(), toUOM);
+		}
+
+		return quantities;
 	}
 
 	/**

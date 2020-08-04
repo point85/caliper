@@ -416,6 +416,17 @@ UnitOfMeasure uiuPerml = sys.createQuotientUOM(UnitType.MOLAR_CONCENTRATION, "uI
 testResult = new Quantity(2.0, uiuPerml);
 ```
 
+## Multi-unit Conversions
+
+```
+// convert 74 inches to feet and inches
+Quantity qHeight = new Quantity(74, Unit.INCH);
+List<UnitOfMeasure> uoms = new ArrayList<>();
+uoms.add(sys.getUOM(Unit.FOOT));
+uoms.add(sys.getUOM(Unit.INCH));
+List<Quantity> converted = qHeight.convert(uoms);
+```
+
 ### Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
 
