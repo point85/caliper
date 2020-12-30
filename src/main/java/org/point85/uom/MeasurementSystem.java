@@ -870,7 +870,7 @@ public class MeasurementSystem {
 			// troy ounce
 			uom = createScalarUOM(UnitType.MASS, Unit.TROY_OUNCE, units.getString("troy_oz.name"),
 					units.getString("troy_oz.symbol"), units.getString("troy_oz.desc"));
-			uom.setConversion(31.1034768, getUOM(Unit.GRAM));
+			uom.setConversion(0.06857142857, getUOM(Unit.POUND_MASS));
 			break;
 
 		case SLUG:

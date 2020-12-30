@@ -1361,9 +1361,6 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 				explodeRecursively(uomTwo, level);
 				pathExponents.remove(level);
 			}
-
-			// up a level
-			level--;
 		}
 
 		// add a UOM and exponent pair to the map of reduced terms

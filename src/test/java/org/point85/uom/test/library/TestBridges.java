@@ -239,4 +239,21 @@ public class TestBridges extends BaseTest {
 
 		}
 	}
+	
+	@Test
+	public void testGrade() throws Exception {
+		UnitOfMeasure uomGrams = sys.getUOM(Unit.GRAM);
+		UnitOfMeasure uomTonnes = sys.getUOM(Unit.TONNE);
+		UnitOfMeasure uomShortTons = sys.getUOM(Unit.US_TON);
+		UnitOfMeasure uomTroyOz = sys.getUOM(Unit.TROY_OUNCE);
+		UnitOfMeasure uomPennyweight = sys.createScalarUOM(UnitType.MASS, "pennyweight", "dwt", "Pennyweight");
+		uomPennyweight.setConversion(0.05, uomTroyOz);
+		UnitOfMeasure uomGramsPerTonne = sys.createQuotientUOM(uomGrams, uomTonnes);
+		UnitOfMeasure uomPennyweightPerShortTon = sys.createQuotientUOM(uomPennyweight, uomShortTons);
+
+		Quantity grade = new Quantity(0.95, uomGramsPerTonne);
+		Quantity converted = grade.convert(uomPennyweightPerShortTon);
+
+		assertTrue(isCloseTo(converted.getAmount(), 0.554167d, DELTA6));
+	}
 }

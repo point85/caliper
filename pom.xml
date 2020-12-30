@@ -4,7 +4,7 @@
 
   <groupId>org.point85</groupId>
   <artifactId>uom</artifactId>
-  <version>1.2.2</version>
+  <version>1.2.3</version>
   <packaging>jar</packaging>
 
   <name>uom</name>
