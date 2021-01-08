@@ -418,7 +418,7 @@ testResult = new Quantity(2.0, uiuPerml);
 
 ## Multi-unit Conversions
 
-```
+```java
 // convert 74 inches to feet and inches
 Quantity qHeight = new Quantity(74, Unit.INCH);
 List<UnitOfMeasure> uoms = new ArrayList<>();
@@ -426,6 +426,38 @@ uoms.add(sys.getUOM(Unit.FOOT));
 uoms.add(sys.getUOM(Unit.INCH));
 List<Quantity> converted = qHeight.convert(uoms);
 ```
+
+## Converting Mixed Units of Measure
+
+In general, Caliper does not support conversion of mixed units of measure.  For example, if customary and SI units appear together in either a quotient or product unit of measurement (e.g. density in kilogram/cubic foot), 
+conversion to another consistent unit of measure (e.g. density in lbm/litre) requires a case-by-case solution.  The practical case below from the mining and precious metals industry illustrates this approach.
+
+Caliper defines a troy ounce (troyOz) as 0.06857142857 pound-mass.  Now define the pennyweight based on a troy ounce where sys = MeasurementSystem.instance():
+```java
+UnitOfMeasure pennyweight = sys.createScalarUOM(UnitType.MASS, "pennyweight", "dwt", "Pennyweight");
+pennyweight.setConversion(0.05, troyOz);
+```
+Now create a unitless quotient UOM for metal grade:
+```java
+UnitOfMeasure pennyweightPerShortTon = sys.createQuotientUOM(pennyweight, sys.getUOM(Unit.US_TON)); 
+```
+Let's convert a precious metal grade defined in SI units to pennyweight customary units:
+```java
+UnitOfMeasure gramsPerTonne = sys.createQuotientUOM(sys.getUOM(Unit.GRAM), sys.getUOM(Unit.TONNE));
+Quantity qGrade = new Quantity(0.95, gramsPerTonne);	
+Quantity qGradeConverted = qGrade.convert(pennyweightPerShortTon);
+```
+The converted grade is about 0.554167.  These conversions work since the quotient units are defined within a consistent system (SI and Customary in this example).
+
+Now suppose we want to convert a mixed unit grade in grams per metric tonne to troy ounces per metric tonne.  This will require defining another troy ounce based on grams:
+```java
+UnitOfMeasure troyOzSI = sys.createScalarUOM(UnitType.MASS, "troy ounce SI", "troy oz", "Troy ounce SI conversion");
+troyOzSI.setConversion(31.1034768, sys.getUOM(Unit.GRAM));
+
+UnitOfMeasure troyOzPerTonne = sys.createQuotientUOM(troyOzSI, sys.getUOM(Unit.TONNE));
+Quantity qGradeConverted = qGrade.convert(troyOzPerTonne);
+```
+The grade when converted to troyOzPerTonne is about 0.0305432.
 
 ### Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
