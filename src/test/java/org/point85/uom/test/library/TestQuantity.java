@@ -33,6 +33,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.point85.uom.Constant;
+import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
 import org.point85.uom.Unit;
@@ -1249,5 +1250,24 @@ public class TestQuantity extends BaseTest {
 		assertTrue(isCloseTo(converted.get(0).getAmount(), 6.0, DELTA6));
 		assertTrue(isCloseTo(converted.get(1).getAmount(), 1128.0, DELTA6));
 		assertTrue(isCloseTo(converted.get(2).getAmount(), 4.787, DELTA3));
+	}
+	
+	@Test
+	public void testCurrencyConversion() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getSystem();
+		UnitOfMeasure usd_uom = sys.createScalarUOM(UnitType.CURRENCY, "US-Dollar", "USD", "US 'paper' dollar");
+		UnitOfMeasure usdt_uom = sys.createScalarUOM(UnitType.CURRENCY, "Tether", "USDT", "USD 'stable' coin");
+
+		// Initial conversion rate
+		usdt_uom.setConversion(0.9, usd_uom);
+
+		Quantity portfolio = new Quantity(200, usdt_uom);
+		Quantity portfolio_usd = portfolio.convert(usd_uom);
+		assertTrue(isCloseTo(portfolio_usd.getAmount(), 180.0, DELTA6));
+
+		// change conversion rate
+		usdt_uom.setConversion(1.0, usd_uom);
+		portfolio_usd = portfolio.convert(usd_uom);
+		assertTrue(isCloseTo(portfolio_usd.getAmount(), 200.0, DELTA6));
 	}
 }

@@ -710,6 +710,11 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// re-cache
 		MeasurementSystem.getSystem().registerUnit(this);
+
+		// remove from conversion registry
+		if (conversionRegistry.containsKey(abscissaUnit)) {
+			conversionRegistry.remove(abscissaUnit);
+		}
 	}
 
 	/**
