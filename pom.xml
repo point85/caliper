@@ -4,7 +4,7 @@
 
   <groupId>org.point85</groupId>
   <artifactId>uom</artifactId>
-  <version>1.2.4</version>
+  <version>1.2.5</version>
   <packaging>jar</packaging>
 
   <name>uom</name>
@@ -65,7 +65,7 @@
 <dependency>
     <groupId>org.hsqldb</groupId>
     <artifactId>hsqldb</artifactId>
-    <version>2.4.1</version>
+    <version>2.7.1</version>
     <scope>test</scope>
 </dependency>
 

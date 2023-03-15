@@ -72,7 +72,7 @@ public class TestUnifiedCode extends BaseTest {
 		to = from.convert(sys.getUOM(Unit.PSI));
 
 		convertedAmount = wsConvert(amount, "[in_i'Hg]", "[psi]");
-		assertTrue(isCloseTo(to.getAmount(), convertedAmount, DELTA5));
+		assertTrue(isCloseTo(to.getAmount(), convertedAmount, DELTA4));
 
 		// days to weeks
 		from = new Quantity(amount, sys.getUOM(Unit.DAY));

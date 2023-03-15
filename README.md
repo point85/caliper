@@ -480,7 +480,7 @@ already.created = The unit of measure with symbol {0} has already been created b
 ```
 
 ## Unit of Measure Application
-An example Unit of Measure converter and editor desktop application has been built to demonstrate fundamental capabilities of the library.  The user interface is implemented in JavaFX 8 and database persistency is provided by JPA (Java Persistence API) with FXML descriptors.  EclipseLink is the JPA implementation for a Microsoft SQL Server database.
+An example Unit of Measure converter and editor desktop application has been built to demonstrate fundamental capabilities of the library.  The user interface is implemented in JavaFX 8 and database persistency is provided by JPA (Java Persistence API) with FXML descriptors.  Hibernate is the JPA implementation for a supported relational database.
 
 The editor allows new units of measure to be created and saved to the database as well as updated and deleted.  All of the units of measure pre-defined in the library are available for use in the editor or in the converter. 
 
@@ -517,7 +517,7 @@ To delete a unit of measure, select it in the tree view then click the "Delete" 
 
 
 ## Project Structure
-The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+ and a JPA implementation (e.g. EclipseLink http://www.eclipse.org/eclipselink/#jpa).
+The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+ and a JPA implementation (e.g. Hibernate).
 
 The Caliper library and application, when built with Gradle, has the following structure:
  * `/database` - SQL script files for table and index generation

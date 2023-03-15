@@ -951,7 +951,9 @@ public class MeasurementSystem {
 			// inches of Mercury
 			uom = createScalarUOM(UnitType.PRESSURE, Unit.IN_HG, units.getString("inhg.name"),
 					units.getString("inhg.symbol"), units.getString("inhg.desc"));
-			uom.setConversion(0.4911531047, getUOM(Unit.PSI));
+			UnitOfMeasure u1 = createProductUOM(getUOM(Unit.FOOT), getUOM(Unit.SQUARE_SECOND));
+			UnitOfMeasure u2 = createQuotientUOM(getUOM(Unit.POUND_MASS), u1);
+			uom.setConversion(2275.520677, u2);
 			break;
 
 		case SQUARE_INCH:
