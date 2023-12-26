@@ -17,7 +17,7 @@ A simple unit, for example a metre, is defined as a scalar UOM.  A special scala
 
 *Product Unit*
 
-A unit of measure that is the product of two other units is defined as a product UOM.  An example is a Joule which is a Newton·metre.  
+A unit of measure that is the product of two other units is defined as a product UOM.  An example is a Joule which is a Newtonï¿½metre.  
 
 *Quotient Unit*  
 
@@ -33,7 +33,7 @@ Units are classified by type, e.g. length, mass, time and temperature.  Only uni
 
 *Base Symbol*
  
-All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogram·metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantities.  For example, dividing a quantity of Newton·metres by a quantity of metres results in a quantity of Newtons. 
+All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogramï¿½metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantities.  For example, dividing a quantity of Newtonï¿½metres by a quantity of metres results in a quantity of Newtons. 
 
 *Quantity*
 
@@ -280,7 +280,7 @@ Quantity kwh = new Quantity(100, Prefix.KILO, Unit.WATT_HOUR);
 Quantity electrons = kwh.divide(c).divide(c).divide(me);
 ```
 
-Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 °C.  How many moles of argon are in the cylinder?
+Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 ï¿½C.  How many moles of argon are in the cylinder?
 ```java
 Quantity p = new Quantity(18.4, Unit.ATMOSPHERE).convert(Unit.PASCAL);
 Quantity v = new Quantity(50d, Unit.LITRE).convert(Unit.CUBIC_METRE);
@@ -479,42 +479,6 @@ and for an exception:
 already.created = The unit of measure with symbol {0} has already been created by {1}.  Did you intend to scale this unit with a linear conversion?
 ```
 
-## Unit of Measure Application
-An example Unit of Measure converter and editor desktop application has been built to demonstrate fundamental capabilities of the library.  The user interface is implemented in JavaFX 8 and database persistency is provided by JPA (Java Persistence API) with FXML descriptors.  Hibernate is the JPA implementation for a supported relational database.
-
-The editor allows new units of measure to be created and saved to the database as well as updated and deleted.  All of the units of measure pre-defined in the library are available for use in the editor or in the converter. 
-
-The screen capture below shows the converter:
-![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/UOM_Converter.png)
-
-The "Editor ..." button launches the editor (see below).  To convert a unit of measure follow these steps:
-*  Select the unit type in the drop-down, e.g. LENGTH.  
-*  Enter the amount to convert from, e.g. 1
-*  Select the from prefix if desired.  For example, "kilo" is 1000 of the units.
-*  Select the from unit of measure, e.g. "m (metre)" in the drop-down.
-*  Select the to prefix if desired.  
-*  Select the to unit of measure, e.g. "mi (mile)" in the drop-down.
-*  Click the "Convert" button.  The converted amount will be displayed below the from amount, e.g. 0.621371192.
-
-The screen capture below shows the unit of measure editor:
-![Caliper Diagram](https://github.com/point85/caliper/blob/master/doc/UOM_Editor.png) 
-
-To create a unit of measure, click the "New" button and follow these steps:
-*  Enter a name, symbol, category (or choose one already defined) and description.
-*  Choose the type from the drop-down.  For custom units, choose "UNCLASSIFIED".  Only units of the same type can be converted.
-*  If the unit of measure is related to another unit of measure via a conversion, enter the scaling factor (a), abscissa (x) and offset (b).  A prefix (e.g. kilo) may be chosen for the scaling factor.  The conversion will default to the unit of measure itself.
-*  For a simple scalar unit, no additional properties are required.
-*  For a product or quotient unit of measure, the multiplier/multiplicand or dividend/divisor properties must be entered.  First select the respective unit type (e.g. VOLUME) then the unit of measure.  Click the respective radio button to indicate whether this is product or quotient.
-*  For a power unit, the base unit of measure and exponent must be entered.  First select the unit type, then the base unit of measure.  Enter the exponent.
-*  Click the "Save" button.  The new unit of measure will appear in the tree view on the left under its category.
-
-
-To edit a unit of measure, select it in the tree view.  It's properties will be displayed on the right.  Change properties as required, then click the "Save" button.
-
-To refresh the state of the unit that is selected in the tree view from the database, click the "Refresh" button.
-
-To delete a unit of measure, select it in the tree view then click the "Delete" button.
-
 
 ## Project Structure
 The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+ and a JPA implementation (e.g. Hibernate).
@@ -524,8 +488,7 @@ The Caliper library and application, when built with Gradle, has the following s
  * `/doc` - documentation
  * `/src/main/java` - java library source files
  * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol and description.
- * `/src/test/java` - JUnit test java source files for the library and java source files for JPA persistency and JavaFX 8 user interface for the application
- * `/src/test/resources` - images and XML files for for JPA persistency
+ * `/src/test/java` - JUnit test java source files for the library
  
  The binary jar file can be accessed by clicking on the "releases" link.
 

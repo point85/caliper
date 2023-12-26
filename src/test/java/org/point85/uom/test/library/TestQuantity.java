@@ -865,19 +865,19 @@ public class TestQuantity extends BaseTest {
 		double bd = Quantity.createAmount(new BigInteger("4"));
 		assertTrue(bd == four);
 
-		bd = Quantity.createAmount(new Double(4.0d));
+		bd = Quantity.createAmount(Double.valueOf(4.0d));
 		assertTrue(bd == four);
 
-		bd = Quantity.createAmount(new Float(4.0f));
+		bd = Quantity.createAmount(Float.valueOf(4.0f));
 		assertTrue(bd == four);
 
-		bd = Quantity.createAmount(new Long(4l));
+		bd = Quantity.createAmount(Long.valueOf(4l));
 		assertTrue(bd == four);
 
-		bd = Quantity.createAmount(new Integer(4));
+		bd = Quantity.createAmount(Integer.valueOf(4));
 		assertTrue(bd == four);
 
-		bd = Quantity.createAmount(new Short((short) 4));
+		bd = Quantity.createAmount(Short.valueOf((short) 4));
 		assertTrue(bd == four);
 
 		// add
@@ -1076,6 +1076,7 @@ public class TestQuantity extends BaseTest {
 
 	@Test
 	public void testPowerProductConversions() throws Exception {
+		sys.clearCache();
 
 		UnitOfMeasure one = sys.getOne();
 		UnitOfMeasure mps = sys.getUOM(Unit.METRE_PER_SEC);

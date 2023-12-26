@@ -626,6 +626,7 @@ public class TestUnits extends BaseTest {
 
 	@Test
 	public void testTime() throws Exception {
+		sys.clearCache();
 
 		UnitOfMeasure s2 = sys.getUOM(Unit.SQUARE_SECOND);
 		UnitOfMeasure second = sys.getSecond();
