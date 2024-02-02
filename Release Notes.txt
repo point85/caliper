@@ -1,0 +1,14 @@
+				   Caliper Units of Measurement
+						   RELEASE NOTES
+
+(1)  1.2.7, February 3, 2024:  
+	- Created a Maven repository at io.github.point85.caliper:
+	<dependency>
+		<groupId>io.github.point85</groupId>
+		<artifactId>caliper</artifactId>
+		<version>1.2.7</version>
+	</dependency>
+
+	- Upgraded gson to version 2.10.1
+	- Upgraded hamcrest to 2.2
+	- Removed unused Maven dependencies
