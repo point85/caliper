@@ -481,16 +481,16 @@ already.created = The unit of measure with symbol {0} has already been created b
 
 
 ## Project Structure
-The Caliper library depends on Java 6+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).  The example application depends on Java 8+ and a JPA implementation (e.g. Hibernate).
+The Caliper library depends on Java 11+.  The unit tests depend on JUnit (http://junit.org/junit4/), Hamcrest (http://hamcrest.org/), Gson (https://github.com/google/gson) and HTTP Request (https://github.com/kevinsawicki/http-request).
 
-The Caliper library and application, when built with Gradle, has the following structure:
- * `/database` - SQL script files for table and index generation
- * `/doc` - documentation
- * `/src/main/java` - java library source files
- * `/src/main/resources` - localizable Message.properties file to define error messages and localizable Unit.properties file to define the unit's name, symbol and description.
- * `/src/test/java` - JUnit test java source files for the library
- 
- The binary jar file can be accessed by clicking on the "releases" link.
+The Maven repository is:
+```java
+<dependency>
+<groupId>io.github.point85</groupId>
+<artifactId>caliper</artifactId>
+<version>1.2.7</version>
+</dependency>
+```
 
 ## JSR 363
 JSR 363 "proposes to establish safe and useful methods for modeling physical quantities" (https://java.net/downloads/unitsofmeasurement/JSR363Specification_EDR.pdf).  Caliper shares many of the underlying aspects of JSR 363.  Caliper however does not use Java generics, and there is only one system of units.  Caliper performs math using double amounts whereas JSR 363 uses Numbers.
