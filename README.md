@@ -17,7 +17,7 @@ A simple unit, for example a metre, is defined as a scalar UOM.  A special scala
 
 *Product Unit*
 
-A unit of measure that is the product of two other units is defined as a product UOM.  An example is a Joule which is a Newton�metre.  
+A unit of measure that is the product of two other units is defined as a product UOM.  An example is a Joule which is a Newton-metre.  
 
 *Quotient Unit*  
 
@@ -33,7 +33,7 @@ Units are classified by type, e.g. length, mass, time and temperature.  Only uni
 
 *Base Symbol*
  
-All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogram�metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantities.  For example, dividing a quantity of Newton�metres by a quantity of metres results in a quantity of Newtons. 
+All units have a base symbol that is the most reduced form of the unit.  For example, a Newton is kilogram-metre/second^2.  The base symbol is used in the measurement system to register each unit and to discern the result of arithmetic operations on quantities.  For example, dividing a quantity of Newton-metres by a quantity of metres results in a quantity of Newtons. 
 
 *Quantity*
 
@@ -280,7 +280,7 @@ Quantity kwh = new Quantity(100, Prefix.KILO, Unit.WATT_HOUR);
 Quantity electrons = kwh.divide(c).divide(c).divide(me);
 ```
 
-Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 �C.  How many moles of argon are in the cylinder?
+Ideal Gas Law, PV = nRT.  A cylinder of argon gas contains 50.0 L of Ar at 18.4 atm and 127 -C.  How many moles of argon are in the cylinder?
 ```java
 Quantity p = new Quantity(18.4, Unit.ATMOSPHERE).convert(Unit.PASCAL);
 Quantity v = new Quantity(50d, Unit.LITRE).convert(Unit.CUBIC_METRE);

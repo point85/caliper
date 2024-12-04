@@ -29,21 +29,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.36</version>
-			<scope>test</scope>
-		</dependency>
-		https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12 
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.7.36</version>
-			<scope>test</scope>
-		</dependency>
-		-->
 		<!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -110,7 +95,7 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
-			<!-- For publishing to Maven Central -->
+			<!-- For publishing to Maven Repo -->
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
