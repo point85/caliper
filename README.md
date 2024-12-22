@@ -459,6 +459,46 @@ Quantity qGradeConverted = qGrade.convert(troyOzPerTonne);
 ```
 The grade when converted to troyOzPerTonne is about 0.0305432.
 
+## The Kilogram and Planck's Constant
+The new kilogram is defined based on Planck's constan.  It can be understood as the mass difference of the number of cesium-133  atoms in the ground state versus the same number in the excited hyperfine state.
+Or,  or as the mass of the number of photons at the Cesium-133 hyperfine frequency trapped in a microwave cavity. 
+
+What is this number?
+
+This number can be calculated from Plancks' constant (h), the definition of a second in terms of ∆νCs: the hyperfine transition frequency of cesium-133 and the speed of light in a vacuum, and the speed of light in a vacuum (c):
+
+count/kg = c^2 / (h * ∆νCs)
+
+The Java calculation for 1.475521E40/kg is 
+
+```java
+MeasurementSystem sys = MeasurementSystem.getSystem();
+
+// Planck's constant
+Quantity planck = sys.getQuantity(Constant.PLANCK_CONSTANT);
+System.out.println(planck);
+
+// cesium-133 hyperfine transition frequency
+Quantity vCs = new Quantity(9.192631770E+09, Unit.HERTZ);
+System.out.println(vCs);
+
+// speed of light
+Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+System.out.println(c);
+
+// number of cesium 133 atoms in a kilogram
+Quantity kgCount = c.power(2).divide(planck.multiply(vCs));
+System.out.println(kgCount);
+```
+
+with output:
+```java
+6.62607015E-34, [Type: UNCLASSIFIED, Symbol: J·s, Conversion: J·s, Base Symbol: kg·m²/s]  (hc, Planck's constant, Planck's constant)
+9.19263177E9, [Type: FREQUENCY, Enumeration: HERTZ, Symbol: Hz, Conversion: Hz, Base Symbol: 1/s] 
+2.99792458E8, [Type: VELOCITY, Enumeration: METRE_PER_SEC, Symbol: m/s, Conversion: m/s, Base Symbol: m/s]  (c, Vc, velocity of light in a vacuum)
+1.475521399735271E40, [Type: UNCLASSIFIED, Symbol: m/s^2/J·s·Hz, Conversion: m/s^2/J·s·Hz, Base Symbol: 1/kg] 
+```
+
 ### Caching
 A unit of measure once created is registered in two hashmaps, one by its base symbol key and the second one by its enumeration key.  Caching greatly increases performance since the unit of measure is created only once.  Methods are provided to clear the cache of all instances as well as to unregister a particular instance.
 
