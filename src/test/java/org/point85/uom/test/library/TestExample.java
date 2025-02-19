@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.point85.uom.Constant;
 import org.point85.uom.MeasurementSystem;
 import org.point85.uom.Prefix;
 import org.point85.uom.Quantity;
@@ -49,8 +50,8 @@ public class TestExample {
 		uoms.add(sys.getUOM(Unit.FOOT));
 		uoms.add(sys.getUOM(Unit.INCH));
 		List<Quantity> converted = qkm.convert(uoms);
-		
-		for (Quantity qty: converted) {
+
+		for (Quantity qty : converted) {
 			System.out.println("  (5)  " + qty);
 		}
 
@@ -60,5 +61,23 @@ public class TestExample {
 		UnitOfMeasure sqmi = sys.createPowerUOM(sys.getUOM(Unit.MILE), 2);
 		Quantity qArea = new Quantity(5, sqmi);
 		System.out.println("(5)  " + qArea.convert(Unit.SQUARE_FOOT).divide(qPopulation));
+	}
+
+	@Test
+	public void testMetrology() throws Exception {
+		MeasurementSystem sys = MeasurementSystem.getSystem();
+
+		// Planck's constant
+		Quantity planck = sys.getQuantity(Constant.PLANCK_CONSTANT);
+
+		// cesium-133 hyperfine transition frequency
+		Quantity vCs = new Quantity(9.192631770E+09, Unit.HERTZ);
+
+		// speed of light
+		Quantity c = sys.getQuantity(Constant.LIGHT_VELOCITY);
+
+		// number of cesium 133 atoms in a kilogram
+		Quantity kgCount = c.power(2).divide(planck.multiply(vCs));
+		System.out.println(kgCount);
 	}
 }
