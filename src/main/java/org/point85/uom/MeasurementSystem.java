@@ -1,8 +1,6 @@
 /*
 MIT License
 
-Copyright (c) 2016 Kent Randall
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -107,8 +105,11 @@ public class MeasurementSystem {
 	static String getUnitString(String key) {
 		return units.getString(key);
 	}
+	
+	// floating point precision equality
+    final static double EPSILON = 1e-10;
 
-	protected MeasurementSystem() {
+	private MeasurementSystem() {
 		// Singleton
 	}
 
@@ -208,7 +209,7 @@ public class MeasurementSystem {
 			named.setDescription(units.getString("boltzmann.desc"));
 			break;
 
-		case AVAGADRO_CONSTANT:
+		case AVOGADRO_CONSTANT:
 			// NA
 			named = new Quantity(6.02214076E+23, getOne());
 			named.setName(units.getString("avo.name"));
@@ -218,7 +219,7 @@ public class MeasurementSystem {
 
 		case GAS_CONSTANT:
 			// R
-			named = getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVAGADRO_CONSTANT));
+			named = getQuantity(Constant.BOLTZMANN_CONSTANT).multiply(getQuantity(Constant.AVOGADRO_CONSTANT));
 			named.setName(units.getString("gas.name"));
 			named.setSymbol(units.getString("gas.symbol"));
 			named.setDescription(units.getString("gas.desc"));
@@ -235,7 +236,7 @@ public class MeasurementSystem {
 		case FARADAY_CONSTANT:
 			// F = e.NA
 			Quantity qe = getQuantity(Constant.ELEMENTARY_CHARGE);
-			named = qe.multiply(getQuantity(Constant.AVAGADRO_CONSTANT));
+			named = qe.multiply(getQuantity(Constant.AVOGADRO_CONSTANT));
 			named.setName(units.getString("faraday.name"));
 			named.setSymbol(units.getString("faraday.symbol"));
 			named.setDescription(units.getString("faraday.desc"));

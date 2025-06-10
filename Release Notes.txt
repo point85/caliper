@@ -12,3 +12,11 @@
 	- Upgraded gson to version 2.10.1
 	- Upgraded hamcrest to 2.2
 	- Removed unused Maven dependencies
+	
+(2)  1.2.8, June 10, 2025: 	
+	- Constant: fixed AVOGADRO typo
+	- MeasurementSytem: defined EPSILON for floating point precision; made ctor private
+	- Prefix:  made prefixes a synchronized list; peta typo; used EPSILON in fromFactor() comparison
+	- Quantity: used EPSILON in equals() comparison; added BigDecimal case in createAmount(); checked for division by 0 in divide(double)
+	- UnitOfMeasure: synchronized setConversion()
+		

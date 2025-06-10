@@ -528,7 +528,7 @@ The Maven repository is:
 <dependency>
 <groupId>io.github.point85</groupId>
 <artifactId>caliper</artifactId>
-<version>1.2.7</version>
+<version>1.2.8</version>
 </dependency>
 ```
 

@@ -25,15 +25,16 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * The Prefix class defines SI unit of measure prefixes as well as those found
  * in computer science.
  */
-public class Prefix {
+public class Prefix {    
 	// list of pre-defined prefixes
-	private static List<Prefix> prefixes = new ArrayList<>();
+	private static List<Prefix> prefixes = Collections.synchronizedList(new ArrayList<>());
 
 	// SI prefix 10^24
 	public static final Prefix YOTTA = new Prefix("yotta", "Y", 1.0E+24);
@@ -42,7 +43,7 @@ public class Prefix {
 	// SI prefix 10^18
 	public static final Prefix EXA = new Prefix("exa", "E", 1.0E+18);
 	// SI prefix 10^15
-	public static final Prefix PETA = new Prefix("petta", "P", 1.0E+15);
+	public static final Prefix PETA = new Prefix("peta", "P", 1.0E+15);
 	// SI prefix 10^12
 	public static final Prefix TERA = new Prefix("tera", "T", 1.0E+12);
 	// SI prefix 10^9
@@ -166,16 +167,12 @@ public class Prefix {
 	 * @return {@link Prefix}
 	 */
 	public static Prefix fromFactor(double factor) {
-		Prefix prefix = null;
-
-		for (Prefix p : prefixes) {
-			if (p.getFactor() == factor) {
-				prefix = p;
-				break;
-			}
-		}
-
-		return prefix;
+	    for (Prefix p : prefixes) {
+	        if (Math.abs(p.getFactor() - factor) < MeasurementSystem.EPSILON) {
+	            return p;
+	        }
+	    }
+	    return null;
 	}
 
 	/**

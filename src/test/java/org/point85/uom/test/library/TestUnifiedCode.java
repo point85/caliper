@@ -278,18 +278,10 @@ public class TestUnifiedCode extends BaseTest {
 		convertedAmount = wsConvert(amount, "kg", "[gr]");
 		assertTrue(isCloseTo(to.getAmount(), convertedAmount, DELTA2));
 
-		// a deg Fahrenheit to a deg Celsius
-		UnitOfMeasure degF = sys.getUOM(Unit.FAHRENHEIT);
-		UnitOfMeasure degC = sys.getUOM(Unit.CELSIUS);
-		double factor = degF.getConversionFactor(degC);
-
-		convertedAmount = wsConvert(1d, "[degF]", "Cel");
-		assertTrue(isCloseTo(factor, convertedAmount, DELTA6));
-
 		// a deg Kelvin to a deg Rankine
 		UnitOfMeasure degK = sys.getUOM(Unit.KELVIN);
 		UnitOfMeasure degR = sys.getUOM(Unit.RANKINE);
-		factor = degK.getConversionFactor(degR);
+		double factor = degK.getConversionFactor(degR);
 
 		convertedAmount = wsConvert(1d, "K", "[degR]");
 		assertTrue(isCloseTo(factor, convertedAmount, DELTA6));

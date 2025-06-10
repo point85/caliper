@@ -51,7 +51,7 @@ public class TestQuantity extends BaseTest {
 		// faraday
 		Quantity f = sys.getQuantity(Constant.FARADAY_CONSTANT);
 		Quantity qe = sys.getQuantity(Constant.ELEMENTARY_CHARGE);
-		Quantity na = sys.getQuantity(Constant.AVAGADRO_CONSTANT);
+		Quantity na = sys.getQuantity(Constant.AVOGADRO_CONSTANT);
 		Quantity eNA = qe.multiply(na);
 		assertTrue(isCloseTo(f.getAmount(), eNA.getAmount(), DELTA6));
 		assertTrue(isCloseTo(f.getAmount(), 96485.332123, DELTA5));
@@ -468,7 +468,7 @@ public class TestQuantity extends BaseTest {
 
 		// Boltzmann and Avogadro
 		Quantity boltzmann = sys.getQuantity(Constant.BOLTZMANN_CONSTANT);
-		Quantity avogadro = sys.getQuantity(Constant.AVAGADRO_CONSTANT);
+		Quantity avogadro = sys.getQuantity(Constant.AVOGADRO_CONSTANT);
 		Quantity gas = sys.getQuantity(Constant.GAS_CONSTANT);
 		Quantity qR = boltzmann.multiply(avogadro);
 		assertTrue(isCloseTo(qR.getUOM().getScalingFactor(), gas.getUOM().getScalingFactor(), DELTA6));

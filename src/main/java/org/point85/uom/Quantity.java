@@ -138,17 +138,14 @@ public class Quantity extends Symbolic {
 	 */
 	@Override
 	public boolean equals(Object other) {
-		boolean answer = false;
+		if (this == other)
+			return true;
+		if (!(other instanceof Quantity))
+			return false;
 
-		if (other instanceof Quantity) {
-			Quantity otherQuantity = (Quantity) other;
-
-			// same amount and same unit of measure
-			if (getAmount() == otherQuantity.getAmount() && getUOM().equals(otherQuantity.getUOM())) {
-				answer = true;
-			}
-		}
-		return answer;
+		Quantity that = (Quantity) other;
+		return Math.abs(getAmount() - that.getAmount()) < MeasurementSystem.EPSILON
+				&& Objects.equals(getUOM(), that.getUOM());
 	}
 
 	/**
@@ -187,6 +184,8 @@ public class Quantity extends Symbolic {
 			result = (double) ((Integer) number);
 		} else if (number instanceof Short) {
 			result = (double) ((Short) number);
+		} else if (number instanceof BigDecimal) {
+			return ((BigDecimal) number).doubleValue();
 		}
 
 		return result;
@@ -264,6 +263,10 @@ public class Quantity extends Symbolic {
 	 * @throws Exception Exception
 	 */
 	public Quantity divide(double divisor) throws Exception {
+		if (divisor == 0.0d) {
+			throw new Exception(MeasurementSystem.getMessage("divisor.cannot.be.zero"));
+		}
+
 		double newAmount = getAmount() / divisor;
 		return new Quantity(newAmount, getUOM());
 	}
@@ -364,7 +367,7 @@ public class Quantity extends Symbolic {
 		for (int i = 0; i < toMeasures.size(); i++) {
 			UnitOfMeasure toUOM = toMeasures.get(i);
 			Quantity converted = quantityLeft.convert(toUOM);
-			
+
 			if (i == toMeasures.size() - 1) {
 				// last conversion
 				quantities.add(converted);

@@ -44,6 +44,7 @@ public class TestSystems extends BaseTest {
 
 	@Test
 	public void testUnifiedSystem() throws Exception {
+		sys.clearCache();
 
 		assertFalse(sys.equals(null));
 
