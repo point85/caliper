@@ -19,4 +19,38 @@
 	- Prefix:  made prefixes a synchronized list; peta typo; used EPSILON in fromFactor() comparison
 	- Quantity: used EPSILON in equals() comparison; added BigDecimal case in createAmount(); checked for division by 0 in divide(double)
 	- UnitOfMeasure: synchronized setConversion()
+	
+(3)  1.3.0, February 16, 2026: 	
+	- Claude Sonnet 4.5 changes:
+Performance Improvements
+Prefix.java - Optimized prefix lookup:
+
+Changed from O(n) linear search to O(1) HashMap lookup in fromName()
+Added nameMap for fast name-based lookups
+Made prefix list unmodifiable to prevent external modification
+UnitOfMeasure.java - Eliminated unnecessary boxing:
+
+Replaced Double.valueOf().compareTo() with Double.compare() in 4 locations
+Added initial capacity to HashMap in multiplyOrDivide() method
+Added initial capacity to Reducer's terms HashMap (16 elements)
+Quantity.java - Optimized comparisons:
+
+Replaced Double.valueOf().compareTo() with Double.compare() in compare() method
+Added initial capacity to ArrayList in convert(List<UnitOfMeasure>) method
+MeasurementSystem.java - Collection optimization:
+
+Added initial capacity (32) to ArrayList in getUnitsOfMeasure() method
+UnitType.java - Immutability improvement:
+
+Made typeMap unmodifiable using Collections.unmodifiableMap()
+Added initial capacity calculation for HashMap
+
+Bug Fixes
+Prefix.java - Null safety:
+
+Added null check in fromName() method to prevent NullPointerException
+UnitOfMeasure.java - Null safety in equals():
+
+Added null checks for getAbscissaUnit() and getSymbol() to prevent NullPointerException
+Improved defensive programming in equality checks
 		

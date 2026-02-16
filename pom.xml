@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.point85</groupId>
 	<artifactId>caliper</artifactId>
-	<version>1.2.8</version>
+	<version>1.3.0</version>
 	<packaging>jar</packaging>
 	<name>Caliper</name>
 	<description>Units of Measure</description>
@@ -18,7 +18,7 @@
 		<developer>
 			<id>Point85</id>
 			<name>Kent W. Randall</name>
-			<email>point85.llc@gmail.com</email>
+			<email>point85.apps@gmail.com</email>
 		</developer>
 	</developers>
 	<scm>
@@ -90,7 +90,7 @@
 				<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.20.1</version>
+			<version>3.0.0</version>
 				<configuration>
 					<skipTests>true</skipTests>
 				</configuration>

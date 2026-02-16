@@ -489,27 +489,38 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		}
 
 		// same abscissa unit symbols
-		String thisSymbol = getAbscissaUnit().getSymbol();
-		String otherSymbol = otherUnit.getAbscissaUnit().getSymbol();
+		UnitOfMeasure thisAbscissa = getAbscissaUnit();
+		UnitOfMeasure otherAbscissa = otherUnit.getAbscissaUnit();
+		
+		if (thisAbscissa == null || otherAbscissa == null) {
+			return thisAbscissa == otherAbscissa;
+		}
+		
+		String thisSymbol = thisAbscissa.getSymbol();
+		String otherSymbol = otherAbscissa.getSymbol();
+		
+		if (thisSymbol == null || otherSymbol == null) {
+			return thisSymbol == otherSymbol;
+		}
 
 		if (!thisSymbol.equals(otherSymbol)) {
 			return false;
 		}
 
-		// same factors
-		if (Double.valueOf(getScalingFactor()).compareTo(Double.valueOf(otherUnit.getScalingFactor())) != 0) {
+		// same factors - avoid unnecessary boxing
+		if (Double.compare(getScalingFactor(), otherUnit.getScalingFactor()) != 0) {
 			return false;
 		}
 
-		// same offsets
-		if (Double.valueOf(getOffset()).compareTo(Double.valueOf(otherUnit.getOffset())) != 0) {
+		// same offsets - avoid unnecessary boxing
+		if (Double.compare(getOffset(), otherUnit.getOffset()) != 0) {
 			return false;
 		}
 		return true;
 	}
 
 	private void checkOffset(UnitOfMeasure other) throws Exception {
-		if (Double.valueOf(other.getOffset()).compareTo(0.0d) != 0) {
+		if (Double.compare(other.getOffset(), 0.0d) != 0) {
 			String msg = MessageFormat.format(MeasurementSystem.getMessage("offset.not.supported"), other.toString());
 			throw new Exception(msg);
 		}
@@ -532,7 +543,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		Map<UnitOfMeasure, Integer> otherMap = otherReducer.getTerms();
 
 		// create a map of the unit of measure powers
-		Map<UnitOfMeasure, Integer> resultMap = new HashMap<>();
+		Map<UnitOfMeasure, Integer> resultMap = new HashMap<>((thisMap.size() + otherMap.size()) * 2);
 
 		// iterate over the multiplier's unit map
 		for (Entry<UnitOfMeasure, Integer> thisEntry : thisMap.entrySet()) {
@@ -695,7 +706,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// self conversion is special
 		if (this.equals(abscissaUnit)) {
-			if (Double.valueOf(scalingFactor).compareTo(1.0d) != 0 || Double.valueOf(offset).compareTo(0.0d) != 0) {
+			if (Double.compare(scalingFactor, 1.0d) != 0 || Double.compare(offset, 0.0d) != 0) {
 				throw new Exception(MeasurementSystem.getMessage("conversion.not.allowed"));
 			}
 		}
@@ -976,7 +987,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// scaling factor
 		double factor = getScalingFactor();
-		if (Double.valueOf(factor).compareTo(1.0d) != 0) {
+		if (Double.compare(factor, 1.0d) != 0) {
 			sb.append(Double.toString(factor)).append(MULT);
 		}
 
@@ -988,7 +999,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 
 		// offset
 		double uomOffset = getOffset();
-		if (Double.valueOf(uomOffset).compareTo(0.0d) != 0) {
+		if (Double.compare(uomOffset, 0.0d) != 0) {
 			sb.append(" + ").append(Double.toString(getOffset()));
 		}
 
@@ -1254,7 +1265,7 @@ public class UnitOfMeasure extends Symbolic implements Comparable<UnitOfMeasure>
 		private static final int STARTING_LEVEL = -1;
 
 		// UOMs and their exponents
-		private Map<UnitOfMeasure, Integer> terms = new HashMap<>();
+		private Map<UnitOfMeasure, Integer> terms = new HashMap<>(16);
 
 		// the overall scaling factor
 		private double mapScalingFactor = 1.0d;

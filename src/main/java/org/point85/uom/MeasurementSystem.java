@@ -1727,7 +1727,7 @@ public class MeasurementSystem {
 	 * @throws Exception Exception
 	 */
 	public List<UnitOfMeasure> getUnitsOfMeasure(UnitType type) throws Exception {
-		List<UnitOfMeasure> uoms = new ArrayList<>();
+		List<UnitOfMeasure> uoms = new ArrayList<>(32);
 
 		switch (type) {
 		case LENGTH:

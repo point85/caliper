@@ -360,7 +360,7 @@ public class Quantity extends Symbolic {
 	 * @throws Exception Exception
 	 */
 	public List<Quantity> convert(List<UnitOfMeasure> toMeasures) throws Exception {
-		List<Quantity> quantities = new ArrayList<>();
+		List<Quantity> quantities = new ArrayList<>(toMeasures.size());
 
 		Quantity quantityLeft = this;
 
@@ -468,7 +468,7 @@ public class Quantity extends Symbolic {
 			toCompare = other.convert(this.getUOM());
 		}
 
-		return Double.valueOf(getAmount()).compareTo(Double.valueOf(toCompare.getAmount()));
+		return Double.compare(getAmount(), toCompare.getAmount());
 	}
 
 	/**

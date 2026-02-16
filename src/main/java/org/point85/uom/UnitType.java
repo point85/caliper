@@ -24,6 +24,7 @@ SOFTWARE.
 package org.point85.uom;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -135,13 +136,15 @@ public enum UnitType {
 	// unclassified. Reserved for use when creating custom units of measure.
 	UNCLASSIFIED();
 
-	private Map<UnitType, Integer> typeMap = new HashMap<>();
+	private Map<UnitType, Integer> typeMap;
 
 	@SafeVarargs
 	private UnitType(SimpleImmutableEntry<UnitType, Integer>... entries) {
+		Map<UnitType, Integer> tempMap = new HashMap<>(entries.length * 2);
 		for (SimpleImmutableEntry<UnitType, Integer> entry : entries) {
-			typeMap.put(entry.getKey(), entry.getValue());
+			tempMap.put(entry.getKey(), entry.getValue());
 		}
+		this.typeMap = Collections.unmodifiableMap(tempMap);
 	}
 
 	public Map<UnitType, Integer> getTypeMap() {

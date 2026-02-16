@@ -26,7 +26,9 @@ package org.point85.uom;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The Prefix class defines SI unit of measure prefixes as well as those found
@@ -34,7 +36,10 @@ import java.util.List;
  */
 public class Prefix {    
 	// list of pre-defined prefixes
-	private static List<Prefix> prefixes = Collections.synchronizedList(new ArrayList<>());
+	private static List<Prefix> prefixes = new ArrayList<>();
+	
+	// map for fast name lookup
+	private static Map<String, Prefix> nameMap = new HashMap<>();
 
 	// SI prefix 10^24
 	public static final Prefix YOTTA = new Prefix("yotta", "Y", 1.0E+24);
@@ -110,6 +115,7 @@ public class Prefix {
 		this.factor = factor;
 
 		prefixes.add(this);
+		nameMap.put(name, this);
 	}
 
 	/**
@@ -147,16 +153,10 @@ public class Prefix {
 	 * @return {@link Prefix}
 	 */
 	public static Prefix fromName(String name) {
-		Prefix prefix = null;
-
-		for (Prefix p : prefixes) {
-			if (p.getName().equals(name)) {
-				prefix = p;
-				break;
-			}
+		if (name == null) {
+			return null;
 		}
-
-		return prefix;
+		return nameMap.get(name);
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class Prefix {
 	 * @return Prefix list
 	 */
 	public static List<Prefix> getDefinedPrefixes() {
-		return prefixes;
+		return Collections.unmodifiableList(prefixes);
 	}
 
 	/**
